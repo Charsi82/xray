@@ -17,6 +17,7 @@
 #include "Include/xrRender/Kinematics.h"
 #include "Level.h"
 #include "CarWeapon.h"
+#include "hudmanager.h"
 
 void	CCar::OnMouseMove(int dx, int dy)
 {
@@ -32,6 +33,17 @@ void	CCar::OnMouseMove(int dx, int dy)
 		float d		= ((psMouseInvert.test(1))?-1:1)*float(dy)*scale*3.f/4.f;
 		C->Move		((d>0)?kUP:kDOWN, _abs(d));
 	}
+	if (m_car_weapon)
+	{
+		Fvector pos = active_camera->Position();
+		Fvector cam_dir = active_camera->Direction();
+
+		//что актер видит перед собой
+		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
+
+		pos.mad(cam_dir, RQ.range>3.f ? RQ.range : 30.f);
+		SetParam(CCarWeapon::eWpnDesiredPos, pos);
+	};
 }
 
 bool CCar::bfAssignMovement(CScriptEntityAction *tpEntityAction)
@@ -137,6 +149,7 @@ void CCar::OnKeyboardPress(int cmd)
 	case kDETECTOR:	SwitchEngine();				break;
 	case kTORCH:	m_lights.SwitchHeadLights();break;
 	case kUSE:									break;
+	case kWPN_FUNC: m_repairing = true; break;
 	};
 
 }
@@ -152,6 +165,9 @@ void	CCar::OnKeyboardRelease(int cmd)
 	case kL_STRAFE:	ReleaseLeft();				if (OwnerActor()) OwnerActor()->steer_Vehicle(0);	break;
 	case kR_STRAFE:	ReleaseRight();				if (OwnerActor()) OwnerActor()->steer_Vehicle(0);	break;
 	case kJUMP:		ReleaseBreaks();			break;
+	case kWPN_FIRE:	if (OwnerActor()) Action(CCarWeapon::eWpnFire, 0); break; // stop shooting on lmb release
+	case kWPN_FUNC: m_repairing = false; break;
+
 	};
 }
 
@@ -167,6 +183,8 @@ void	CCar::OnKeyboardHold(int cmd)
 	case kDOWN:
 	case kLEFT:
 	case kRIGHT:	active_camera->Move(cmd);	break;
+	case kWPN_FIRE: if (OwnerActor()) Action(CCarWeapon::eWpnFire, 1); break; // shooting on hold lmb
+	
 /*
 	case kFWD:		
 		if (ectFree==active_camera->tag)	active_camera->Move(kUP);
