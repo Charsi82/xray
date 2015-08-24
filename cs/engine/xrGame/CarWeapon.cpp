@@ -223,8 +223,16 @@ void CCarWeapon::FireEnd()
 	StopFlameParticles	();
 }
 
+#include "holder_custom.h"
 void CCarWeapon::OnShot()
 {
+	CHolderCustom* car = smart_cast<CHolderCustom*>(m_object);
+	if (car->Engaged())
+	{
+		FireBullet(m_fire_pos, m_fire_dir, fireDispersionBase, *m_Ammo,
+			0, m_object->ID(), SendHitAllowed(m_object));
+	}
+	else
 	FireBullet				(	m_fire_pos, m_fire_dir, fireDispersionBase, *m_Ammo, 
 								m_object->ID(), m_object->ID(), SendHitAllowed(m_object));
 
