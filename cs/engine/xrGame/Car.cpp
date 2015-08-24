@@ -73,7 +73,7 @@ CCar::CCar()
 	m_exhaust_particles	="vehiclefx\\exhaust_1";
 	m_car_sound			= new SCarSound(this);
 
-	//у машины слотов в инвентаре нет
+	//Сѓ РјР°С€РёРЅС‹ СЃР»РѕС‚РѕРІ РІ РёРЅРІРµРЅС‚Р°СЂРµ РЅРµС‚
 	inventory			= new CInventory();
 	inventory->SetSlotsUseful(false);
 	m_doors_torque_factor = 2.f;
@@ -215,6 +215,12 @@ void CCar::SpawnInitPhysics	(CSE_Abstract	*D)
 	//PPhysicsShell()->add_ObjectContactCallback(ActorObstacleCallback);
 	SetDefaultNetState				(so);
 	CPHUpdateObject::Activate       ();
+
+// CAR_SPANW_PH_IMPULS
+	Fvector dir;
+	dir.set(0, -1.f, 0);
+	m_pPhysicsShell->applyImpulse(dir, 0.1);
+// CAR_SPANW_PH_IMPULS
 }
 
 void	CCar::net_Destroy()
@@ -622,6 +628,7 @@ void CCar::detach_Actor()
 #ifdef DEBUG
 	DBgClearPlots();
 #endif
+	if (m_car_weapon) { Action(CCarWeapon::eWpnActivate, 0); };
 }
 
 bool CCar::attach_Actor(CGameObject* actor)
@@ -656,6 +663,8 @@ bool CCar::attach_Actor(CGameObject* actor)
 	//driver_pos_tranform.c.set(bone_data.bind_translate);
 	//m_sits_transforms.push_back(driver_pos_tranform);
 	//H_SetParent(actor);
+
+	if (m_car_weapon) Action(CCarWeapon::eWpnActivate, 1); // for targeting and shooting
 
 	return true;
 }
@@ -1681,7 +1690,7 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 	inherited::OnEvent		(P,type);
 	CExplosive::OnEvent		(P,type);
 
-	//обработка сообщений, нужных для работы с багажником машины
+	//РѕР±СЂР°Р±РѕС‚РєР° СЃРѕРѕР±С‰РµРЅРёР№, РЅСѓР¶РЅС‹С… РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р±Р°РіР°Р¶РЅРёРєРѕРј РјР°С€РёРЅС‹
 	u16 id;
 	switch (type)
 	{
