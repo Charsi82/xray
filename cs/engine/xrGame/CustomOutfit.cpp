@@ -148,7 +148,7 @@ float CCustomOutfit::HitThroughArmor( float hit_power, s16 element, float ap, bo
 
 	if( ap > EPS && ap > BoneArmor )
 	{
-		//пуля пробила бронь
+		//ГЇГіГ«Гї ГЇГ°Г®ГЎГЁГ«Г  ГЎГ°Г®Г­Гј
 		float d_ap = ap - BoneArmor;
 		NewHitPower *= ( d_ap / ap );
 
@@ -163,14 +163,14 @@ float CCustomOutfit::HitThroughArmor( float hit_power, s16 element, float ap, bo
 		
 		if ( NewHitPower < 0.0f ) { NewHitPower = 0.0f; }
 
-		//увеличить изношенность костюма
+		//ГіГўГҐГ«ГЁГ·ГЁГІГј ГЁГ§Г­Г®ГёГҐГ­Г­Г®Г±ГІГј ГЄГ®Г±ГІГѕГ¬Г 
 		Hit( NewHitPower, ALife::eHitTypeFireWound );
 	}
 	else
 	{
-		//пуля НЕ пробила бронь
+		//ГЇГіГ«Гї ГЌГ… ГЇГ°Г®ГЎГЁГ«Г  ГЎГ°Г®Г­Гј
 		NewHitPower *= m_boneProtection->m_fHitFracActor;
-		add_wound = false; 	//раны нет
+		add_wound = false; 	//Г°Г Г­Г» Г­ГҐГІ
 		Hit( NewHitPower, ALife::eHitTypeFireWound );
 	}// if >=
 
@@ -248,7 +248,7 @@ void	CCustomOutfit::OnMoveToRuck		(EItemPlace prev)
 	if (m_pInventory)
 	{
 		CActor* pActor = smart_cast<CActor*> (m_pInventory->GetOwner());
-		if (pActor)
+		if (pActor && prev == eItemPlaceSlot) // fixed 
 		{
 			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
 			if(pTorch)
