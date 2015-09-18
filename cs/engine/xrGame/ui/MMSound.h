@@ -18,6 +18,8 @@ public:
 	void 			music_Update();
 
 	void 			all_Stop	();
+	void 			music_prev_track();
+	void 			music_next_track();
 protected:
 
 	IC	bool		check_file			(LPCSTR fname);
@@ -27,5 +29,8 @@ protected:
 	ref_sound		m_whell;
 	ref_sound		m_whell_click;
 	bool			m_bRandom;
+#ifdef RND_MM_SOUND
+	s32			m_iCurrentTrack;
+#endif
 	xr_vector<xr_string>m_play_list;
 };
