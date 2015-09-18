@@ -102,6 +102,12 @@ void CUIActorMenu::Construct()
 	m_pTradePartnerBagList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_bag", this);
 	m_pTradePartnerList			= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_trade", this);
 
+#ifdef DRAG_DROP_TRASH
+	m_pTrashList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_trash", this);
+	m_pTrashList->m_f_item_drop = CUIDragDropListEx::DRAG_DROP_EVENT(this, &CUIActorMenu::OnItemDrop);
+	m_pTrashList->m_f_drag_event = CUIDragDropListEx::DRAG_ITEM_EVENT(this, &CUIActorMenu::OnDragItemOnTrash);
+#endif
+
 	m_belt_list_over[0] = UIHelper::CreateStatic(uiXml, "belt_list_over", this);
 	Fvector2 pos;
 	pos = m_belt_list_over[0]->GetWndPos();
@@ -189,6 +195,12 @@ void CUIActorMenu::Construct()
 	BindDragDropListEvents				(m_pTradePartnerBagList);
 	BindDragDropListEvents				(m_pTradePartnerList);
 	BindDragDropListEvents				(m_pDeadBodyBagList);
+
+#ifdef DRAG_DROP_TRASH
+	m_allowed_drops[iTrashSlot].push_back(iActorBag);
+	m_allowed_drops[iTrashSlot].push_back(iActorSlot);
+	m_allowed_drops[iTrashSlot].push_back(iActorBelt);
+#endif 
 
 	m_allowed_drops[iActorSlot].push_back(iActorBag);
 	m_allowed_drops[iActorSlot].push_back(iActorTrade);
