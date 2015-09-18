@@ -14,6 +14,15 @@ public:
 	virtual void		OnDraw				(CUICellItem* cell)	= 0;
 };
 
+#ifdef DRAG_DROP_TRASH
+class ICustomDrawDragItem
+{
+public:
+	virtual				~ICustomDrawDragItem()	{};
+	virtual void		OnDraw(CUIDragItem* drag_item) = 0;
+};
+#endif // DRAG_DROP_TRASH
+
 class CUICellItem :public CUIStatic
 {
 private:
@@ -84,10 +93,18 @@ private:
 	CUICellItem*			m_pParent;
 	Fvector2				m_pos_offset;
 	CUIDragDropListEx*		m_back_list;
+
+#ifdef DRAG_DROP_TRASH
+	ICustomDrawDragItem*	m_custom_draw; //+
+#endif
+
 public:
 							CUIDragItem(CUICellItem* parent);
 	virtual		void		Init(const ui_shader& sh, const Frect& rect, const Frect& text_rect);
 	virtual					~CUIDragItem();
+#ifdef DRAG_DROP_TRASH
+	void		SetCustomDraw(ICustomDrawDragItem* c); //+
+#endif
 			CUIStatic*		wnd						() {return &m_static;}
 	virtual		bool		OnMouse					(float x, float y, EUIMessages mouse_action);
 	virtual		void		Draw					();
