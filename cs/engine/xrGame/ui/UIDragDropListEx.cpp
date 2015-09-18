@@ -53,6 +53,14 @@ CUIDragDropListEx::~CUIDragDropListEx()
 	delete_data					(m_container);
 }
 
+#ifdef DRAG_DROP_TRASH
+void CUIDragDropListEx::OnDragEvent(CUIDragItem* drag_item, bool b_receive)
+{
+	if (m_f_drag_event)
+		m_f_drag_event(drag_item, b_receive);
+}
+#endif
+
 void CUIDragDropListEx::SetAutoGrow(bool b)						
 {
 	m_flags.set(flAutoGrow,b);
