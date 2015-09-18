@@ -68,13 +68,16 @@ xr_token							qminmax_sm_token					[ ]={
 	{ 0,							0												}
 };
 
-//	“Off”
-//	“DX10.0 style [Standard]”
-//	“DX10.1 style [Higher quality]”
+//	â€œOffâ€
+//	â€œDX10.0 style [Standard]â€
+//	â€œDX10.1 style [Higher quality]â€
 
 // Common
 extern int			psSkeletonUpdate;
 extern float		r__dtex_range;
+
+//KD
+Flags32		ps_common_flags = { 0 };		// r1-only
 
 //int		ps_r__Supersample			= 1		;
 int			ps_r__LightSleepFrames		= 10	;
