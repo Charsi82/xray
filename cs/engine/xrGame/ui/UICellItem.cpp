@@ -275,6 +275,7 @@ void CUICellItem::SetCustomDraw			(ICustomDrawCell* c){
 CUIDragItem::CUIDragItem(CUICellItem* parent)
 {
 	m_back_list						= NULL;
+	m_custom_draw = NULL;//+
 	m_pParent						= parent;
 	AttachChild						(&m_static);
 	Device.seqRender.Add			(this, REG_PRIORITY_LOW-5000);
@@ -286,6 +287,8 @@ CUIDragItem::~CUIDragItem()
 {
 	Device.seqRender.Remove			(this);
 	Device.seqFrame.Remove			(this);
+	if (m_custom_draw) //+
+		delete_data(m_custom_draw); //+
 }
 
 void CUIDragItem::Init(const ui_shader& sh, const Frect& rect, const Frect& text_rect)
@@ -333,15 +336,38 @@ void CUIDragItem::Draw()
 	inherited::Draw();
 
 	UI()->PopScissor();
+#ifdef DRAG_DROP_TRASH
+	if (m_custom_draw)
+		m_custom_draw->OnDraw(this);
+#endif
 }
 
 void CUIDragItem::SetBackList(CUIDragDropListEx*l)
 {
-	if(m_back_list!=l){
-		m_back_list=l;
+#ifdef DRAG_DROP_TRASH
+	if (m_back_list)
+		m_back_list->OnDragEvent(this, false);
+
+	m_back_list = l;
+
+	if (m_back_list)
+		l->OnDragEvent(this, true);
+#else //DRAG_DROP_TRASH
+	if (m_back_list != l){
+		m_back_list = l;
 	}
+#endif //DRAG_DROP_TRASH
 }
 
+#ifdef DRAG_DROP_TRASH
+void CUIDragItem::SetCustomDraw(ICustomDrawDragItem* c)
+{
+	if (m_custom_draw)
+		delete_data(m_custom_draw);
+
+	m_custom_draw = c;
+}
+#endif
 Fvector2 CUIDragItem::GetPosition()
 {
 	return Fvector2().add(m_pos_offset, GetUICursor()->GetCursorPosition());
