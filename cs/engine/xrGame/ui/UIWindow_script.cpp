@@ -22,7 +22,7 @@ CGameFont* GetFontMedium()
 {return mngr().pFontMedium;}
 CGameFont* GetFontDI()
 {return mngr().pFontDI;}
-//øðèôòû äëÿ èíòåðôåéñà
+//Ã¸Ã°Ã¨Ã´Ã²Ã» Ã¤Ã«Ã¿ Ã¨Ã­Ã²Ã¥Ã°Ã´Ã¥Ã©Ã±Ã 
 CGameFont* GetFontGraffiti19Russian()
 {return mngr().pFontGraffiti19Russian;}
 CGameFont* GetFontGraffiti22Russian()
@@ -58,6 +58,19 @@ TEX_INFO	get_texture_info(LPCSTR name, LPCSTR def_name)
 	return CUITextureMaster::FindItem(name, def_name);
 }
 
+Fvector2 GetCursorPosition()
+{
+	Fvector2 res = Fvector2().set(0,0);
+	auto cur = UI()->GetUICursor();
+	if (cur && cur->IsVisible())
+	{
+		Fvector2 pos = cur->GetCursorPosition();
+		//Msg("x = %d y = %d", iFloor(pos.x + 0.5f), iFloor(pos.y + 0.5f));
+		res.set(iFloor(pos.x + 0.5f), iFloor(pos.y + 0.5f));
+	}
+	return res;
+}
+
 using namespace luabind;
 
 #pragma optimize("s",on)
@@ -76,6 +89,7 @@ void CUIWindow::script_register(lua_State *L)
 		def("GetFontGraffiti32Russian",	&GetFontGraffiti32Russian),
 		def("GetFontGraffiti50Russian",	&GetFontGraffiti50Russian),
 		def("GetFontLetterica25",		&GetFontLetterica25),
+		def("get_cursor_pos", &GetCursorPosition),//+
 
 		class_<TEX_INFO>("TEX_INFO")
 		.def("get_file_name",	 			&TEX_INFO::get_file_name)
@@ -99,7 +113,9 @@ void CUIWindow::script_register(lua_State *L)
 		.def("SetWidth",				&CUIWindow::SetWidth)
 		.def("GetHeight",				&CUIWindow::GetHeight)
 		.def("SetHeight",				&CUIWindow::SetHeight)
-
+		.def("GetWndRect", &CUIWindow::GetWndRect_script)//+
+		.def("Init", (void (CUIWindow::*)(float, float, float, float))   &CUIWindow::Init)//+
+		
 		.def("Enable",					&CUIWindow::Enable)
 		.def("IsEnabled",				&CUIWindow::IsEnabled)
 		.def("Show",					&CUIWindow::Show)
