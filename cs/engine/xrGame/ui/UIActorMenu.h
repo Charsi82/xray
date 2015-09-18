@@ -5,9 +5,15 @@
 #include <xrServerEntities/inventory_space.h>
 #include "UIHint.h"
 
+#include <dinput.h>
+#include "key_binding_registrator.h"
+
 class CUICharacterInfo;
 class CUIDragDropListEx;
 class CUICellItem;
+#ifdef DRAG_DROP_TRASH
+class CUIDragItem;
+#endif
 class ui_actor_state_wnd;
 class CUIItemInfo;
 class CUIFrameLineWnd;
@@ -35,6 +41,9 @@ enum EDDListType{
 		iPartnerTradeBag,
 		iPartnerTrade,
 		iDeadBodyBag,
+#ifdef DRAG_DROP_TRASH
+		iTrashSlot,
+#endif
 		iListTypeMax
 };
 
@@ -93,6 +102,9 @@ protected:
 	CUIDragDropListEx*			m_pTradePartnerBagList;
 	CUIDragDropListEx*			m_pTradePartnerList;
 	CUIDragDropListEx*			m_pDeadBodyBagList;
+#ifdef DRAG_DROP_TRASH
+	CUIDragDropListEx*			m_pTrashList;
+#endif
 	enum						{e_af_count = 5};
 	CUIStatic*					m_belt_list_over[e_af_count];
 
@@ -182,6 +194,9 @@ protected:
 	bool		xr_stdcall		OnItemFocusReceive			(CUICellItem* itm);
 	bool		xr_stdcall		OnItemFocusLost				(CUICellItem* itm);
 	bool		xr_stdcall		OnItemFocusedUpdate			(CUICellItem* itm);
+#ifdef DRAG_DROP_TRASH
+	void		xr_stdcall		OnDragItemOnTrash(CUIDragItem* item, bool b_receive);
+#endif
 	bool						OnItemDropped				(PIItem itm, CUIDragDropListEx* new_owner, CUIDragDropListEx* old_owner);
 
 	void						ResetMode					();
@@ -290,5 +305,5 @@ public:
 	void						TakeAllFromInventoryBox		();
 
 	IC	UIHint*					get_hint_wnd				() { return m_hint_wnd; }
-
+	void						ShowCallback();
 }; // class CUIActorMenu
