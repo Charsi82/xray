@@ -6,6 +6,9 @@
 #include "UI3tButton.h"
 #include "UI.h"
 #include "UITalkWnd.h"
+#ifdef NUM_PHRASES
+#include "dinput.h" // for dik_keys
+#endif
 
 #define				TALK_XML				"talk.xml"
 
@@ -41,23 +44,23 @@ void CUITalkDialogWnd::InitTalkDialogWnd()
 	AttachChild					(&UIOurIcon);
 	AttachChild					(&UIOthersIcon);
 
-	// Ôðåéì ñ íàùèìè ôðàçàìè
+	// Ã”Ã°Ã¥Ã©Ã¬ Ã± Ã­Ã Ã¹Ã¨Ã¬Ã¨ Ã´Ã°Ã Ã§Ã Ã¬Ã¨
 	AttachChild					(&UIDialogFrameBottom);
 	CUIXmlInit::InitStatic		(*m_uiXml, "frame_bottom", 0, &UIDialogFrameBottom);
 
-	//îñíîâíîé ôðåéì äèàëîãà
+	//Ã®Ã±Ã­Ã®Ã¢Ã­Ã®Ã© Ã´Ã°Ã¥Ã©Ã¬ Ã¤Ã¨Ã Ã«Ã®Ã£Ã 
 	AttachChild					(&UIDialogFrameTop);
 	CUIXmlInit::InitStatic		(*m_uiXml, "frame_top", 0, &UIDialogFrameTop);
 
 
-	//Îòâåòû
+	//ÃŽÃ²Ã¢Ã¥Ã²Ã»
 	UIAnswersList				= new CUIScrollView();
 	UIAnswersList->SetAutoDelete(true);
 	UIDialogFrameTop.AttachChild(UIAnswersList);
 	CUIXmlInit::InitScrollView	(*m_uiXml, "answers_list", 0, UIAnswersList);
 	UIAnswersList->SetWindowName("---UIAnswersList");
 
-	//Âîïðîñû
+	//Ã‚Ã®Ã¯Ã°Ã®Ã±Ã»
 	UIQuestionsList				= new CUIScrollView();
 	UIQuestionsList->SetAutoDelete(true);
 	UIDialogFrameBottom.AttachChild(UIQuestionsList);
@@ -65,7 +68,7 @@ void CUITalkDialogWnd::InitTalkDialogWnd()
 	UIQuestionsList->SetWindowName("---UIQuestionsList");
 
 
-	//êíîïêà ïåðåõîäà â ðåæèì òîðãîâëè
+	//ÃªÃ­Ã®Ã¯ÃªÃ  Ã¯Ã¥Ã°Ã¥ÃµÃ®Ã¤Ã  Ã¢ Ã°Ã¥Ã¦Ã¨Ã¬ Ã²Ã®Ã°Ã£Ã®Ã¢Ã«Ã¨
 	AttachChild					(&UIToTradeButton);
 	CUIXmlInit::Init3tButtonEx	(*m_uiXml, "button", 0, &UIToTradeButton);
 	UIToTradeButton.SetWindowName("trade_btn");
@@ -78,7 +81,7 @@ void CUITalkDialogWnd::InitTalkDialogWnd()
 	m_btn_pos[1]				= UIToExitButton.GetWndPos();
 	m_btn_pos[2].x				= (m_btn_pos[0].x+m_btn_pos[1].x)/2.0f;
 	m_btn_pos[2].y				= m_btn_pos[0].y;
-	// øðèôò äëÿ èíäèêàöèè èìåíè ïåðñîíàæà â îêíå ðàçãîâîðà
+	// Ã¸Ã°Ã¨Ã´Ã² Ã¤Ã«Ã¿ Ã¨Ã­Ã¤Ã¨ÃªÃ Ã¶Ã¨Ã¨ Ã¨Ã¬Ã¥Ã­Ã¨ Ã¯Ã¥Ã°Ã±Ã®Ã­Ã Ã¦Ã  Ã¢ Ã®ÃªÃ­Ã¥ Ã°Ã Ã§Ã£Ã®Ã¢Ã®Ã°Ã 
 	CUIXmlInit::InitFont		(*m_uiXml, "font", 0, m_iNameTextColor, m_pNameTextFont);
 
 	CGameFont * pFont			= NULL;
@@ -147,8 +150,8 @@ void CUITalkDialogWnd::SetTradeMode()
 	OnTradeClicked( &UIToTradeButton, 0 );
 }
 
-//ïåðåñûëàåì ñîîáùåíèå ðîäèòåëüñêîìó îêíó äëÿ îáðàáîòêè
-//è ôèëüòðóåì åñëè îíî ïðèøëî îò íàøåãî äî÷åðíåãî îêíà
+//Ã¯Ã¥Ã°Ã¥Ã±Ã»Ã«Ã Ã¥Ã¬ Ã±Ã®Ã®Ã¡Ã¹Ã¥Ã­Ã¨Ã¥ Ã°Ã®Ã¤Ã¨Ã²Ã¥Ã«Ã¼Ã±ÃªÃ®Ã¬Ã³ Ã®ÃªÃ­Ã³ Ã¤Ã«Ã¿ Ã®Ã¡Ã°Ã Ã¡Ã®Ã²ÃªÃ¨
+//Ã¨ Ã´Ã¨Ã«Ã¼Ã²Ã°Ã³Ã¥Ã¬ Ã¥Ã±Ã«Ã¨ Ã®Ã­Ã® Ã¯Ã°Ã¨Ã¸Ã«Ã® Ã®Ã² Ã­Ã Ã¸Ã¥Ã£Ã® Ã¤Ã®Ã·Ã¥Ã°Ã­Ã¥Ã£Ã® Ã®ÃªÃ­Ã 
 void CUITalkDialogWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
 	CUIWndCallback::OnEvent(pWnd, msg, pData);
@@ -165,14 +168,27 @@ void CUITalkDialogWnd::ClearQuestions()
 	UIQuestionsList->Clear();
 }
 
-
+#ifdef NUM_PHRASES
+void CUITalkDialogWnd::AddQuestion(LPCSTR str, LPCSTR value, int number)
+#else
 void CUITalkDialogWnd::AddQuestion(LPCSTR str, LPCSTR value)
+#endif
 {
 	CUIQuestionItem* itm			= new CUIQuestionItem(m_uiXml,"question_item");
 	itm->Init						(value, str);
 	itm->SetWindowName				("question_item");
 	UIQuestionsList->AddWindow		(itm, true);
 	Register						(itm);
+#ifdef NUM_PHRASES
+	++number; //zero-based index
+	if (number <= 10)
+	{
+		string16 buff;
+		sprintf_s(buff, "%d.", (number == 10) ? 0 : number);
+		itm->m_num_text->SetText(buff);
+		itm->m_text->SetAccelerator(DIK_ESCAPE + number, 0);
+	}
+#endif
 }
 
 #include "game_news.h"
@@ -285,6 +301,14 @@ CUIQuestionItem::CUIQuestionItem			(CUIXml* xml_doc, LPCSTR path)
 	Register						(m_text);
 	m_text->SetWindowName			("text_button");
 	AddCallback						("text_button",BUTTON_CLICKED,CUIWndCallback::void_function(this, &CUIQuestionItem::OnTextClicked));
+
+#ifdef NUM_PHRASES
+	m_num_text = new CUIStatic();
+	m_num_text->SetAutoDelete(true);
+	AttachChild(m_num_text);
+	strconcat(sizeof(str), str, path, ":num_text");
+	xml_init.InitStatic(*xml_doc, str, 0, m_num_text);
+#endif
 
 }
 
