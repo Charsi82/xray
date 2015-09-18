@@ -23,6 +23,11 @@
 #include "UIPropertiesBox.h"
 #include "UIMainIngameWnd.h"
 
+#ifdef TRADE_TIP
+#include "Trade.h"
+#include "trade_parameters.h"
+#endif
+
 void CUIActorMenu::SetActor(CInventoryOwner* io)
 {
 	R_ASSERT			(!IsShown());
@@ -55,8 +60,9 @@ void CUIActorMenu::SetPartner(CInventoryOwner* io)
 			if ( monster )
 			{
 				shared_str monster_tex_name = pSettings->r_string( monster->cNameSect(), "icon" );
-				m_PartnerCharacterInfo->UIIcon().InitTexture( monster_tex_name.c_str() );
-				m_PartnerCharacterInfo->UIIcon().SetStretchTexture( true );
+//				m_PartnerCharacterInfo->UIIcon().InitTexture( monster_tex_name.c_str() );
+//				m_PartnerCharacterInfo->UIIcon().SetStretchTexture( true );
+				m_PartnerCharacterInfo->InitMonsterCharacter(monster_tex_name);
 			}
 		}
 		else 
@@ -181,6 +187,7 @@ void CUIActorMenu::Show()
 	PlaySnd								(eSndOpen);
 	m_ActorStateInfo->Show				(true);
 	m_ActorStateInfo->UpdateActorInfo	(m_pActorInvOwner);
+	ShowCallback();
 }
 
 void CUIActorMenu::Hide()
@@ -189,6 +196,7 @@ void CUIActorMenu::Hide()
 	PlaySnd								(eSndClose);
 	SetMenuMode							(mmUndefined);
 	m_ActorStateInfo->Show				(false);
+	repack_ammo();
 }
 
 void CUIActorMenu::Draw()
@@ -241,7 +249,7 @@ void CUIActorMenu::Update()
 	m_ItemInfo->Update();
 	m_hint_wnd->Update();
 }
-bool CUIActorMenu::StopAnyMove()  // true = àêò¸ð íå èä¸ò ïðè îòêðûòîì ìåíþ
+bool CUIActorMenu::StopAnyMove()  // true = Ã ÃªÃ²Â¸Ã° Ã­Ã¥ Ã¨Ã¤Â¸Ã² Ã¯Ã°Ã¨ Ã®Ã²ÃªÃ°Ã»Ã²Ã®Ã¬ Ã¬Ã¥Ã­Ã¾
 {
 	switch ( m_currMenuMode )
 	{
@@ -297,7 +305,9 @@ EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 	if(l==m_pTradePartnerBagList)		return iPartnerTradeBag;
 	if(l==m_pTradePartnerList)			return iPartnerTrade;
 	if(l==m_pDeadBodyBagList)			return iDeadBodyBag;
-
+#ifdef DRAG_DROP_TRASH
+	if (l == m_pTrashList)				return iTrashSlot;
+#endif
 	R_ASSERT(0);
 	
 	return iInvalid;
@@ -365,7 +375,25 @@ void CUIActorMenu::InfoCurItem( CUICellItem* cell_item )
 	{
 		compare_item = m_pActorInvOwner->inventory().m_slots[compare_slot].m_pIItem;
 	}
-	
+
+#ifdef TRADE_TIP
+	m_ItemInfo->m_TradeTip = "";
+	if (m_currMenuMode == mmTrade)
+	{
+		// calculation tips
+		CInventoryOwner* item_owner = smart_cast<CInventoryOwner*>(current_item->m_pInventory->GetOwner());
+		if (!current_item->CanTrade() ||
+			(
+			item_owner && item_owner == m_pActorInvOwner &&
+			!m_pPartnerInvOwner->trade_parameters().enabled(CTradeParameters::action_buy(0), current_item->object().cNameSect())
+			)
+			)
+			m_ItemInfo->m_TradeTip = "st_no_trade_tip_1";
+		else if (current_item->GetCondition() < m_pPartnerInvOwner->trade_parameters().buy_item_condition_factor)
+			m_ItemInfo->m_TradeTip = "st_no_trade_tip_2";
+	}
+#endif
+
 	m_ItemInfo->InitItem	( current_item, compare_item );
 	float dx_pos = GetWndRect().left;
 	m_ItemInfo->AlignHintWndPos( Frect().set( 0.0f, 0.0f, 1024.0f - dx_pos, 768.0f ), 10.0f, dx_pos );
@@ -437,6 +465,16 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 		{
 			ToDeadBodyBag(itm, true);
 		}break;
+#ifdef DRAG_DROP_TRASH
+		case iTrashSlot:
+		{
+			if (CurrentIItem()->IsQuestItem())
+				return true;
+
+			SendEvent_Item_Drop(CurrentIItem(), m_pActorInvOwner->object_id());
+			SetCurrentItem(NULL);
+		}break;
+#endif
 	};
 
 	OnItemDropped			(CurrentIItem(), new_owner, old_owner);
@@ -770,3 +808,40 @@ void CUIActorMenu::UpdateActorMP()
 	m_ActorCharacterInfo->InitCharacterMP( Game().local_player->name, "ui_npc_u_nebo_1" );
 
 }
+
+#ifdef DRAG_DROP_TRASH
+class CUITrashIcon :public ICustomDrawDragItem
+{
+	CUIStatic			m_icon;
+public:
+	CUITrashIcon()
+	{
+		m_icon.SetWndSize(Fvector2().set(29.0f * UI()->get_current_kx(), 36.0f));
+		m_icon.SetStretchTexture(true);
+		//		m_icon.SetAlignment		(waCenter);
+		m_icon.InitTexture("ui_inGame2_inv_trash");
+	}
+	virtual void		OnDraw(CUIDragItem* drag_item)
+	{
+		Fvector2 pos = drag_item->GetWndPos();
+		Fvector2 icon_sz = m_icon.GetWndSize();
+		Fvector2 drag_sz = drag_item->GetWndSize();
+
+		pos.x -= icon_sz.x;
+		pos.y += drag_sz.y;
+
+		m_icon.SetWndPos(pos);
+		//		m_icon.SetWndSize(sz);
+		m_icon.Draw();
+	}
+
+};
+
+void CUIActorMenu::OnDragItemOnTrash(CUIDragItem* item, bool b_receive)
+{
+	if (b_receive && !CurrentIItem()->IsQuestItem())
+		item->SetCustomDraw(new CUITrashIcon());
+	else
+		item->SetCustomDraw(NULL);
+}
+#endif //DRAG_DROP_TRASH
