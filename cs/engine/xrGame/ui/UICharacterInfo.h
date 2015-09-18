@@ -1,4 +1,4 @@
-// UICharacterInfo.h:  окошко, с информацией о персонаже
+// UICharacterInfo.h:  Г®ГЄГ®ГёГЄГ®, Г± ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГҐГ© Г® ГЇГҐГ°Г±Г®Г­Г Г¦ГҐ
 // 
 //////////////////////////////////////////////////////////////////////
 #pragma once
@@ -79,6 +79,8 @@ public:
 
 	const shared_str&	IconName				()	const	{	return m_texture_name;	}
 
+	void				InitMonsterCharacter	(shared_str monster_tex_name);
+	
 	static	bool		get_actor_community		(shared_str* our, shared_str* enemy);
 	static	bool		ignore_community		(shared_str const& check_community);
 };
