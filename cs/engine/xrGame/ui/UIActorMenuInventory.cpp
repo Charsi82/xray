@@ -29,6 +29,9 @@
 #include "HUDManager.h"
 #include "player_hud.h"
 
+#ifdef PROPBOX_WPN_ADDONS_EXT
+#include "string_table.h"//+
+#endif
 
 void move_item_from_to(u16 from_id, u16 to_id, u16 what_id);
 
@@ -40,7 +43,11 @@ void CUIActorMenu::InitInventoryMode()
 	m_pInventoryDetectorList->Show		(true);
 	m_pInventoryPistolList->Show		(true);
 	m_pInventoryAutomaticList->Show		(true);
-	
+
+#ifdef DRAG_DROP_TRASH
+	m_pTrashList->Show(true);
+#endif
+
 	m_RightDelimiter->Show				(false);
 	m_clock_value->Show					(true);
 
@@ -53,6 +60,9 @@ void CUIActorMenu::InitInventoryMode()
 void CUIActorMenu::DeInitInventoryMode()
 {
 	m_clock_value->Show					(false);
+#ifdef DRAG_DROP_TRASH
+	m_pTrashList->Show(false);
+#endif
 }
 
 void CUIActorMenu::SendEvent_ActivateSlot(u32 slot, u16 recipient)
@@ -544,6 +554,11 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		{
 			ColorizeItem( itm, !CanMoveToPartner( iitem ) );
 		}
+		if ((i != itm) && key_state(DIK_LCONTROL))
+		{
+			ToBag(itm, (old_owner == new_owner));
+			return true;
+		}
 		return true;
 	}
 	return false;
@@ -729,7 +744,7 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 	CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>( item );
 	CInventory*  inv = &m_pActorInvOwner->inventory();
 
-	// Флаг-признак для невлючения пункта контекстного меню: Dreess Outfit, если костюм уже надет
+	// Г”Г«Г ГЈ-ГЇГ°ГЁГ§Г­Г ГЄ Г¤Г«Гї Г­ГҐГўГ«ГѕГ·ГҐГ­ГЁГї ГЇГіГ­ГЄГІГ  ГЄГ®Г­ГІГҐГЄГ±ГІГ­Г®ГЈГ® Г¬ГҐГ­Гѕ: Dreess Outfit, ГҐГ±Г«ГЁ ГЄГ®Г±ГІГѕГ¬ ГіГ¦ГҐ Г­Г Г¤ГҐГІ
 	bool bAlreadyDressed = false;
 	u32 const cur_slot = item->GetSlot();
 
@@ -768,7 +783,7 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 
 void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, bool& b_show )
 {
-	//отсоединение аддонов от вещи
+	//Г®ГІГ±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г Г¤Г¤Г®Г­Г®Гў Г®ГІ ГўГҐГ№ГЁ
 	CWeapon*	pWeapon = smart_cast<CWeapon*>( item );
 	if ( !pWeapon )
 	{
@@ -815,14 +830,76 @@ void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, 
 
 void CUIActorMenu::PropertiesBoxForAddon( PIItem item, bool& b_show )
 {
-	//присоединение аддонов к активному слоту (2 или 3)
+	//ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г Г¤Г¤Г®Г­Г®Гў ГЄ Г ГЄГІГЁГўГ­Г®Г¬Гі Г±Г«Г®ГІГі (2 ГЁГ«ГЁ 3)
 
 	CScope*				pScope				= smart_cast<CScope*>			(item);
 	CSilencer*			pSilencer			= smart_cast<CSilencer*>		(item);
 	CGrenadeLauncher*	pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>	(item);
 	CInventory*			inv					= &m_pActorInvOwner->inventory();
 
-	if ( pScope )
+#ifdef PROPBOX_WPN_ADDONS_EXT
+	PIItem tgt = NULL;
+	if (pScope)
+	{
+		tgt = inv->m_slots[PISTOL_SLOT].m_pIItem;
+		if (tgt && tgt->CanAttach(pScope))
+		{
+			shared_str str = CStringTable().translate("st_attach_scope_to_pistol");
+			string64			buff;
+			sprintf_s(buff, "%s %s", str.c_str(), tgt->m_name.c_str());
+			m_UIPropertiesBox->AddItem(buff, (void*)tgt, INVENTORY_ATTACH_ADDON);
+			b_show = true;
+		}
+		tgt = inv->m_slots[RIFLE_SLOT].m_pIItem;
+		if (tgt && tgt->CanAttach(pScope))
+		{
+			shared_str str = CStringTable().translate("st_attach_scope_to_rifle");
+			string64			buff;
+			sprintf_s(buff, "%s %s", str.c_str(), tgt->m_name.c_str());
+			m_UIPropertiesBox->AddItem(buff, (void*)tgt, INVENTORY_ATTACH_ADDON);
+			b_show = true;
+		}
+		return;
+	}
+
+	if (pSilencer)
+	{
+		tgt = inv->m_slots[PISTOL_SLOT].m_pIItem;
+		if (tgt && tgt->CanAttach(pSilencer))
+		{
+			shared_str str = CStringTable().translate("st_attach_silencer_to_pistol");
+			string64			buff;
+			sprintf_s(buff, "%s %s", str.c_str(), tgt->m_name.c_str());
+			m_UIPropertiesBox->AddItem(buff, (void*)tgt, INVENTORY_ATTACH_ADDON);
+			b_show = true;
+		}
+
+		tgt = inv->m_slots[RIFLE_SLOT].m_pIItem;
+		if (tgt && tgt->CanAttach(pSilencer))
+		{
+			shared_str str = CStringTable().translate("st_attach_silencer_to_rifle");
+			string64			buff;
+			sprintf_s(buff, "%s %s", str.c_str(), tgt->m_name.c_str());
+			m_UIPropertiesBox->AddItem(buff, (void*)tgt, INVENTORY_ATTACH_ADDON);
+			b_show = true;
+		}
+		return;
+	}
+
+	if (pGrenadeLauncher)
+	{
+		tgt = inv->m_slots[RIFLE_SLOT].m_pIItem;
+		if (tgt && tgt->CanAttach(pGrenadeLauncher))
+		{
+			shared_str str = CStringTable().translate("st_attach_gl_to_rifle");
+			string64			buff;
+			sprintf_s(buff, "%s %s", str.c_str(), tgt->m_name.c_str());
+			m_UIPropertiesBox->AddItem(buff, (void*)tgt, INVENTORY_ATTACH_ADDON);
+			b_show = true;
+		}
+	}
+#else
+	if (pScope)
 	{
 		if ( inv->m_slots[PISTOL_SLOT].m_pIItem && inv->m_slots[PISTOL_SLOT].m_pIItem->CanAttach(pScope) )
 		{
@@ -865,6 +942,7 @@ void CUIActorMenu::PropertiesBoxForAddon( PIItem item, bool& b_show )
 			b_show			= true;
 		}
 	}
+#endif
 }
 
 void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
@@ -890,6 +968,9 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 			act_str = "st_eat";
 		}
 	}
+#ifdef PROPBOX_USE_ITEMS_EXT
+	act_str = READ_IF_EXISTS(pSettings, r_string, item->m_section_id.c_str(), "st_use_action_name", act_str);
+#endif
 	if ( act_str )
 	{
 		m_UIPropertiesBox->AddItem( act_str,  NULL, INVENTORY_EAT_ACTION );
