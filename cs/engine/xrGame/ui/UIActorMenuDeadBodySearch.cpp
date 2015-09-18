@@ -21,12 +21,12 @@
 void move_item_from_to (u16 from_id, u16 to_id, u16 what_id)
 {
 	NET_Packet P;
-	CGameObject::u_EventGen					(P, GE_TRADE_SELL, from_id);
+	CGameObject::u_EventGen					(P, GE_OWNERSHIP_REJECT, from_id);
 	P.w_u16									(what_id);
 	CGameObject::u_EventSend				(P);
 
-	//äðóãîìó èíâåíòàðþ - âçÿòü âåùü 
-	CGameObject::u_EventGen					(P, GE_TRADE_BUY, to_id);
+	//Ã¤Ã°Ã³Ã£Ã®Ã¬Ã³ Ã¨Ã­Ã¢Ã¥Ã­Ã²Ã Ã°Ã¾ - Ã¢Ã§Ã¿Ã²Ã¼ Ã¢Ã¥Ã¹Ã¼ 
+	CGameObject::u_EventGen					(P, GE_OWNERSHIP_TAKE, to_id);
 	P.w_u16									(what_id);
 	CGameObject::u_EventSend				(P);
 }
@@ -160,6 +160,12 @@ bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 		move_item_from_to				(m_pActorInvOwner->object_id(), m_pInvBox->ID(), iitem->object_id());
 	}
 	
+	if ((i != itm) && key_state(DIK_LCONTROL))
+	{
+		ToDeadBodyBag(itm, (old_owner == new_owner));
+		return true;
+	}
+
 	UpdateDeadBodyBag();
 	return true;
 }
