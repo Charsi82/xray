@@ -44,6 +44,10 @@ CUIItemInfo::CUIItemInfo()
 	m_pInvItem					= NULL;
 	m_b_FitToHeight				= false;
 	m_complex_desc				= false;
+#ifdef TRADE_TIP
+	UITradeTip = NULL;
+	m_TradeTip = "";
+#endif
 }
 
 CUIItemInfo::~CUIItemInfo()
@@ -106,6 +110,16 @@ void CUIItemInfo::InitItemInfo(LPCSTR xml_name)
 		UICost->SetAutoDelete	(true);
 		xml_init.InitStatic		(uiXml, "static_cost", 0,			UICost);
 	}
+	
+#ifdef TRADE_TIP
+	if (uiXml.NavigateToNode("static_no_trade", 0))
+	{
+		UITradeTip = new CUIStatic();
+		AttachChild(UITradeTip);
+		UITradeTip->SetAutoDelete(true);
+		xml_init.InitStatic(uiXml, "static_no_trade", 0, UITradeTip);
+	}
+#endif
 
 	if(uiXml.NavigateToNode("descr_list",0))
 	{
@@ -218,6 +232,29 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 //		GetItemPrice();
 //	}
 	
+#ifdef TRADE_TIP
+	if (UITradeTip && IsGameTypeSingle())
+	{
+		pos.x = UITradeTip->GetWndPos().x;
+		if (UIWeight && m_complex_desc)
+		{
+			pos.y = UIWeight->GetWndPos().y + UIWeight->GetHeight() + 4.0f;
+		}
+
+		if (m_TradeTip == "")
+		{
+			UITradeTip->Show(false);
+		}
+		else
+		{
+			UITradeTip->SetText(CStringTable().translate(m_TradeTip).c_str());
+			UITradeTip->AdjustHeightToText();
+			UITradeTip->SetWndPos(pos);
+			UITradeTip->Show(true);
+		}
+	}
+#endif
+
 	if ( UIDesc )
 	{
 		pos.y = UIDesc->GetWndPos().y;
@@ -226,6 +263,10 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 			pos.y = UIWeight->GetWndPos().y + UIWeight->GetHeight() + 4.0f;
 		}
 
+#ifdef TRADE_TIP
+		if (UITradeTip && m_TradeTip != "")
+			pos.y = UITradeTip->GetWndPos().y + UITradeTip->GetHeight() + 4.0f;
+#endif
 		pos.x					= UIDesc->GetWndPos().x;
 		UIDesc->SetWndPos		(pos);
 		UIDesc->Clear			();
@@ -264,7 +305,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 	}
 	if(UIItemImage)
 	{
-		// Çàãðóæàåì êàðòèíêó
+		// Ã‡Ã Ã£Ã°Ã³Ã¦Ã Ã¥Ã¬ ÃªÃ Ã°Ã²Ã¨Ã­ÃªÃ³
 		UIItemImage->SetShader				(InventoryUtilities::GetEquipmentIconsShader());
 
 		Irect item_grid_rect				= pInvItem->GetInvGridRect();
