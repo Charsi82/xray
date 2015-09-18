@@ -153,6 +153,10 @@ bool CUIActorMenu::ToActorTrade(CUICellItem* itm, bool b_use_cursor_pos)
 		{
 			SendEvent_Item2Ruck				(iitem, m_pActorInvOwner->object_id());
 		}
+
+		if ((i != itm) && key_state(DIK_LCONTROL))
+			ToActorTrade(itm, (old_owner == new_owner));
+
 		return true;
 	}
 }
@@ -183,7 +187,13 @@ bool CUIActorMenu::ToPartnerTrade(CUICellItem* itm, bool b_use_cursor_pos)
 		new_owner->SetItem				(i,old_owner->GetDragItemPosition());
 	else
 		new_owner->SetItem				(i);
-
+		
+	if ((i != itm) && key_state(DIK_LCONTROL))
+	{
+		ToPartnerTrade(itm, (old_owner == new_owner));
+		return true;
+	}
+	
 	UpdatePrices();
 	return true;
 }
@@ -207,6 +217,9 @@ bool CUIActorMenu::ToPartnerTradeBag(CUICellItem* itm, bool b_use_cursor_pos)
 	else
 		new_owner->SetItem				(i);
 	
+	if ((i != itm) && key_state(DIK_LCONTROL))
+		ToPartnerTradeBag(itm, (old_owner == new_owner));
+
 	return true;
 }
 
@@ -257,6 +270,11 @@ bool CUIActorMenu::CanMoveToPartner(PIItem pItem)
 	{
 		return false;
 	}
+	
+#ifdef NO_TRADE_TRASH
+	if (pItem->GetCondition() < m_pPartnerInvOwner->trade_parameters().buy_item_condition_factor)
+		return false;
+#endif
 
 	float r1				= CalcItemsWeight( m_pTradeActorList );		// actor
 	float r2				= CalcItemsWeight( m_pTradePartnerList );	// partner
