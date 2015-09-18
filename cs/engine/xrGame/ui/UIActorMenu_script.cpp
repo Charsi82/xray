@@ -92,3 +92,12 @@ void CUIActorMenu::CurModeToScript()
 	R_ASSERT( ai().script_engine().functor( "actor_menu.actor_menu_mode", funct ) );
 	funct( mode );
 }
+
+#include "HUDManager.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+#include "game_object_space.h"
+void CUIActorMenu::ShowCallback()
+{
+	Actor()->callback(GameObject::eActorMenuOpen)(HUD().GetUI()->MainInputReceiver(), m_currMenuMode);
+}
