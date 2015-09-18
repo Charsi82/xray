@@ -61,4 +61,8 @@ public:
 
 	Fvector2			UIItemImageSize; 
 	CUIStatic*			UIItemImage;
+#ifdef TRADE_TIP
+	CUIStatic*			UITradeTip;
+	shared_str m_TradeTip;
+#endif
 };
