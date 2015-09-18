@@ -14,7 +14,9 @@ CMMSound::~CMMSound()
 void CMMSound::Init(CUIXml& xml_doc, LPCSTR path){
 	string256 _path;	
 	m_bRandom = xml_doc.ReadAttribInt(path, 0, "random")? true : false;
-
+#ifdef RND_MM_SOUND
+	m_iCurrentTrack = -1;
+#endif
 	int nodes_num	= xml_doc.GetNodesNum(path, 0, "menu_music");
 
 	XML_NODE* tab_node = xml_doc.NavigateToNode(path,0);
@@ -69,7 +71,19 @@ void CMMSound::music_Play()
 	if (m_play_list.empty())
 		return;
 
+#ifdef RND_MM_SOUND
+	if (m_bRandom)
+	{
+		m_iCurrentTrack = (m_iCurrentTrack == -1) ? 0 : Random.randI(m_play_list.size());
+	}
+	else
+	{
+		(++m_iCurrentTrack)%=m_play_list.size();
+	}
+	int i = m_iCurrentTrack;
+#else
 	int i = Random.randI(m_play_list.size());
+#endif
 
 	string_path		_path;
 	strconcat		(sizeof(_path),_path, m_play_list[i].c_str(), ".ogg");
@@ -96,4 +110,18 @@ void CMMSound::all_Stop(){
 	music_Stop();
 	m_whell.stop();
 	m_whell_click.stop();
+}
+
+void CMMSound::music_prev_track()
+{
+	music_Stop();
+	if (!m_bRandom)
+		m_iCurrentTrack = (m_iCurrentTrack-2+m_play_list.size())%m_play_list.size();
+	music_Update();
+}
+
+void CMMSound::music_next_track()
+{
+	music_Stop();
+	music_Update();
 }
