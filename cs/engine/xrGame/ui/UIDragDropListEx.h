@@ -75,7 +75,12 @@ public:
 	DRAG_DROP_EVENT			m_f_item_focus_received;
 	DRAG_DROP_EVENT			m_f_item_focus_lost;
 	DRAG_DROP_EVENT			m_f_item_focused_update;
-
+	
+#ifdef DRAG_DROP_TRASH
+	typedef					fastdelegate::FastDelegate2<CUIDragItem*, bool, void>	DRAG_ITEM_EVENT;
+	DRAG_ITEM_EVENT			m_f_drag_event;
+	void		OnDragEvent(CUIDragItem* drag_item, bool b_receive);
+#endif
 	u32						back_color;
 
 	const	Ivector2&		CellsCapacity		();
