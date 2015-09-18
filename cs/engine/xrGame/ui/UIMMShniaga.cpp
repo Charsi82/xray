@@ -276,6 +276,15 @@ bool CUIMMShniaga::OnKeyboard(int dik, EUIMessages keyboard_action){
 				if (m_selected_btn < BtnCount() - 1)
 					SelectBtn(m_selected_btn + 1);
 				return true;
+			
+			// управление треками
+			case DIK_LEFT:
+				m_sound->music_prev_track();
+				return true;
+			case DIK_RIGHT:
+				m_sound->music_next_track();
+				return true;
+
 			case DIK_RETURN:
 				OnBtnClick();
 				return true;
