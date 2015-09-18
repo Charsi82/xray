@@ -52,7 +52,9 @@ void test_draw	();
 void test_key	(int dik);
 
 #include "Include/xrRender/Kinematics.h"
-
+#ifdef AF_PANEL
+#include "UIArtefactPanel.h"
+#endif
 
 using namespace InventoryUtilities;
 //BOOL		g_old_style_ui_hud			= FALSE;
@@ -79,6 +81,9 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	m_pPickUpItem				= NULL;
 	m_pMPChatWnd				= NULL;
 	m_pMPLogWnd					= NULL;	
+#ifdef AF_PANEL
+	m_artefactPanel = new CUIArtefactPanel();
+#endif
 }
 
 #include "UIProgressShape.h"
@@ -90,6 +95,9 @@ CUIMainIngameWnd::~CUIMainIngameWnd()
 	xr_delete					(UIZoneMap);
 	HUD_SOUND_ITEM::DestroySound(m_contactSnd);
 	xr_delete					(g_MissileForceShape);
+#ifdef AF_PANEL
+	xr_delete(m_artefactPanel);
+#endif
 }
 
 void CUIMainIngameWnd::Init()
@@ -127,10 +135,10 @@ void CUIMainIngameWnd::Init()
 	m_iPickUpItemIconY			= UIPickUpItemIcon.GetWndRect().top;
 	//---------------------------------------------------------
 
-	//индикаторы 
+	//ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г» 
 	UIZoneMap->Init				();
 
-	// Подсказки, которые возникают при наведении прицела на объект
+	// ГЏГ®Г¤Г±ГЄГ Г§ГЄГЁ, ГЄГ®ГІГ®Г°Г»ГҐ ГўГ®Г§Г­ГЁГЄГ ГѕГІ ГЇГ°ГЁ Г­Г ГўГҐГ¤ГҐГ­ГЁГЁ ГЇГ°ГЁГ¶ГҐГ«Г  Г­Г  Г®ГЎГєГҐГЄГІ
 	AttachChild					(&UIStaticQuickHelp);
 	xml_init.InitStatic			(uiXml, "quick_info", 0, &UIStaticQuickHelp);
 
@@ -140,7 +148,7 @@ void CUIMainIngameWnd::Init()
 	xml_init.InitScrollView		(uiXml, "icons_scroll_view", 0, m_UIIcons);
 	AttachChild					(m_UIIcons);
 
-	// Загружаем иконки 
+	// Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГЁГЄГ®Г­ГЄГЁ 
 /*	if ( IsGameTypeSingle() )
 	{
 		xml_init.InitStatic		(uiXml, "starvation_static", 0, &UIStarvationIcon);
@@ -180,11 +188,11 @@ void CUIMainIngameWnd::Init()
 		"artefact"
 	};
 
-	// Загружаем пороговые значения для индикаторов
+	// Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГЇГ®Г°Г®ГЈГ®ГўГ»ГҐ Г§Г­Г Г·ГҐГ­ГЁГї Г¤Г«Гї ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г®Гў
 	EWarningIcons j = ewiWeaponJammed;
 	while (j < ewiInvincible)
 	{
-		// Читаем данные порогов для каждого индикатора
+		// Г—ГЁГІГ ГҐГ¬ Г¤Г Г­Г­Г»ГҐ ГЇГ®Г°Г®ГЈГ®Гў Г¤Г«Гї ГЄГ Г¦Г¤Г®ГЈГ® ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г 
 		shared_str cfgRecord = pSettings->r_string("main_ingame_indicators_thresholds", *warningStrings[static_cast<int>(j) - 1]);
 		u32 count = _GetItemCount(*cfgRecord);
 
@@ -212,6 +220,14 @@ void CUIMainIngameWnd::Init()
 
 	AttachChild								(&UIMotionIcon);
 	UIMotionIcon.Init						();
+
+#ifdef AF_PANEL
+	if (IsGameTypeSingle())
+	{
+		m_artefactPanel->InitFromXML(uiXml, "artefact_panel", 0);
+		this->AttachChild(m_artefactPanel);
+	}
+#endif
 
 	AttachChild								(&UIStaticDiskIO);
 	xml_init.InitStatic						(uiXml, "disk_io", 0, &UIStaticDiskIO);
@@ -407,16 +423,16 @@ void CUIMainIngameWnd::Update()
 
 		xr_vector<float>::reverse_iterator	rit;
 
-		// Сначала проверяем на точное соответсвие
+		// Г‘Г­Г Г·Г Г«Г  ГЇГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г  ГІГ®Г·Г­Г®ГҐ Г±Г®Г®ГІГўГҐГІГ±ГўГЁГҐ
 		rit  = std::find( m_Thresholds[i].rbegin(), m_Thresholds[i].rend(), value );
 
-		// Если его нет, то берем последнее меньшее значение ()
+		// Г…Г±Г«ГЁ ГҐГЈГ® Г­ГҐГІ, ГІГ® ГЎГҐГ°ГҐГ¬ ГЇГ®Г±Г«ГҐГ¤Г­ГҐГҐ Г¬ГҐГ­ГјГёГҐГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ()
 		if ( rit == m_Thresholds[i].rend() )
 		{
 			rit = std::find_if(m_Thresholds[i].rbegin(), m_Thresholds[i].rend(), std::bind2nd(std::less<float>(), value));
 		}
 
-		// Минимальное и максимальное значения границы
+		// ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ ГЁ Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГї ГЈГ°Г Г­ГЁГ¶Г»
 		float min = m_Thresholds[i].front();
 		float max = m_Thresholds[i].back();
 
@@ -477,6 +493,26 @@ bool CUIMainIngameWnd::OnKeyboardPress(int dik)
 		}
 	}
 */
+#ifdef SHOW_HIDE_HUD
+	if (!Actor()->Holder() || Level().IR_GetKeyState(DIK_RCONTROL) || Level().IR_GetKeyState(DIK_RCONTROL))
+	switch (dik)
+	{
+	case DIK_NUMPADMINUS:
+		if (HUD().GetUI()->UIGame() && !HUD().GetUI()->UIGame()->ActorMenu().IsShown())
+		{
+			HUD().GetUI()->ShowGameIndicators(false);
+		}
+		return true;
+		break;
+	case DIK_NUMPADPLUS:
+		if (HUD().GetUI()->UIGame() && !HUD().GetUI()->UIGame()->ActorMenu().IsShown())
+		{
+			HUD().GetUI()->ShowGameIndicators(true);
+		}
+		return true;
+		break;
+	};
+#endif
 	return false;
 }
 
@@ -540,7 +576,7 @@ void CUIMainIngameWnd::SetWarningIconColor(EWarningIcons icon, const u32 cl)
 {
 	bool bMagicFlag = true;
 
-	// Задаем цвет требуемой иконки
+	// Г‡Г Г¤Г ГҐГ¬ Г¶ГўГҐГІ ГІГ°ГҐГЎГіГҐГ¬Г®Г© ГЁГЄГ®Г­ГЄГЁ
 	switch(icon)
 	{
 	case ewiAll:
@@ -583,7 +619,7 @@ void CUIMainIngameWnd::TurnOffWarningIcon(EWarningIcons icon)
 
 void CUIMainIngameWnd::SetFlashIconState_(EFlashingIcons type, bool enable)
 {
-	// Включаем анимацию требуемой иконки
+	// Г‚ГЄГ«ГѕГ·Г ГҐГ¬ Г Г­ГЁГ¬Г Г¶ГЁГѕ ГІГ°ГҐГЎГіГҐГ¬Г®Г© ГЁГЄГ®Г­ГЄГЁ
 	FlashingIcons_it icon = m_FlashingIcons.find(type);
 	R_ASSERT2(icon != m_FlashingIcons.end(), "Flashing icon with this type not existed");
 	icon->second->Show(enable);
@@ -596,14 +632,14 @@ void CUIMainIngameWnd::InitFlashingIcons(CUIXml* node)
 
 	CUIXmlInit xml_init;
 	CUIStatic *pIcon = NULL;
-	// Пробегаемся по всем нодам и инициализируем из них статики
+	// ГЏГ°Г®ГЎГҐГЈГ ГҐГ¬Г±Гї ГЇГ® ГўГ±ГҐГ¬ Г­Г®Г¤Г Г¬ ГЁ ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ ГЁГ§ Г­ГЁГµ Г±ГІГ ГІГЁГЄГЁ
 	for (int i = 0; i < staticsCount; ++i)
 	{
 		pIcon = new CUIStatic();
 		xml_init.InitStatic(*node, flashingIconNodeName, i, pIcon);
 		shared_str iconType = node->ReadAttrib(flashingIconNodeName, i, "type", "none");
 
-		// Теперь запоминаем иконку и ее тип
+		// Г’ГҐГЇГҐГ°Гј Г§Г ГЇГ®Г¬ГЁГ­Г ГҐГ¬ ГЁГЄГ®Г­ГЄГі ГЁ ГҐГҐ ГІГЁГЇ
 		EFlashingIcons type = efiPdaTask;
 
 		if		(iconType == "pda")		type = efiPdaTask;
@@ -654,15 +690,49 @@ void CUIMainIngameWnd::SetPickUpItem	(CInventoryItem* PickUpItem)
 	m_pPickUpItem = PickUpItem;
 };
 
+#include "UICellCustomItems.h"
+typedef CUIWeaponCellItem::eAddonType eAddonType;
+
+CUIStatic* init_addon(
+	CUIWeaponCellItem *cell_item,
+	LPCSTR sect,
+	float scale,
+	float scale_x,
+	eAddonType idx)
+{
+	CUIStatic *addon = new CUIStatic();
+	addon->SetAutoDelete(true);
+
+	auto pos = cell_item->get_addon_offset(idx); pos.x *= scale*scale_x; pos.y *= scale;
+	auto width = (float)pSettings->r_u32(sect, "inv_grid_width")*INV_GRID_WIDTH;
+	auto height = (float)pSettings->r_u32(sect, "inv_grid_height")*INV_GRID_HEIGHT;
+	auto tex_x = (float)pSettings->r_u32(sect, "inv_grid_x")*INV_GRID_WIDTH;
+	auto tex_y = (float)pSettings->r_u32(sect, "inv_grid_y")*INV_GRID_HEIGHT;
+
+	addon->SetStretchTexture(true);
+	addon->InitTexture("ui\\ui_icon_equipment");
+	addon->SetOriginalRect(Frect().set(tex_x, tex_y, tex_x + width, tex_y + height));
+	addon->SetWndRect(Frect().set(pos.x, pos.y, pos.x + width*scale*scale_x, pos.y + height*scale));
+	addon->SetColor(color_rgba(255, 255, 255, 192));
+
+	return addon;
+}
+
+u16 stored_id = 65535;
 void CUIMainIngameWnd::UpdatePickUpItem	()
 {
 	if (!m_pPickUpItem || !Level().CurrentViewEntity() || !smart_cast<CActor*>(Level().CurrentViewEntity())) 
 	{
 		UIPickUpItemIcon.Show(false);
+		UIPickUpItemIcon.DetachAll();
+		stored_id = 65535;
 		return;
 	};
 
-
+	u16 _id	= m_pPickUpItem->object().ID();
+	if (_id == stored_id) return;
+	stored_id = _id;
+	
 	shared_str sect_name	= m_pPickUpItem->object().cNameSect();
 
 	//properties used by inventory menu
@@ -691,12 +761,44 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 
 	UIPickUpItemIcon.SetStretchTexture(true);
 
-	UIPickUpItemIcon.SetWidth(m_iGridWidth*INV_GRID_WIDTH*scale);
+	// Real Wolf: РСЃРїСЂР°РІР»СЏРµРј СЂР°СЃС‚СЏРіРёРІР°РЅРёРµ. 10.08.2014.
+	scale_x = Device.fASPECT / 0.75f;
+
+	UIPickUpItemIcon.SetWidth(m_iGridWidth*INV_GRID_WIDTH*scale*scale_x);
 	UIPickUpItemIcon.SetHeight(m_iGridHeight*INV_GRID_HEIGHT*scale);
 
 	UIPickUpItemIcon.SetWndPos(Fvector2().set(	m_iPickUpItemIconX+(m_iPickUpItemIconWidth-UIPickUpItemIcon.GetWidth())/2.0f,
 												m_iPickUpItemIconY+(m_iPickUpItemIconHeight-UIPickUpItemIcon.GetHeight())/2.0f) );
 
+	// Real Wolf: Р”РѕР±Р°РІР»СЏРµРј Рє РёРєРѕРЅРєРµ Р°РґРґРѕРЅС‹ РѕСЂСѓР¶РёСЏ. 10.08.2014.
+	if (auto wpn = m_pPickUpItem->cast_weapon())
+	{
+		auto cell_item = new CUIWeaponCellItem(wpn);
+
+		if (wpn->SilencerAttachable() && wpn->IsSilencerAttached())
+		{
+			auto sil = init_addon(cell_item, *wpn->GetSilencerName(), scale, scale_x, eAddonType::eSilencer);
+			UIPickUpItemIcon.AttachChild(sil);
+		}
+
+		if (wpn->ScopeAttachable() && wpn->IsScopeAttached())
+		{
+			auto scope = init_addon(cell_item, *wpn->GetScopeName(), scale, scale_x, eAddonType::eScope);
+			UIPickUpItemIcon.AttachChild(scope);
+		}
+
+		if (wpn->GrenadeLauncherAttachable() && wpn->IsGrenadeLauncherAttached())
+		{
+			auto launcher = init_addon(cell_item, *wpn->GetGrenadeLauncherName(), scale, scale_x, eAddonType::eLauncher);
+			UIPickUpItemIcon.AttachChild(launcher);
+		}
+		delete_data(cell_item);
+	}
+	else
+	{
+		UIPickUpItemIcon.DetachAll();
+	}
+	
 	UIPickUpItemIcon.SetColor(color_rgba(255,255,255,192));
 	UIPickUpItemIcon.Show(true);
 };
