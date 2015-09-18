@@ -747,6 +747,9 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Mask,		"r3_volumetric_smoke",			&ps_r2_ls_flags,			R3FLAG_VOLUMETRIC_SMOKE);
 
 //	CMD3(CCC_Mask,		"r2_sun_ignore_portals",		&ps_r2_ls_flags,			R2FLAG_SUN_IGNORE_PORTALS);
+
+	CMD3(CCC_Mask, "r__actor_shadow", &ps_common_flags, RFLAG_ACTOR_SHADOW);
+
 }
 
 void	xrRender_apply_tf		()
