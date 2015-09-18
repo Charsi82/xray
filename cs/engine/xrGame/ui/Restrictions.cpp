@@ -12,7 +12,7 @@ shared_str	g_ranks[_RANK_COUNT];
 
 u32 get_rank(const shared_str &section)
 {
-	int res = -1;
+	int res = 0; // -1; fixed get_rank for weapon w/o rank
 	if( g_ranks[0].size()==0 )
 	{ //load
 		string32			buff;
