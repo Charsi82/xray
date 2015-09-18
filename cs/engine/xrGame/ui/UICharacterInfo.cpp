@@ -16,6 +16,8 @@
 #include "xrServer.h"
 #include "xrServerEntities/xrServer_Objects_ALife_Monsters.h"
 
+u32 const full_clr = color_argb(255, 255, 255, 255);
+
 using namespace InventoryUtilities;
 
 CSE_ALifeTraderAbstract* ch_info_get_from_id (u16 id)
@@ -185,7 +187,11 @@ void CUICharacterInfo::InitCharacter(u16 id)
 
 	//	m_icons[eIcon]->SetStretchTexture		(true);
 	m_texture_name._set( chInfo.IconName() );
-	if ( m_icons[eIcon            ] ) { m_icons[eIcon            ]->InitTexture( m_texture_name.c_str()     ); }
+	if ( m_icons[eIcon            ] )
+	{
+		m_icons[eIcon            ]->InitTexture( m_texture_name.c_str()     );
+		m_icons[eIcon]->SetColor(full_clr);
+	}
 	if ( m_icons[eRankIcon        ] ) { m_icons[eRankIcon        ]->InitTexture( chInfo.Rank().id().c_str() ); }
 	
 	if ( Actor()->ID() != m_ownerID && !ignore_community( comm_id ) )
@@ -315,7 +321,7 @@ void CUICharacterInfo::Update()
 			CSE_ALifeCreatureAbstract*		pCreature = smart_cast<CSE_ALifeCreatureAbstract*>(T);
 			if ( pCreature && !pCreature->g_Alive() )
 			{
-				m_icons[eIcon]->SetColor	(color_argb(255,255,160,160));
+				m_icons[eIcon]->SetColor(m_deadbody_color); // (color_argb(255, 255, 160, 160));
 			}
 		}
 	}
@@ -386,4 +392,16 @@ bool CUICharacterInfo::ignore_community( shared_str const& check_community )
 		}
 	}
 	return false;
+}
+
+// call from using dead monster
+void CUICharacterInfo::InitMonsterCharacter(shared_str monster_tex_name)
+{
+	if (m_icons[eIcon])
+	{
+		m_icons[eIcon]->InitTexture(monster_tex_name.c_str());
+		m_icons[eIcon]->SetStretchTexture(true);
+		m_icons[eIcon]->SetColor(m_deadbody_color); // (color_argb(255, 255, 160, 160));
+		m_icons[eIcon]->Show(true);
+	}
 }
