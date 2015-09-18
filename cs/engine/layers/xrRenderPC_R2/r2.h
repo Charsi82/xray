@@ -304,6 +304,10 @@ public:
 	// Constructor/destructor/loader
 	CRender							();
 	virtual ~CRender				();
+	
+	//SunDetails
+	BOOL is_sun();
+
 protected:
 	virtual	void					ScreenshotImpl				(ScreenshotMode mode, LPCSTR name, CMemoryWriter* memory_writer);
 };
