@@ -22,7 +22,7 @@
 // refs
 class ENGINE_API			CBoneInstance;
 class						CActor;
-class						CInventory;
+//class						CInventory;
 class						CSE_PHSkeleton;
 class						CCarWeapon;
 struct						dxGeomUserData;
@@ -538,6 +538,10 @@ public:
 	bool					Enter						(const Fvector& pos,const Fvector& dir,const Fvector& foot_pos);
 	bool					Exit						(const Fvector& pos,const Fvector& dir);
 	bool					Use							(const Fvector& pos,const Fvector& dir,const Fvector& foot_pos);
+	
+	void					DoExit();//+
+	//	void					DoEnter();
+	
 	u16						DriverAnimationType 		();
 	// Core events
 	virtual DLL_Pure		*_construct					();
@@ -594,7 +598,10 @@ public:
 	void					SetExplodeTime				(u32 et)	;
 			u32				ExplodeTime					()			;
 	// Inventory for the car	
-	CInventory*						GetInventory						(){return inventory;}
+	CInventory*						GetInventory						(){return NULL/*inventory*/;}
+	void					AddAvailableItems(TIItemContainer& items_container) const;
+	void					ShowTrunk();
+	
 		  void						VisualUpdate						(float fov=90.0f);
 protected:
 	virtual void					SpawnInitPhysics					(CSE_Abstract	*D)																;
@@ -613,13 +620,15 @@ public:
 
 public:
 	virtual CEntity*					cast_entity				()						{return this;}
+	u32		GetSize() { return m_items.size(); }
 private:
 	template <class T> IC void fill_wheel_vector(LPCSTR S,xr_vector<T>& type_wheels);
 	IC void fill_exhaust_vector(LPCSTR S,xr_vector<SExhaust>& exhausts);
 	IC void fill_doors_map(LPCSTR S,xr_map<u16,SDoor>& doors);
 
 	//Inventory for the car
-	CInventory	*inventory;
+	//CInventory	*inventory;
+	xr_vector<u16> m_items;
 	
 	virtual	void reinit			();
 	virtual	void reload			(LPCSTR section);
