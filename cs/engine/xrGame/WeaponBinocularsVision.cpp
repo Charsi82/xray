@@ -191,6 +191,20 @@ CBinocularsVision::~CBinocularsVision()
 	delete_data			(m_active_objects);
 }
 
+struct check_pred
+{
+	check_pred(){ apos = Actor()->Position(); };
+	Fvector apos;
+	IC void operator()(SBinocVisibleObj* _it){
+		auto object_ = _it->m_object;
+		CEntityAlive*	EA = smart_cast<CEntityAlive*>(object_);
+		Fvector opos = Fvector(object_->Position());
+		if (!EA->g_Alive() ||
+		   (0 > opos.sub(apos).dotproduct(Device.vCameraDirection)))
+			_it->m_flags.set(flVisObjNotValid, TRUE);
+	};
+};
+
 void CBinocularsVision::Update()
 {
 	if (g_dedicated_server)
@@ -227,6 +241,8 @@ void CBinocularsVision::Update()
 		CEntityAlive*	EA = smart_cast<CEntityAlive*>(object_);
 		if(!EA || !EA->g_Alive())						continue;
 		
+		Fvector opos = Fvector(object_->Position());
+		if (0 > opos.sub(Actor()->Position()).dotproduct(Device.vCameraDirection)) continue;
 
 		FindVisObjByObject	f				(object_);
 		VIS_OBJECTS_IT found;
@@ -245,12 +261,27 @@ void CBinocularsVision::Update()
 				m_snd_found.play_at_pos			(0,Fvector().set(0,0,0),sm_2D);
 		}
 	}
-	std::sort								(m_active_objects.begin(), m_active_objects.end());
+/*	std::sort								(m_active_objects.begin(), m_active_objects.end());
 
 	while(m_active_objects.size() && m_active_objects.back()->m_flags.test(flVisObjNotValid)){
 		xr_delete							(m_active_objects.back());
 		m_active_objects.pop_back			();
-	}
+	}*/
+	
+	// death or invis
+	for_each(m_active_objects.begin(), m_active_objects.end(), check_pred());
+
+	m_active_objects.erase(
+		remove_if(
+			m_active_objects.begin(),
+			m_active_objects.end(),
+			[](SBinocVisibleObj* _it){
+				bool res = _it->m_flags.test(flVisObjNotValid);
+				if (res) xr_delete(_it);
+				return res;
+			}),
+		m_active_objects.end()
+	);
 
 	it = m_active_objects.begin();
 	for(;it!=m_active_objects.end();++it)
