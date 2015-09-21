@@ -24,6 +24,11 @@ void CArtefact::script_register(lua_State *L)
 	[
 		class_<CArtefact			,CGameObject>("CArtefact")
 		.def(						constructor<>() )
+		.def_readwrite("health_restore_speed", &CArtefact::m_fHealthRestoreSpeed)
+		.def_readwrite("radiation_restore_speed", &CArtefact::m_fRadiationRestoreSpeed)
+		.def_readwrite("satiety_restore_speed", &CArtefact::m_fSatietyRestoreSpeed)
+		.def_readwrite("power_restore_speed", &CArtefact::m_fPowerRestoreSpeed)
+		.def_readwrite("bleeding_restore_speed", &CArtefact::m_fBleedingRestoreSpeed)
 		.def("FollowByPath",		&CArtefact::FollowByPath)
 		.def("SwitchVisibility",	&CArtefact::SwitchVisibility)
 		.def("GetAfRank",			&CArtefact::GetAfRank),
