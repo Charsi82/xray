@@ -14,9 +14,11 @@
 #include <xrEngine/StatGraph.h>
 #include "PhraseDialogManager.h"
 #include "ui_defs.h"
-
+#include "car.h"
 #include "step_manager.h"
 #include "script_export_space.h"
+
+void repack_ammo();
 
 using namespace ACTOR_DEFS;
 
@@ -197,7 +199,7 @@ public:
 
 public:
 
-	//свойства артефактов
+	//Г±ГўГ®Г©Г±ГІГўГ  Г Г°ГІГҐГґГ ГЄГІГ®Гў
 	virtual void		UpdateArtefactsOnBeltAndOutfit();
 	virtual void		MoveArtefactBelt		(const CArtefact* artefact, bool on_belt);
 			float		HitArtefactsOnBelt		(float hit_power, ALife::EHitType hit_type);
@@ -205,7 +207,7 @@ public:
 
 	const xr_vector<const CArtefact*>& ArtefactsOnBelt() {return m_ArtefactsOnBelt;}
 protected:
-	//звук тяжелого дыхания
+	//Г§ГўГіГЄ ГІГїГ¦ГҐГ«Г®ГЈГ® Г¤Г»ГµГ Г­ГЁГї
 	ref_sound			m_HeavyBreathSnd;
 	ref_sound			m_BloodSnd;
 	ref_sound			m_DangerSnd;
@@ -233,13 +235,13 @@ protected:
 	BOOL					b_DropActivated;
 	float					f_DropPower;
 
-	//random seed для Zoom mode
+	//random seed Г¤Г«Гї Zoom mode
 	s32						m_ZoomRndSeed;
-	//random seed для Weapon Effector Shot
+	//random seed Г¤Г«Гї Weapon Effector Shot
 	s32						m_ShotRndSeed;
 
 	bool					m_bOutBorder;
-	//сохраняет счетчик объектов в feel_touch, для которых необходимо обновлять размер колижена с актером 
+	//Г±Г®ГµГ°Г Г­ГїГҐГІ Г±Г·ГҐГІГ·ГЁГЄ Г®ГЎГєГҐГЄГІГ®Гў Гў feel_touch, Г¤Г«Гї ГЄГ®ГІГ®Г°Г»Гµ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® Г®ГЎГ­Г®ГўГ«ГїГІГј Г°Г Г§Г¬ГҐГ° ГЄГ®Г«ГЁГ¦ГҐГ­Г  Г± Г ГЄГІГҐГ°Г®Г¬ 
 	u32						m_feel_touch_characters;
 private:
 	void					SwitchOutBorder(bool new_border_state);
@@ -255,7 +257,7 @@ public:
 	void					detach_Vehicle			();
 	void					steer_Vehicle			(float angle);
 	void					attach_Vehicle			(CHolderCustom* vehicle);
-
+	CCar*					GetAttachedCar();//+
 	virtual bool			can_attach				(const CInventoryItem *inventory_item) const;
 protected:
 	CHolderCustom*			m_holder;
@@ -273,10 +275,10 @@ protected:
 	// Rotation
 	SRotation				r_torso;
 	float					r_torso_tgt_roll;
-	//положение торса без воздействия эффекта отдачи оружия
+	//ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ ГІГ®Г°Г±Г  ГЎГҐГ§ ГўГ®Г§Г¤ГҐГ©Г±ГІГўГЁГї ГЅГґГґГҐГЄГІГ  Г®ГІГ¤Г Г·ГЁ Г®Г°ГіГ¦ГЁГї
 	SRotation				unaffected_r_torso;
 
-	//ориентация модели
+	//Г®Г°ГЁГҐГ­ГІГ Г¶ГЁГї Г¬Г®Г¤ГҐГ«ГЁ
 	float					r_model_yaw_dest;
 	float					r_model_yaw;			// orientation of model
 	float					r_model_yaw_delta;		// effect on multiple "strafe"+"something"
@@ -293,7 +295,7 @@ public:
 	MotionID				m_current_torso;
 	MotionID				m_current_head;
 
-	// callback на анимации модели актера
+	// callback Г­Г  Г Г­ГЁГ¬Г Г¶ГЁГЁ Г¬Г®Г¤ГҐГ«ГЁ Г ГЄГІГҐГ°Г 
 	void					SetCallbacks		();
 	void					ResetCallbacks		();
 	static void				Spin0Callback		(CBoneInstance*);
@@ -320,9 +322,9 @@ public:
 	CActorCameraManager&	Cameras				() 	{VERIFY(m_pActorEffector); return *m_pActorEffector;}
 	IC CCameraBase*			cam_Active			()	{return cameras[cam_active];}
 	IC CCameraBase*			cam_FirstEye		()	{return cameras[eacFirstEye];}
-
-protected:
+	IC EActorCameras		active_cam()	{ return cam_active; }
 	virtual	void			cam_Set					(EActorCameras style);
+protected:
 	void					cam_Update				(float dt, float fFOV);
 	void					cam_Lookout				( const Fmatrix &xform, float camera_height );
 	void					camUpdateLadder			(float dt);
@@ -339,7 +341,7 @@ protected:
 	CEffectorBobbing*		pCamBobbing;
 
 
-	//менеджер эффекторов, есть у каждого актрера
+	//Г¬ГҐГ­ГҐГ¤Г¦ГҐГ° ГЅГґГґГҐГЄГІГ®Г°Г®Гў, ГҐГ±ГІГј Гі ГЄГ Г¦Г¤Г®ГЈГ® Г ГЄГІГ°ГҐГ°Г 
 	CActorCameraManager*	m_pActorEffector;
 	static float			f_Ladder_cam_limit;
 public:
@@ -368,12 +370,12 @@ protected:
 	shared_str				m_sInventoryItemUseAction;
 	shared_str				m_sInventoryBoxUseAction;
 
-	//режим подбирания предметов
+	//Г°ГҐГ¦ГЁГ¬ ГЇГ®Г¤ГЎГЁГ°Г Г­ГЁГї ГЇГ°ГҐГ¤Г¬ГҐГІГ®Гў
 	bool					m_bPickupMode;
-	//расстояние (в метрах) на котором актер чувствует гранату (любую)
+	//Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ (Гў Г¬ГҐГІГ°Г Гµ) Г­Г  ГЄГ®ГІГ®Г°Г®Г¬ Г ГЄГІГҐГ° Г·ГіГўГ±ГІГўГіГҐГІ ГЈГ°Г Г­Г ГІГі (Г«ГѕГЎГіГѕ)
 	float					m_fFeelGrenadeRadius;
-	float					m_fFeelGrenadeTime; 	//время гранаты (сек) после которого актер чувствует гранату
-	//расстояние подсветки предметов
+	float					m_fFeelGrenadeTime; 	//ГўГ°ГҐГ¬Гї ГЈГ°Г Г­Г ГІГ» (Г±ГҐГЄ) ГЇГ®Г±Г«ГҐ ГЄГ®ГІГ®Г°Г®ГЈГ® Г ГЄГІГҐГ° Г·ГіГўГ±ГІГўГіГҐГІ ГЈГ°Г Г­Г ГІГі
+	//Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ ГЇГ®Г¤Г±ГўГҐГІГЄГЁ ГЇГ°ГҐГ¤Г¬ГҐГІГ®Гў
 	float					m_fPickupInfoRadius;
 
 	void					PickupModeUpdate	();
@@ -387,7 +389,7 @@ public:
 
 
 	//////////////////////////////////////////////////////////////////////////
-	// Motions (передвижения актрера)
+	// Motions (ГЇГҐГ°ГҐГ¤ГўГЁГ¦ГҐГ­ГЁГї Г ГЄГІГ°ГҐГ°Г )
 	//////////////////////////////////////////////////////////////////////////
 public:
 	void					g_cl_CheckControls		(u32 mstate_wf, Fvector &vControlAccel, float &Jump, float dt);
@@ -455,32 +457,32 @@ public:
 
 protected:
 	CFireDispertionController			m_fdisp_controller;
-	//если актер целится в прицел
+	//ГҐГ±Г«ГЁ Г ГЄГІГҐГ° Г¶ГҐГ«ГЁГІГ±Гї Гў ГЇГ°ГЁГ¶ГҐГ«
 	void								SetZoomAimingMode	(bool val)	{m_bZoomAimingMode = val;}
 	bool								m_bZoomAimingMode;
 
-	//настройки аккуратности стрельбы
-	//базовая дисперсия (когда игрок стоит на месте)
+	//Г­Г Г±ГІГ°Г®Г©ГЄГЁ Г ГЄГЄГіГ°Г ГІГ­Г®Г±ГІГЁ Г±ГІГ°ГҐГ«ГјГЎГ»
+	//ГЎГ Г§Г®ГўГ Гї Г¤ГЁГ±ГЇГҐГ°Г±ГЁГї (ГЄГ®ГЈГ¤Г  ГЁГЈГ°Г®ГЄ Г±ГІГ®ГЁГІ Г­Г  Г¬ГҐГ±ГІГҐ)
 	float								m_fDispBase;
 	float								m_fDispAim;
-	//коэффициенты на сколько процентов увеличится базовая дисперсия
-	//учитывает скорость актера 
+	//ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» Г­Г  Г±ГЄГ®Г«ГјГЄГ® ГЇГ°Г®Г¶ГҐГ­ГІГ®Гў ГіГўГҐГ«ГЁГ·ГЁГІГ±Гї ГЎГ Г§Г®ГўГ Гї Г¤ГЁГ±ГЇГҐГ°Г±ГЁГї
+	//ГіГ·ГЁГІГ»ГўГ ГҐГІ Г±ГЄГ®Г°Г®Г±ГІГј Г ГЄГІГҐГ°Г  
 	float								m_fDispVelFactor;
-	//если актер бежит
+	//ГҐГ±Г«ГЁ Г ГЄГІГҐГ° ГЎГҐГ¦ГЁГІ
 	float								m_fDispAccelFactor;
-	//если актер сидит
+	//ГҐГ±Г«ГЁ Г ГЄГІГҐГ° Г±ГЁГ¤ГЁГІ
 	float								m_fDispCrouchFactor;
 	//crouch+no acceleration
 	float								m_fDispCrouchNoAccelFactor;
-	//смещение firepoint относительно default firepoint для бросания болтов и гранат
+	//Г±Г¬ГҐГ№ГҐГ­ГЁГҐ firepoint Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® default firepoint Г¤Г«Гї ГЎГ°Г®Г±Г Г­ГЁГї ГЎГ®Г«ГІГ®Гў ГЁ ГЈГ°Г Г­Г ГІ
 	Fvector								m_vMissileOffset;
 public:
-	// Получение, и запись смещения для гранат
+	// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ, ГЁ Г§Г ГЇГЁГ±Гј Г±Г¬ГҐГ№ГҐГ­ГЁГї Г¤Г«Гї ГЈГ°Г Г­Г ГІ
 	Fvector								GetMissileOffset	() const;
 	void								SetMissileOffset	(const Fvector &vNewOffset);
 
 protected:
-	//косточки используемые при стрельбе
+	//ГЄГ®Г±ГІГ®Г·ГЄГЁ ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГ¬Г»ГҐ ГЇГ°ГЁ Г±ГІГ°ГҐГ«ГјГЎГҐ
 	int									m_r_hand;
 	int									m_l_finger1;
     int									m_r_finger2;
@@ -533,15 +535,15 @@ protected:
 ////////////////////////////////////////////////////////////////////////////
 virtual	bool				can_validate_position_on_spawn	(){return false;}
 	///////////////////////////////////////////////////////
-	// апдайт с данными физики
+	// Г ГЇГ¤Г Г©ГІ Г± Г¤Г Г­Г­Г»Г¬ГЁ ГґГЁГ§ГЁГЄГЁ
 	xr_deque<net_update_A>	NET_A;
 	
 	//---------------------------------------------
 //	bool					m_bHasUpdate;	
 	/// spline coeff /////////////////////
-	float			SCoeff[3][4];			//коэффициэнты для сплайна Бизье
-	float			HCoeff[3][4];			//коэффициэнты для сплайна Эрмита
-	Fvector			IPosS, IPosH, IPosL;	//положение актера после интерполяции Бизье, Эрмита, линейной
+	float			SCoeff[3][4];			//ГЄГ®ГЅГґГґГЁГ¶ГЁГЅГ­ГІГ» Г¤Г«Гї Г±ГЇГ«Г Г©Г­Г  ГЃГЁГ§ГјГҐ
+	float			HCoeff[3][4];			//ГЄГ®ГЅГґГґГЁГ¶ГЁГЅГ­ГІГ» Г¤Г«Гї Г±ГЇГ«Г Г©Г­Г  ГќГ°Г¬ГЁГІГ 
+	Fvector			IPosS, IPosH, IPosL;	//ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ Г ГЄГІГҐГ°Г  ГЇГ®Г±Г«ГҐ ГЁГ­ГІГҐГ°ГЇГ®Г«ГїГ¶ГЁГЁ ГЃГЁГ§ГјГҐ, ГќГ°Г¬ГЁГІГ , Г«ГЁГ­ГҐГ©Г­Г®Г©
 
 #ifdef DEBUG
 	using VIS_POSITION = xr_deque<Fvector>;
@@ -688,7 +690,7 @@ public:
 	virtual void				OnPrevWeaponSlot				();
 			void				SwitchNightVision				();
 			void				SwitchTorch						();
-
+			void				RepackAmmo();
 public:
 	
 	virtual	void				on_weapon_shot_start			(CWeapon *weapon);
