@@ -69,14 +69,16 @@ BIND_FUNCTION10	(&object(),	CScriptGameObject::GetRange,			CEntityAlive,	ffGetRa
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetHealth,			CEntityAlive,	conditions().GetHealth,			float,							-1);
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetPsyHealth,		CEntityAlive,	conditions().GetPsyHealth,		float,							-1);
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetPower,			CEntityAlive,	conditions().GetPower,			float,							-1);
-//BIND_FUNCTION10	(&object(),	CScriptGameObject::GetSatiety,			CEntityAlive,	conditions().GetSatiety,			float,							-1);
+BIND_FUNCTION10	(&object(),	CScriptGameObject::GetSatiety,			CEntityAlive,	conditions().GetSatiety,			float,							-1);
+BIND_FUNCTION10 (&object(), CScriptGameObject::GetAlcohol,			CEntityAlive,	conditions().GetAlcohol, float, -1);
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetRadiation,		CEntityAlive,	conditions().GetRadiation,		float,							-1);
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetBleeding,			CEntityAlive,	conditions().BleedingSpeed,		float,							-1);
 BIND_FUNCTION10	(&object(),	CScriptGameObject::GetMorale,			CEntityAlive,	conditions().GetEntityMorale,	float,							-1);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetHealth,			CEntityAlive,	conditions().ChangeHealth,		float,							float);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetPsyHealth,		CEntityAlive,	conditions().ChangePsyHealth,	float,							float);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetPower,			CEntityAlive,	conditions().ChangePower,		float,							float);
-//BIND_FUNCTION01	(&object(),	CScriptGameObject::SetSatiety,			CEntityAlive,	conditions().ChangeSatiety,		float,							float);
+BIND_FUNCTION01	(&object(),	CScriptGameObject::SetSatiety,			CEntityAlive,	conditions().ChangeSatiety,		float,							float);
+BIND_FUNCTION01 (&object(), CScriptGameObject::SetAlcohol,			CEntityAlive,	conditions().ChangeAlcohol, float, float);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetRadiation,		CEntityAlive,	conditions().ChangeRadiation,	float,							float);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetCircumspection,	CEntityAlive,	conditions().ChangeCircumspection,float,							float);
 BIND_FUNCTION01	(&object(),	CScriptGameObject::SetMorale,			CEntityAlive,	conditions().ChangeEntityMorale,	float,							float);
@@ -531,4 +533,235 @@ void CScriptGameObject::invulnerable		(bool invulnerable)
 	}
 
 	monster->invulnerable	(invulnerable);
+}
+
+
+bool CScriptGameObject::IsActorOutdoors() const
+{
+	// Check to make sure all the params are available (we're in game and such).
+	if (!g_pGameLevel)
+	{
+		Msg("CScriptGameObject::IsActorOutdoors : Game Level Doesn't Exist.");
+		return FALSE;
+	}
+	CObject *e = g_pGameLevel->CurrentViewEntity();
+	if (!e || !e->renderable_ROS())
+	{
+		return FALSE;
+	}
+
+	// Now do the real check! This is a copy out of another section of code that is also hard coded.
+	// I don't know what the proper limit for this is supposed to be, but this seems good enough.
+	return e->renderable_ROS()->get_luminocity_hemi() > 0.05f;
+}
+
+#include "searchlight.h"
+void CScriptGameObject::SwitchProjector(bool state)
+{
+	if (!g_pGameLevel)
+		return Msg("Error! CScriptGameObject::SwitchProjector : game level doesn't exist.");
+
+	CProjector *obj = smart_cast<CProjector*>(&object());
+	if (!obj)
+		return Msg("Error! CScriptGameObject::SwitchProjector : incorrect object type.");
+
+	//state ? obj->TurnOn() : obj->TurnOff();
+	obj->Switch(!!state);
+}
+
+bool CScriptGameObject::ProjectorIsOn() const
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::ProjectorIsOn : game level doesn't exist.");
+		return false;
+	}
+
+	CProjector *obj = smart_cast<CProjector*>(&object());
+	if (!obj)
+	{
+		Msg("Error! CScriptGameObject::ProjectorIsOn : incorrect object type.");
+		return false;
+	}
+
+	return obj->IsEnabled();
+}
+
+u16 CScriptGameObject::GetAmmoBoxCurr() const
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::GetAmmoBoxCurr : game level doesn't exist.");
+		return 0;
+	}
+
+	CWeaponAmmo *obj = smart_cast<CWeaponAmmo*>(&object());
+	if (!obj)
+	{
+		Msg("Error! CScriptGameObject::GetAmmoBoxCurr : incorrect object type.");
+		return 0;
+	}
+
+	return obj->m_boxCurr;
+}
+
+u16 CScriptGameObject::GetAmmoBoxSize() const
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::GetAmmoBoxSize : game level doesn't exist.");
+		return 0;
+	}
+
+	CWeaponAmmo *obj = smart_cast<CWeaponAmmo*>(&object());
+	if (!obj)
+	{
+		Msg("Error! CScriptGameObject::GetAmmoBoxSize : incorrect object type.");
+		return 0;
+	}
+
+	return obj->m_boxSize;
+}
+
+void CScriptGameObject::SetAmmoBoxCurr(u16 curr)
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::SetAmmoBoxCurr : game level doesn't exist.");
+		return;
+	}
+
+	CWeaponAmmo *obj = smart_cast<CWeaponAmmo*>(&object());
+	if (!obj)
+	{
+		Msg("Error! CScriptGameObject::SetAmmoBoxCurr : incorrect object type.");
+		return;
+	}
+
+	obj->m_boxCurr = curr;
+}
+
+LPCSTR CScriptGameObject::GetVisualName()
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::GetVisualName : game level doesn't exist.");
+		return "";
+	}
+
+	return *object().cNameVisual();
+}
+
+//#include "Car.h"
+void CScriptGameObject::AttachVehicle(CScriptGameObject *obj)
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::AttachVehicle : game level doesn't exist.");
+		return;
+	}
+
+	CHolderCustom* car = smart_cast<CHolderCustom*>(&obj->object());
+	if (!car)
+	{
+		Msg("Error! CScriptGameObject::AttachVehicle : car isn't a holder custom.");
+		return;
+	}
+
+	CActor *actor = smart_cast<CActor*>(&object());
+	if (!actor)
+	{
+		Msg("Error! CScriptGameObject::AttachVehicle : object isn't actor.");
+		return;
+	}
+
+	actor->attach_Vehicle(car);
+}
+
+void CScriptGameObject::DetachVehicle()
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::DetachVehicle : game level doesn't exist.");
+		return;
+	}
+
+	CActor *actor = smart_cast<CActor*>(&object());
+	if (!actor)
+	{
+		Msg("Error! CScriptGameObject::DetachVehicle : object isn't actor.");
+		return;
+	}
+
+	actor->detach_Vehicle();
+}
+
+void CScriptGameObject::HealWounds(float percent)
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::HealWounds : game level doesn't exist.");
+		return;
+	}
+
+	CEntityAlive *obj = smart_cast<CEntityAlive*>(&object());
+	if (!obj)
+	{
+		Msg("Error! CScriptGameObject::HealWounds : object isn't entity alive.");
+		return;
+	}
+
+	obj->conditions().ChangeBleeding(percent);
+}
+
+CScriptIniFile* CScriptGameObject::GetVisualIni() const
+{
+	if (!g_pGameLevel)
+	{
+		Msg("Error! CScriptGameObject::GetVisualIni : game level doesn't exist.");
+		return 0;
+	}
+
+	//CKinematics* K = smart_cast<CKinematics*>(object().Visual());
+	auto K = PKinematics(object().Visual());
+	return K ? (CScriptIniFile*)K->LL_UserData() : 0;
+}
+
+#include "HUDManager.h"
+#include "UIGameSP.h"
+#include "InventoryBox.h"
+void CScriptGameObject::OpenInventoryBox(CScriptGameObject *obj) const
+{
+	auto owner = smart_cast<CInventoryOwner*>(&object());
+	if (!owner)
+	{
+		Msg("Error! CScriptGameObject::OpenInventoryBox: called not for inventory owner!");
+		return;
+	}
+
+	auto box = smart_cast<CInventoryBox*>(&obj->object());
+	if (!box)
+	{
+		Msg("Error! CScriptGameObject::OpenInventoryBox: arg is not inventory box!");
+		return;
+	}
+
+	if (HUD().GetUI() && HUD().GetUI()->UIGame())
+	{
+		CUIGameSP* game_sp = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		game_sp->StartCarBody(owner, box);
+	}
+}
+
+LPCSTR CScriptGameObject::GetBoneName(u16 id) const
+{
+	if (auto K = PKinematics(object().Visual()))
+		return K->LL_BoneName_dbg(id);
+	return 0;
+}
+
+bool CScriptGameObject::IsZoomAimingMode()
+{
+	auto pActor = Actor(); // smart_cast<CActor*>(&object());
+	return pActor ? pActor->IsZoomAimingMode() : false;
 }
