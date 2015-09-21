@@ -22,7 +22,7 @@ IC	CTradeParameters::CTradeParameters						(const shared_str &section) :
 		)
 	)
 {
-	buy_item_condition_factor = 1.0f;
+	buy_item_condition_factor = 0.7f;
 }
 
 IC	void CTradeParameters::clear							()
