@@ -185,6 +185,16 @@ void CUIGameCustom::RemoveCustomStatic		(LPCSTR id)
 	}
 }
 
+void CUIGameCustom::SetCustomStaticToTop(LPCSTR id)
+{
+	st_vec::iterator it = std::find(m_custom_statics.begin(), m_custom_statics.end(), id);
+	if (it != m_custom_statics.end()){
+		m_custom_statics.push_back(*it);
+		m_custom_statics.erase(it);
+		return;
+	}
+}
+
 void CUIGameCustom::OnInventoryAction(PIItem item, u16 action_type)
 {
 	//.	if(InventoryMenu->IsShown())
