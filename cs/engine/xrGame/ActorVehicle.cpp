@@ -124,5 +124,33 @@ bool CActor::use_Vehicle(CHolderCustom* object)
 void CActor::on_requested_spawn(CObject *object)
 {
 	CCar * car= smart_cast<CCar*>(object);
+	
+	if (!car) return;
+
+	CPHShellSplitterHolder*sh = car->PPhysicsShell()->SplitterHolder();
+	if (sh)sh->Deactivate();
+	if (!character_physics_support()->movement()->ActivateBoxDynamic(0))
+	{
+		if (sh)sh->Activate();
+		return;
+	}
+	if (sh)sh->Activate();
+
+	character_physics_support()->movement()->SetPosition(car->ExitPosition());
+	character_physics_support()->movement()->SetVelocity(car->ExitVelocity());
+
+//	car->DoEnter();
+
 	attach_Vehicle(car);
+
+	//SkyLoader: straightening of actor torso:
+	Fvector			xyz;
+	car->XFORM().getXYZi(xyz);
+	r_torso.yaw = xyz.y;
+
+}
+
+CCar* CActor::GetAttachedCar()
+{
+	return m_holder ? smart_cast<CCar*>(m_holder) : NULL;
 }
