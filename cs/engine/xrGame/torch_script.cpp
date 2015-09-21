@@ -10,5 +10,7 @@ void CTorch::script_register	(lua_State *L)
 	[
 		class_<CTorch,CGameObject>("CTorch")
 			.def(constructor<>())
+			.def("is_active", &CTorch::GetTorchStatus)
+			.def("is_nv_active", &CTorch::GetNightVisionStatus)
 	];
 }
