@@ -108,7 +108,7 @@ BOOL CInventoryOwner::net_Spawn		(CSE_Abstract* DC)
 
 	m_trade_parameters			= new CTradeParameters(trade_section());
 
-	//получить указатель на объект, InventoryOwner
+	//ГЇГ®Г«ГіГ·ГЁГІГј ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г®ГЎГєГҐГЄГІ, InventoryOwner
 	//m_inventory->setSlotsBlocked(false);
 	CGameObject			*pThis = smart_cast<CGameObject*>(this);
 	if(!pThis) return FALSE;
@@ -122,7 +122,7 @@ BOOL CInventoryOwner::net_Spawn		(CSE_Abstract* DC)
 
 		R_ASSERT( pTrader->character_profile().size() );
 
-		//синхронизируем параметры персонажа с серверным объектом
+		//Г±ГЁГ­ГµГ°Г®Г­ГЁГ§ГЁГ°ГіГҐГ¬ ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЇГҐГ°Г±Г®Г­Г Г¦Г  Г± Г±ГҐГ°ГўГҐГ°Г­Г»Г¬ Г®ГЎГєГҐГЄГІГ®Г¬
 		CharacterInfo().Init(pTrader);
 
 		//-------------------------------------
@@ -198,7 +198,7 @@ void CInventoryOwner::UpdateInventoryOwner(u32 deltaT)
 	}
 	if ( IsTrading() )
 	{
-		//если мы умерли, то нет "trade"
+		//ГҐГ±Г«ГЁ Г¬Г» ГіГ¬ГҐГ°Г«ГЁ, ГІГ® Г­ГҐГІ "trade"
 		CEntityAlive* pOurEntityAlive = smart_cast<CEntityAlive*>(this);
 		R_ASSERT(pOurEntityAlive);
 		if ( !pOurEntityAlive->g_Alive() )
@@ -209,14 +209,14 @@ void CInventoryOwner::UpdateInventoryOwner(u32 deltaT)
 
 	if ( IsTalking() )
 	{
-		//если наш собеседник перестал говорить с нами,
-		//то и нам нечего ждать.
+		//ГҐГ±Г«ГЁ Г­Г Гё Г±Г®ГЎГҐГ±ГҐГ¤Г­ГЁГЄ ГЇГҐГ°ГҐГ±ГІГ Г« ГЈГ®ГўГ®Г°ГЁГІГј Г± Г­Г Г¬ГЁ,
+		//ГІГ® ГЁ Г­Г Г¬ Г­ГҐГ·ГҐГЈГ® Г¦Г¤Г ГІГј.
 		if ( !m_pTalkPartner->IsTalking() )
 		{
 			StopTalk();
 		}
 
-		//если мы умерли, то тоже не говорить
+		//ГҐГ±Г«ГЁ Г¬Г» ГіГ¬ГҐГ°Г«ГЁ, ГІГ® ГІГ®Г¦ГҐ Г­ГҐ ГЈГ®ГўГ®Г°ГЁГІГј
 		CEntityAlive* pOurEntityAlive = smart_cast<CEntityAlive*>(this);
 		R_ASSERT(pOurEntityAlive);
 		if ( !pOurEntityAlive->g_Alive() )
@@ -227,7 +227,7 @@ void CInventoryOwner::UpdateInventoryOwner(u32 deltaT)
 }
 
 
-//достать PDA из специального слота инвентаря
+//Г¤Г®Г±ГІГ ГІГј PDA ГЁГ§ Г±ГЇГҐГ¶ГЁГ Г«ГјГ­Г®ГЈГ® Г±Г«Г®ГІГ  ГЁГ­ГўГҐГ­ГІГ Г°Гї
 CPda* CInventoryOwner::GetPDA() const
 {
 	return (CPda*)(m_inventory->m_slots[PDA_SLOT].m_pIItem);
@@ -240,16 +240,16 @@ CTrade* CInventoryOwner::GetTrade()
 }
 
 
-//состояние диалога
+//Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г¤ГЁГ Г«Г®ГЈГ 
 
-//нам предлагают поговорить,
-//проверяем наше отношение 
-//и если не враг начинаем разговор
+//Г­Г Г¬ ГЇГ°ГҐГ¤Г«Г ГЈГ ГѕГІ ГЇГ®ГЈГ®ГўГ®Г°ГЁГІГј,
+//ГЇГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г ГёГҐ Г®ГІГ­Г®ГёГҐГ­ГЁГҐ 
+//ГЁ ГҐГ±Г«ГЁ Г­ГҐ ГўГ°Г ГЈ Г­Г Г·ГЁГ­Г ГҐГ¬ Г°Г Г§ГЈГ®ГўГ®Г°
 bool CInventoryOwner::OfferTalk(CInventoryOwner* talk_partner)
 {
 	if(!IsTalkEnabled()) return false;
 
-	//проверить отношение к собеседнику
+	//ГЇГ°Г®ГўГҐГ°ГЁГІГј Г®ГІГ­Г®ГёГҐГ­ГЁГҐ ГЄ Г±Г®ГЎГҐГ±ГҐГ¤Г­ГЁГЄГі
 	CEntityAlive* pOurEntityAlive = smart_cast<CEntityAlive*>(this);
 	R_ASSERT(pOurEntityAlive);
 
@@ -272,7 +272,7 @@ void CInventoryOwner::StartTalk(CInventoryOwner* talk_partner, bool start_trade)
 	m_bTalking = true;
 	m_pTalkPartner = talk_partner;
 
-	//тут же включаем торговлю
+	//ГІГіГІ Г¦ГҐ ГўГЄГ«ГѕГ·Г ГҐГ¬ ГІГ®Г°ГЈГ®ГўГ«Гѕ
 //old		if(start_trade)
 //old			GetTrade()->StartTradeEx(talk_partner);
 }
@@ -345,13 +345,13 @@ void CInventoryOwner::OnItemTake			(CInventoryItem *inventory_item)
 	}
 }
 
-//возвращает текуший разброс стрельбы с учетом движения (в радианах)
+//ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГІГҐГЄГіГёГЁГ© Г°Г Г§ГЎГ°Г®Г± Г±ГІГ°ГҐГ«ГјГЎГ» Г± ГіГ·ГҐГІГ®Г¬ Г¤ГўГЁГ¦ГҐГ­ГЁГї (Гў Г°Г Г¤ГЁГ Г­Г Гµ)
 float CInventoryOwner::GetWeaponAccuracy	() const
 {
 	return 0.f;
 }
 
-//максимальный переносимы вес
+//Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г»Г© ГЇГҐГ°ГҐГ­Г®Г±ГЁГ¬Г» ГўГҐГ±
 float  CInventoryOwner::MaxCarryWeight () const
 {
 	float ret =  inventory().GetMaxWeight();
@@ -386,7 +386,7 @@ void CInventoryOwner::spawn_supplies		()
 	}
 }
 
-//игровое имя 
+//ГЁГЈГ°Г®ГўГ®ГҐ ГЁГ¬Гї 
 LPCSTR	CInventoryOwner::Name () const
 {
 //	return CharacterInfo().Name();
@@ -407,7 +407,7 @@ void CInventoryOwner::LostPdaContact	(CInventoryOwner* pInvOwner)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//для работы с relation system
+//Г¤Г«Гї Г°Г ГЎГ®ГІГ» Г± relation system
 u16 CInventoryOwner::object_id	()  const
 {
 	return smart_cast<const CGameObject*>(this)->ID();
@@ -415,7 +415,7 @@ u16 CInventoryOwner::object_id	()  const
 
 
 //////////////////////////////////////////////////////////////////////////
-//установка группировки на клиентском и серверном объкте
+//ГіГ±ГІГ Г­Г®ГўГЄГ  ГЈГ°ГіГЇГЇГЁГ°Г®ГўГЄГЁ Г­Г  ГЄГ«ГЁГҐГ­ГІГ±ГЄГ®Г¬ ГЁ Г±ГҐГ°ГўГҐГ°Г­Г®Г¬ Г®ГЎГєГЄГІГҐ
 
 void CInventoryOwner::SetCommunity	(CHARACTER_COMMUNITY_INDEX new_community)
 {
@@ -488,13 +488,22 @@ void CInventoryOwner::OnItemDropUpdate ()
 void CInventoryOwner::OnItemBelt	(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
 //.	attach		(inventory_item);
+	CGameObject	*object = smart_cast<CGameObject*>(this);
+	VERIFY(object);
+	object->callback(GameObject::eOnItemBelt)(inventory_item->object().lua_game_object(), previous_place);
 }
 void CInventoryOwner::OnItemRuck	(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
+	CGameObject	*object = smart_cast<CGameObject*>(this);
+	VERIFY(object);
+	object->callback(GameObject::eOnItemRuck)(inventory_item->object().lua_game_object(), previous_place);
 	detach		(inventory_item);
 }
 void CInventoryOwner::OnItemSlot	(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
+	CGameObject	*object = smart_cast<CGameObject*>(this);
+	VERIFY(object);
+	object->callback(GameObject::eOnItemSlot)(inventory_item->object().lua_game_object(), previous_place);
 	attach		(inventory_item);
 }
 
