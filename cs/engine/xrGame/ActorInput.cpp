@@ -68,6 +68,32 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 	if (!g_Alive()) return;
 
+	switch (cmd)
+	{
+		case kNIGHT_VISION:
+		{
+							  SwitchNightVision();
+							  break;
+		};
+		case kUSE_BANDAGE:
+		case kUSE_MEDKIT:
+		{
+							if (IsGameTypeSingle())
+							{
+								PIItem itm = inventory().item((cmd == kUSE_BANDAGE) ? CLSID_IITEM_BANDAGE : CLSID_IITEM_MEDKIT);
+								if (itm)
+								{
+									inventory().Eat(itm);
+									SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
+									_s->m_endTime = Device.fTimeGlobal + 3.0f;
+									string1024					str;
+									strconcat(sizeof(str), str, *CStringTable().translate("st_item_used"), ": ", itm->NameItem());
+									_s->wnd()->SetText(str);
+								}
+							}
+		}break;
+	};
+
 	if(m_holder && kUSE != cmd)
 	{
 		m_holder->OnKeyboardPress			(cmd);
@@ -393,10 +419,10 @@ void CActor::ActorUse()
 					TryToTalk();
 				}else
 
-				//обыск трупа
+				//Г®ГЎГ»Г±ГЄ ГІГ°ГіГЇГ 
 				if(!Level().IR_GetKeyState(DIK_LSHIFT))
 				{
-					//только если находимся в режиме single
+					//ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ Г­Г ГµГ®Г¤ГЁГ¬Г±Гї Гў Г°ГҐГ¦ГЁГ¬ГҐ single
 					CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 					if(pGameSP)
 						pGameSP->StartCarBody(this, m_pPersonWeLookingAt );
