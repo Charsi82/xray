@@ -46,6 +46,10 @@
 #	include "Physics.h"
 #endif
 
+#ifdef AF_PANEL
+#include "ui/UIArtefactPanel.h"
+#endif
+
 int			g_cl_InterpolationType		= 0;
 u32			g_cl_InterpolationMaxPoints = 0;
 int			g_dwInputUpdateDelta		= 20;
@@ -528,7 +532,7 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	m_current_torso.invalidate	();
 	m_current_head.invalidate	();
 	//-------------------------------------
-	// èíèöèàëèçàöèÿ ðååñòðîâ, èñïîëüçóåìûõ àêòåðîì
+	// Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿ Ã°Ã¥Ã¥Ã±Ã²Ã°Ã®Ã¢, Ã¨Ã±Ã¯Ã®Ã«Ã¼Ã§Ã³Ã¥Ã¬Ã»Ãµ Ã ÃªÃ²Ã¥Ã°Ã®Ã¬
 	encyclopedia_registry->registry().init(ID());
 	game_news_registry->registry().init(ID());
 
@@ -539,7 +543,7 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	CSE_ALifeTraderAbstract	 *pTA	= smart_cast<CSE_ALifeTraderAbstract*>(e);
 	set_money				(pTA->m_dwMoney, false);
 
-	//óáðàòü âñå àðòåôàêòû ñ ïîÿñà
+	//Ã³Ã¡Ã°Ã Ã²Ã¼ Ã¢Ã±Ã¥ Ã Ã°Ã²Ã¥Ã´Ã ÃªÃ²Ã» Ã± Ã¯Ã®Ã¿Ã±Ã 
 	m_ArtefactsOnBelt.clear();
 //.	if(	TRUE == E->s_flags.test(M_SPAWN_OBJECT_LOCAL) && TRUE == E->s_flags.is(M_SPAWN_OBJECT_ASPLAYER))
 //.		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->InitIcons(m_ArtefactsOnBelt);
@@ -650,7 +654,7 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 		K->PlayCycle("death_init");
 
 		
-		//îñòàíîâèòü çâóê òÿæåëîãî äûõàíèÿ
+		//Ã®Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã§Ã¢Ã³Ãª Ã²Ã¿Ã¦Ã¥Ã«Ã®Ã£Ã® Ã¤Ã»ÃµÃ Ã­Ã¨Ã¿
 		m_HeavyBreathSnd.stop();
 	}
 	
@@ -729,7 +733,10 @@ void CActor::net_Destroy	()
 	m_holderID=u16(-1);
 	
 	m_ArtefactsOnBelt.clear();
-
+#ifdef AF_PANEL
+	if (Level().CurrentViewEntity() == this)
+		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->InitIcons(m_ArtefactsOnBelt);
+#endif
 	SetDefaultVisualOutfit(NULL);
 
 
@@ -1072,10 +1079,10 @@ void	CActor::CalculateInterpolationParams()
 		for (u32 k=0; k<3; k++)
 		{
 			SP0[k] = c*(c*(c*SCoeff[k][0]+SCoeff[k][1])+SCoeff[k][2])+SCoeff[k][3];
-			SP1[k] = (c*c*SCoeff[k][0]*3+c*SCoeff[k][1]*2+SCoeff[k][2])/3; // ñîêðîñòü èç ôîðìóëû â 3 ðàçà ïðåâûøàåò ñêîðîñòü ïðè ðàñ÷åòå êîýôôèöèåíòîâ !!!!
+			SP1[k] = (c*c*SCoeff[k][0]*3+c*SCoeff[k][1]*2+SCoeff[k][2])/3; // Ã±Ã®ÃªÃ°Ã®Ã±Ã²Ã¼ Ã¨Ã§ Ã´Ã®Ã°Ã¬Ã³Ã«Ã» Ã¢ 3 Ã°Ã Ã§Ã  Ã¯Ã°Ã¥Ã¢Ã»Ã¸Ã Ã¥Ã² Ã±ÃªÃ®Ã°Ã®Ã±Ã²Ã¼ Ã¯Ã°Ã¨ Ã°Ã Ã±Ã·Ã¥Ã²Ã¥ ÃªÃ®Ã½Ã´Ã´Ã¨Ã¶Ã¨Ã¥Ã­Ã²Ã®Ã¢ !!!!
 
 			HP0[k] = c*(c*(c*HCoeff[k][0]+HCoeff[k][1])+HCoeff[k][2])+HCoeff[k][3];
-			HP1[k] = (c*c*HCoeff[k][0]*3+c*HCoeff[k][1]*2+HCoeff[k][2]); // ñîêðîñòü èç ôîðìóëû â 3 ðàçà ïðåâûøàåò ñêîðîñòü ïðè ðàñ÷åòå êîýôôèöèåíòîâ !!!!
+			HP1[k] = (c*c*HCoeff[k][0]*3+c*HCoeff[k][1]*2+HCoeff[k][2]); // Ã±Ã®ÃªÃ°Ã®Ã±Ã²Ã¼ Ã¨Ã§ Ã´Ã®Ã°Ã¬Ã³Ã«Ã» Ã¢ 3 Ã°Ã Ã§Ã  Ã¯Ã°Ã¥Ã¢Ã»Ã¸Ã Ã¥Ã² Ã±ÃªÃ®Ã°Ã®Ã±Ã²Ã¼ Ã¯Ã°Ã¨ Ã°Ã Ã±Ã·Ã¥Ã²Ã¥ ÃªÃ®Ã½Ã´Ã´Ã¨Ã¶Ã¨Ã¥Ã­Ã²Ã®Ã¢ !!!!
 		};
 
 		SP1.add(SP0);
@@ -1247,7 +1254,7 @@ void CActor::make_Interpolation	()
 			case 1: 
 				{
 					for (int k=0; k<3; k++)
-						SpeedVector[k] = (factor*factor*SCoeff[k][0]*3+factor*SCoeff[k][1]*2+SCoeff[k][2])/3; // ñîêðîñòü èç ôîðìóëû â 3 ðàçà ïðåâûøàåò ñêîðîñòü ïðè ðàñ÷åòå êîýôôèöèåíòîâ !!!!
+						SpeedVector[k] = (factor*factor*SCoeff[k][0]*3+factor*SCoeff[k][1]*2+SCoeff[k][2])/3; // Ã±Ã®ÃªÃ°Ã®Ã±Ã²Ã¼ Ã¨Ã§ Ã´Ã®Ã°Ã¬Ã³Ã«Ã» Ã¢ 3 Ã°Ã Ã§Ã  Ã¯Ã°Ã¥Ã¢Ã»Ã¸Ã Ã¥Ã² Ã±ÃªÃ®Ã°Ã®Ã±Ã²Ã¼ Ã¯Ã°Ã¨ Ã°Ã Ã±Ã·Ã¥Ã²Ã¥ ÃªÃ®Ã½Ã´Ã´Ã¨Ã¶Ã¨Ã¥Ã­Ã²Ã®Ã¢ !!!!
 					
 					ResPosition.set(IPosS); 
 				}break;
@@ -1537,7 +1544,7 @@ void	CActor::OnRender_Network()
 				point1S[k] = c*(c*(c*SCoeff[k][0]+SCoeff[k][1])+SCoeff[k][2])+SCoeff[k][3];
 				point1H[k] = c*(c*(c*HCoeff[k][0]+HCoeff[k][1])+HCoeff[k][2])+HCoeff[k][3];
 
-				tS[k] = (c*c*SCoeff[k][0]*3+c*SCoeff[k][1]*2+SCoeff[k][2])/3; // ñîêðîñòü èç ôîðìóëû â 3 ðàçà ïðåâûøàåò ñêîðîñòü ïðè ðàñ÷åòå êîýôôèöèåíòîâ !!!!
+				tS[k] = (c*c*SCoeff[k][0]*3+c*SCoeff[k][1]*2+SCoeff[k][2])/3; // Ã±Ã®ÃªÃ°Ã®Ã±Ã²Ã¼ Ã¨Ã§ Ã´Ã®Ã°Ã¬Ã³Ã«Ã» Ã¢ 3 Ã°Ã Ã§Ã  Ã¯Ã°Ã¥Ã¢Ã»Ã¸Ã Ã¥Ã² Ã±ÃªÃ®Ã°Ã®Ã±Ã²Ã¼ Ã¯Ã°Ã¨ Ã°Ã Ã±Ã·Ã¥Ã²Ã¥ ÃªÃ®Ã½Ã´Ã´Ã¨Ã¶Ã¨Ã¥Ã­Ã²Ã®Ã¢ !!!!
 				tH[k] = (c*c*HCoeff[k][0]*3+c*HCoeff[k][1]*2+HCoeff[k][2]); 
 			};
 
@@ -1913,7 +1920,7 @@ void				CActor::OnPlayHeadShotParticle (NET_Packet P)
 	if (!m_sHeadShotParticle.size()) return;
 	Fmatrix pos; 	
 	CParticlesPlayer::MakeXFORM(this,element,HitDir,HitPos,pos);
-	// óñòàíîâèòü particles
+	// Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ particles
 	CParticlesObject* ps = NULL;
 	
 	ps = CParticlesObject::Create(m_sHeadShotParticle.c_str(),TRUE);
