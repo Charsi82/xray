@@ -50,6 +50,8 @@ public:
 
 	virtual bool 			IsLimping				() const;
 
+	virtual float			GetSatiety()					{ return 0.f; }; //+
+	virtual float xr_stdcall	GetAlcohol()					{ return 0.f; };//+
 	virtual void			ChangeSatiety			(float value)		{};
 	void 					ChangeHealth			(float value);
 	void 					ChangePower				(float value);
@@ -67,14 +69,14 @@ public:
 	void 					ChangeEntityMorale		(float value);
 
 	virtual CWound*			ConditionHit			(SHit* pHDS);
-	//обновления состояния с течением времени
+	//Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї Г±Г®Г±ГІГ®ГїГ­ГЁГї Г± ГІГҐГ·ГҐГ­ГЁГҐГ¬ ГўГ°ГҐГ¬ГҐГ­ГЁ
 	virtual void			UpdateCondition			();
 	void					UpdateWounds			();
 	void					UpdateConditionTime		();
 	IC void					SetConditionDeltaTime	(float DeltaTime) { m_fDeltaTime = DeltaTime; };
 
 	
-	//скорость потери крови из всех открытых ран 
+	//Г±ГЄГ®Г°Г®Г±ГІГј ГЇГ®ГІГҐГ°ГЁ ГЄГ°Г®ГўГЁ ГЁГ§ ГўГ±ГҐГµ Г®ГІГЄГ°Г»ГІГ»Гµ Г°Г Г­ 
 	float					BleedingSpeed			();
 
 	CObject*				GetWhoHitLastTime		() {return m_pWho;}
@@ -95,29 +97,29 @@ protected:
 	void					UpdateEntityMorale		();
 
 
-	//изменение силы хита в зависимости от надетого костюма
-	//(только для InventoryOwner)
+	//ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГҐ Г±ГЁГ«Г» ГµГЁГІГ  Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ Г­Г Г¤ГҐГІГ®ГЈГ® ГЄГ®Г±ГІГѕГ¬Г 
+	//(ГІГ®Г«ГјГЄГ® Г¤Г«Гї InventoryOwner)
 	float					HitOutfitEffect			(float hit_power, ALife::EHitType hit_type, s16 element, float ap, bool& add_wound );
-	//изменение потери сил в зависимости от надетого костюма
+	//ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГҐ ГЇГ®ГІГҐГ°ГЁ Г±ГЁГ« Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ Г­Г Г¤ГҐГІГ®ГЈГ® ГЄГ®Г±ГІГѕГ¬Г 
 	float					HitPowerEffect			(float power_loss);
 	
-	//для подсчета состояния открытых ран,
-	//запоминается кость куда был нанесен хит
-	//и скорость потери крови из раны
+	//Г¤Г«Гї ГЇГ®Г¤Г±Г·ГҐГІГ  Г±Г®Г±ГІГ®ГїГ­ГЁГї Г®ГІГЄГ°Г»ГІГ»Гµ Г°Г Г­,
+	//Г§Г ГЇГ®Г¬ГЁГ­Г ГҐГІГ±Гї ГЄГ®Г±ГІГј ГЄГіГ¤Г  ГЎГ»Г« Г­Г Г­ГҐГ±ГҐГ­ ГµГЁГІ
+	//ГЁ Г±ГЄГ®Г°Г®Г±ГІГј ГЇГ®ГІГҐГ°ГЁ ГЄГ°Г®ГўГЁ ГЁГ§ Г°Г Г­Г»
 	using WOUND_VECTOR = xr_vector<CWound*>;
 	using WOUND_VECTOR_IT = WOUND_VECTOR::iterator;
 	WOUND_VECTOR			m_WoundVector;
-	//очистка массива ран
+	//Г®Г·ГЁГ±ГІГЄГ  Г¬Г Г±Г±ГЁГўГ  Г°Г Г­
 	
 
-	//все величины от 0 до 1			
-	float m_fPower;					//сила
-	float m_fRadiation;				//доза радиактивного облучения
-	float m_fPsyHealth;				//здоровье
+	//ГўГ±ГҐ ГўГҐГ«ГЁГ·ГЁГ­Г» Г®ГІ 0 Г¤Г® 1			
+	float m_fPower;					//Г±ГЁГ«Г 
+	float m_fRadiation;				//Г¤Г®Г§Г  Г°Г Г¤ГЁГ ГЄГІГЁГўГ­Г®ГЈГ® Г®ГЎГ«ГіГ·ГҐГ­ГЁГї
+	float m_fPsyHealth;				//Г§Г¤Г®Г°Г®ГўГјГҐ
 
-	float m_fEntityMorale;			//мораль
+	float m_fEntityMorale;			//Г¬Г®Г°Г Г«Гј
 
-	//максимальные величины
+	//Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г»ГҐ ГўГҐГ«ГЁГ·ГЁГ­Г»
 	//	float m_fSatietyMax;
 	float m_fPowerMax;
 	float m_fRadiationMax;
@@ -125,7 +127,7 @@ protected:
 
 	float m_fEntityMoraleMax;
 
-	//величины изменения параметров на каждом обновлении
+	//ГўГҐГ«ГЁГ·ГЁГ­Г» ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї ГЇГ Г°Г Г¬ГҐГІГ°Г®Гў Г­Г  ГЄГ Г¦Г¤Г®Г¬ Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГЁ
 	float m_fDeltaHealth;
 	float m_fDeltaPower;
 	float m_fDeltaRadiation;
@@ -150,25 +152,25 @@ protected:
 	SConditionChangeV m_change_v;
 
 	float				m_fMinWoundSize;
-	bool				m_bIsBleeding;		//есть кровотечение
+	bool				m_bIsBleeding;		//ГҐГ±ГІГј ГЄГ°Г®ГўГ®ГІГҐГ·ГҐГ­ГЁГҐ
 
-	//части хита, затрачиваемые на уменьшение здоровья и силы
+	//Г·Г Г±ГІГЁ ГµГЁГІГ , Г§Г ГІГ°Г Г·ГЁГўГ ГҐГ¬Г»ГҐ Г­Г  ГіГ¬ГҐГ­ГјГёГҐГ­ГЁГҐ Г§Г¤Г®Г°Г®ГўГјГї ГЁ Г±ГЁГ«Г»
 	float				m_fHealthHitPart;
 	float				m_fPowerHitPart;
 
 
-	//потеря здоровья от последнего хита
+	//ГЇГ®ГІГҐГ°Гї Г§Г¤Г®Г°Г®ГўГјГї Г®ГІ ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® ГµГЁГІГ 
 	float				m_fHealthLost;
 
 
-	//для отслеживания времени 
+	//Г¤Г«Гї Г®ГІГ±Г«ГҐГ¦ГЁГўГ Г­ГЁГї ГўГ°ГҐГ¬ГҐГ­ГЁ 
 	u64					m_iLastTimeCalled;
 	float				m_fDeltaTime;
-	//кто нанес последний хит
+	//ГЄГІГ® Г­Г Г­ГҐГ± ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГµГЁГІ
 	CObject*			m_pWho;
 	u16					m_iWhoID;
 
-	//для передачи параметров из DamageManager
+	//Г¤Г«Гї ГЇГҐГ°ГҐГ¤Г Г·ГЁ ГЇГ Г°Г Г¬ГҐГІГ°Г®Гў ГЁГ§ DamageManager
 	float				m_fHitBoneScale;
 	float				m_fWoundBoneScale;
 
