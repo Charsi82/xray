@@ -51,7 +51,42 @@ namespace GameObject {
 
 		eInvBoxItemTake,
 		eWeaponNoAmmoAvailable,
+		// клавиатура
+		eOnKeyPress,//+
+		eOnKeyRelease,//+
+		eOnKeyHold,//+
 
+		//мышь
+		eOnMouseMove,//+
+		eOnMouseWheel,//+
+
+		// инвентарь
+		eOnItemBelt,//+
+		eOnItemSlot,//+
+		eOnItemRuck,//+
+
+		// фонарь
+		eSwitchTorch,//+
+
+		//смена слота
+		eChangeSlot,
+
+		// Called when the player zooms their weapon in or out.
+		eOnActorWeaponZoomIn,//+
+		eOnActorWeaponZoomOut,//+
+
+		// vehicle
+		eAttachVehicle,//+
+		eDetachVehicle,//+
+
+		//box events
+		eOnInvBoxItemTake,
+		eOnInvBoxItemDrop,
+
+		// actor menu
+		eActorMenuOpen,
+
+		eOnThrowGrenade,
 		eDummy = u32(-1),
 	};
 };
