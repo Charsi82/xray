@@ -55,7 +55,7 @@ public:
 	virtual		void		Render_First		();
 	virtual		void		Render_Last			();	   
 	virtual		void		OnFrame				();
-
+	virtual		void		Render_Actor_Shadow();	// added by KD
 	virtual		void		RenderUI			();
 
 	virtual		IC CUI*		GetUI				(){return pUI;}
@@ -66,11 +66,11 @@ public:
 				void		net_Relcase			( CObject* obj );
 
 	CFontManager&			Font				()							{return *(UI()->Font());}
-	//текущий предмет на который смотрит HUD
+	//ГІГҐГЄГіГ№ГЁГ© ГЇГ°ГҐГ¤Г¬ГҐГІ Г­Г  ГЄГ®ГІГ®Г°Г»Г© Г±Г¬Г®ГІГ°ГЁГІ HUD
 	collide::rq_result&		GetCurrentRayQuery	();
 
 
-	//устанвка внешнего вида прицела в зависимости от текущей дисперсии
+	//ГіГ±ГІГ Г­ГўГЄГ  ГўГ­ГҐГёГ­ГҐГЈГ® ГўГЁГ¤Г  ГЇГ°ГЁГ¶ГҐГ«Г  Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ ГІГҐГЄГіГ№ГҐГ© Г¤ГЁГ±ГЇГҐГ°Г±ГЁГЁ
 	void					SetCrosshairDisp	(float dispf, float disps = 0.f);
 #ifdef DEBUG
 	void					SetFirstBulletCrosshairDisp(float fbdispf);
