@@ -60,6 +60,7 @@ public:
 			float	NightVisionBattery		  ();
 
 			bool	GetNightVisionStatus	() { return m_bNightVisionOn; }
+			bool	GetTorchStatus() { return m_switched_on; }
 protected:
 	bool					m_bNightVisionEnabled;
 	bool					m_bNightVisionOn;
