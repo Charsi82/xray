@@ -18,6 +18,11 @@
 #include "actorEffector.h"
 #include "CustomOutfit.h"
 
+#include "pch_script.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+#include "game_object_space.h"
+
 static const float		TIME_2_HIDE					= 5.f;
 static const float		TORCH_INERTION_CLAMP		= PI_DIV_6;
 static const float		TORCH_INERTION_SPEED_MAX	= 7.5f;
@@ -85,6 +90,12 @@ void CTorch::Load(LPCSTR section)
 		m_sounds.LoadSound(section,"snd_night_vision_idle", "NightVisionIdleSnd", SOUND_TYPE_ITEM_USING);
 		m_sounds.LoadSound(section,"snd_night_vision_broken", "NightVisionBrokenSnd", SOUND_TYPE_ITEM_USING);
 	}
+#ifdef TORCH_SOUNDS
+	if (pSettings->line_exist(section, "snd_torch_on"))
+		m_sounds.LoadSound(section, "snd_torch_on", "TorchOnSnd", SOUND_TYPE_ITEM_USING);
+	if (pSettings->line_exist(section, "snd_torch_off"))
+		m_sounds.LoadSound(section, "snd_torch_off", "TorchOffSnd", SOUND_TYPE_ITEM_USING);
+#endif
 }
 
 void CTorch::SwitchNightVision()
@@ -183,6 +194,28 @@ void CTorch::Switch()
 void CTorch::Switch	(bool light_on)
 {
 	m_switched_on			= light_on;
+
+#ifdef TORCH_SOUNDS
+	CActor *pA = smart_cast<CActor *>(H_Parent());
+	if (can_use_dynamic_lights())
+	{
+		light_render->set_active(light_on);
+		if (!pA)light_omni->set_active(light_on);
+	}
+
+	if (pA){// Ð¾Ð·Ð²ÑƒÑ‡ÐºÐ° Ð°ÐºÑ‚Ð¾Ñ€ÑÐºÐ¾Ð³Ð¾ Ñ„Ð¾Ð½Ð°Ñ€Ð¸ÐºÐ°
+		bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
+		if (m_switched_on){
+			if (pSettings->line_exist(cNameSect(), "snd_torch_on"))
+				m_sounds.PlaySound("TorchOnSnd", pA->Position(), pA, bPlaySoundFirstPerson);
+		}
+		else{
+			if (pSettings->line_exist(cNameSect(), "snd_torch_off"))
+				m_sounds.PlaySound("TorchOffSnd", pA->Position(), pA, bPlaySoundFirstPerson);
+		}
+		Actor()->callback(GameObject::eSwitchTorch)(light_on ? 1 : 0);
+	};
+#else
 	if (can_use_dynamic_lights())
 	{
 		light_render->set_active(light_on);
@@ -190,6 +223,8 @@ void CTorch::Switch	(bool light_on)
 		CActor *pA = smart_cast<CActor *>(H_Parent());
 		if(!pA)light_omni->set_active(light_on);
 	}
+#endif
+
 	glow_render->set_active					(light_on);
 
 	if (*light_trace_bone) 
@@ -244,7 +279,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 	glow_render->set_color	(clr);
 	glow_render->set_radius	(pUserData->r_float					("torch_definition","glow_radius"));
 
-	//âêëþ÷èòü/âûêëþ÷èòü ôîíàðèê
+	//Ã¢ÃªÃ«Ã¾Ã·Ã¨Ã²Ã¼/Ã¢Ã»ÃªÃ«Ã¾Ã·Ã¨Ã²Ã¼ Ã´Ã®Ã­Ã Ã°Ã¨Ãª
 	Switch					(torch->m_active);
 	VERIFY					(!torch->m_active || (torch->ID_Parent != 0xffff));
 	
@@ -398,7 +433,7 @@ void CTorch::UpdateCL()
 	if (!lanim)							return;
 
 	int						frame;
-	// âîçâðàùàåò â ôîðìàòå BGR
+	// Ã¢Ã®Ã§Ã¢Ã°Ã Ã¹Ã Ã¥Ã² Ã¢ Ã´Ã®Ã°Ã¬Ã Ã²Ã¥ BGR
 	u32 clr					= lanim->CalculateBGR(Device.fTimeGlobal,frame); 
 
 	Fcolor					fclr;
