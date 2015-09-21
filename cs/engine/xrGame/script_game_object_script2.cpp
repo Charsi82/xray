@@ -67,10 +67,11 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 		.property("health",					&CScriptGameObject::GetHealth,			&CScriptGameObject::SetHealth)
 		.property("psy_health",				&CScriptGameObject::GetPsyHealth,		&CScriptGameObject::SetPsyHealth)
 		.property("power",					&CScriptGameObject::GetPower,			&CScriptGameObject::SetPower)
-//		.property("satiety",				&CScriptGameObject::GetSatiety,			&CScriptGameObject::SetSatiety)
+		.property("satiety",				&CScriptGameObject::GetSatiety,			&CScriptGameObject::SetSatiety)
 		.property("radiation",				&CScriptGameObject::GetRadiation,		&CScriptGameObject::SetRadiation)
 		.property("morale",					&CScriptGameObject::GetMorale,			&CScriptGameObject::SetMorale)
-
+		.property("alcohol",				&CScriptGameObject::GetAlcohol,			&CScriptGameObject::SetAlcohol)
+		
 		.def("get_bleeding",				&CScriptGameObject::GetBleeding)
 		.def("center",						&CScriptGameObject::Center)
 		.def("position",					&CScriptGameObject::Position)
@@ -316,6 +317,18 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 
 		.def("take_items_enabled",			(void (CScriptGameObject::*)	(bool))&CScriptGameObject::take_items_enabled)
 		.def("take_items_enabled",			(bool (CScriptGameObject::*)	() const)&CScriptGameObject::take_items_enabled)
+
+		// new
+#ifdef NO_TRADE_TRASH
+		.def("buy_item_condition_factor", &CScriptGameObject::set_buy_item_condition_factor)
+#endif
+		.def("bone_name_to_id", &CScriptGameObject::BoneNameToId)
+		.def("get_bone_visible", &CScriptGameObject::GetBoneVisible)
+		.def("set_bone_visible", &CScriptGameObject::SetBoneVisible)
+		.def("bone_exist", &CScriptGameObject::BoneExist)
+
+		.def("is_zoom_aiming_mode", &CScriptGameObject::IsZoomAimingMode)
+		.def("active_detector", &CScriptGameObject::active_detector)
 
 	;return	(instance);
 }
