@@ -30,6 +30,7 @@
 #include "phworld.h"
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
+#include "raypick.h"
 
 using namespace luabind;
 
@@ -118,6 +119,25 @@ bool set_weather_fx	(LPCSTR weather_name)
 bool is_wfx_playing	()
 {
 	return			(g_pGamePersistent->Environment().IsWFXPlaying());
+}
+
+#include "game_sv_single.h"
+void change_game_time(u32 days, u32 hours, u32 mins)
+{
+	game_sv_Single	*tpGame = smart_cast<game_sv_Single *>(Level().Server->game);
+	if (tpGame && ai().get_alife())
+	{
+		u32 value = days * 86400 + hours * 3600 + mins * 60;
+		float fValue = static_cast<float> (value);
+		value *= 1000;//msec		
+		g_pGamePersistent->Environment().ChangeGameTime(fValue);
+		tpGame->alife().time_manager().change_game_time(value);
+	}
+}
+
+bool isCrosshairShown()
+{
+	return !psHUD_Flags.is(HUD_CROSSHAIR_RT2) && Actor()->IsZoomAimingMode() ;
 }
 
 void set_time_factor(float time_factor)
@@ -637,6 +657,32 @@ u32 render_get_dx_level()
 {
 	return ::Render->get_dx_level();
 }
+
+script_rq_result GetCurrentRQ()
+{
+	script_rq_result res;
+	if (HUD().GetUI())
+	{
+		collide::rq_result r = HUD().GetCurrentRayQuery();
+		res.set(r);
+	}
+	return res;
+}
+
+void LevelPressAction(EGameActions cmd)
+{
+	Level().IR_OnKeyboardPress(cmd);
+}
+
+void LevelReleaseAction(EGameActions cmd)
+{
+	Level().IR_OnKeyboardRelease(cmd);
+}
+
+void LevelHoldAction(EGameActions cmd)
+{
+	Level().IR_OnKeyboardHold(cmd);
+}
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
 {
@@ -673,6 +719,7 @@ void CLevel::script_register(lua_State *L)
 		def("get_time_days",					get_time_days),
 		def("get_time_hours",					get_time_hours),
 		def("get_time_minutes",					get_time_minutes),
+		def("change_game_time", change_game_time),
 
 		def("high_cover_in_direction",			high_cover_in_direction),
 		def("low_cover_in_direction",			low_cover_in_direction),
@@ -732,6 +779,11 @@ void CLevel::script_register(lua_State *L)
 		def("remove_complex_effector",			&remove_complex_effector),
 		
 		def("vertex_id",						&vertex_id),
+		def("hud_target",						&GetCurrentRQ),//+
+		def("press_action",						&LevelPressAction),//+
+		def("release_action",					&LevelReleaseAction),//+
+		def("hold_action",						&LevelHoldAction),//+
+		def("is_crosshair_shown",				&isCrosshairShown),
 
 		def("game_id",							&GameID)
 	],
@@ -748,6 +800,41 @@ void CLevel::script_register(lua_State *L)
 
 	module(L)
 	[
+		 		class_<CRayPick>("ray_pick")
+ 		.def(constructor<>())
+
+		//error C2664: "CRayPick::CRayPick(const CRayPick &)": невозможно преобразовать аргумент 1 из "const Fvector" в "Fvector &"
+ 		//.def(constructor<Fvector&, Fvector&, float, collide::rq_target, CScriptGameObject*>())//??
+
+		.def("set_position",					&CRayPick::set_position)
+		.def("set_direction",					&CRayPick::set_direction)
+		.def("set_range",						&CRayPick::set_range)
+		.def("set_flags",						&CRayPick::set_flags)
+		.def("set_ignore_object",				&CRayPick::set_ignore_object)
+		.def("query",							&CRayPick::query)
+		.def("get_result",						&CRayPick::get_result)
+		.def("get_object",						&CRayPick::get_object)
+		.def("get_distance",					&CRayPick::get_distance)
+		.def("get_element",						&CRayPick::get_element),
+
+		class_<script_rq_result>("rq_result")
+		.def_readonly("object",					&script_rq_result::O)
+		.def_readonly("range",					&script_rq_result::range)
+		.def_readonly("element",				&script_rq_result::element)
+		.def(constructor<>()),
+
+		class_<enum_exporter<collide::rq_target> >("rq_target")
+		.enum_("targets")
+		[
+			value("rqtNone",					int(collide::rqtNone)),
+			value("rqtObject",					int(collide::rqtObject)),
+			value("rqtStatic",					int(collide::rqtStatic)),
+			value("rqtShape",					int(collide::rqtShape)),
+			value("rqtObstacle",				int(collide::rqtObstacle)),
+			value("rqtBoth",					int(collide::rqtBoth)),
+			value("rqtDyn",						int(collide::rqtDyn))
+		],
+
 		def("command_line",						&command_line),
 		def("IsGameTypeSingle",					&IsGameTypeSingle),
 		def("IsDynamicMusic",					&IsDynamicMusic),
