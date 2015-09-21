@@ -74,8 +74,8 @@ CCar::CCar()
 	m_car_sound			= new SCarSound(this);
 
 	//у машины слотов в инвентаре нет
-	inventory			= new CInventory();
-	inventory->SetSlotsUseful(false);
+	//inventory			= new CInventory();
+	//inventory->SetSlotsUseful(false);
 	m_doors_torque_factor = 2.f;
 	m_power_increment_factor=0.5f;
 	m_rpm_increment_factor=0.5f;
@@ -102,7 +102,7 @@ CCar::~CCar(void)
 	xr_delete			(camera[2]);
 	xr_delete			(m_car_sound);
 	ClearExhausts		();
-	xr_delete			(inventory);
+	//xr_delete			(inventory);
 	xr_delete			(m_car_weapon);
 	xr_delete			(m_memory);
  //	xr_delete			(l_tpEntityAction);
@@ -216,11 +216,7 @@ void CCar::SpawnInitPhysics	(CSE_Abstract	*D)
 	SetDefaultNetState				(so);
 	CPHUpdateObject::Activate       ();
 
-// CAR_SPANW_PH_IMPULS
-	Fvector dir;
-	dir.set(0, -1.f, 0);
-	m_pPhysicsShell->applyImpulse(dir, 0.1);
-// CAR_SPANW_PH_IMPULS
+	m_pPhysicsShell->applyImpulse(Fvector().set(0,-1.f,0), 0.1);// хит по физ. оболочке, чтобы не висела в воздухе
 }
 
 void	CCar::net_Destroy()
@@ -526,6 +522,10 @@ void	CCar::OnHUDDraw				(CCustomHUD* /**hud*/)
 #endif
 }
 
+#include "pch_script.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+
 //void CCar::Hit(float P,Fvector &dir,CObject * who,s16 element,Fvector p_in_object_space, float impulse, ALife::EHitType hit_type)
 void	CCar::Hit							(SHit* pHDS)
 {
@@ -546,6 +546,15 @@ void	CCar::Hit							(SHit* pHDS)
 	if(HDS.hit_type!=ALife::eHitTypeStrike) CDamageManager::HitScale(HDS.bone(), hitScale, woundScale);
 	HDS.power *= m_HitTypeK[HDS.hit_type]*hitScale;
 
+	// car hit callback
+	callback(GameObject::eHit)(
+		lua_game_object(),
+		HDS.power,
+		HDS.dir,
+		smart_cast<const CGameObject*>(HDS.who)->lua_game_object(),
+		HDS.bone()
+		);
+		
 	inherited::Hit(&HDS);
 	if(!CDelayedActionFuse::isActive())
 	{
@@ -726,6 +735,18 @@ bool CCar::Exit(const Fvector& pos,const Fvector& dir)
 	}
 	return false;
 
+}
+
+void CCar::DoExit()
+{
+	CActor* A = OwnerActor();
+	if (A)
+	{
+		if (!m_doors.empty())m_doors.begin()->second.GetExitPosition(m_exit_position);
+		else m_exit_position.set(Position());
+		A->detach_Vehicle();
+		if (A->g_Alive() <= 0.f)A->character_physics_support()->movement()->DestroyCharacter();
+	}
 }
 
 void CCar::ParseDefinitions()
@@ -1691,7 +1712,7 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 	CExplosive::OnEvent		(P,type);
 
 	//обработка сообщений, нужных для работы с багажником машины
-	u16 id;
+/*	u16 id;
 	switch (type)
 	{
 	case GE_OWNERSHIP_TAKE:
@@ -1727,7 +1748,7 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 			//moved to DropItem
 		}break;
 	}
-
+*/
 }
 
 void CCar::ResetScriptData(void	*P)
@@ -2043,5 +2064,3 @@ Fvector	CCar::		ExitVelocity				()
 	dBodyGetPointVel(E->get_body(),v.x,v.y,v.z,cast_fp(v));
 	return v;
 }
-
-//#endif // #if 0
