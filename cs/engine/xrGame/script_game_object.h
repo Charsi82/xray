@@ -181,14 +181,17 @@ public:
 	_DECLARE_FUNCTION10	(GetRadiation		,			float);
 	_DECLARE_FUNCTION10	(GetBleeding		,			float);
 	_DECLARE_FUNCTION10	(GetMorale			,			float);
+	_DECLARE_FUNCTION10 (GetSatiety			,			float);
+	_DECLARE_FUNCTION10 (GetAlcohol			,			float);
 
 	_DECLARE_FUNCTION11	(SetHealth,			void, float);
 	_DECLARE_FUNCTION11	(SetPsyHealth,		void, float);
 	_DECLARE_FUNCTION11	(SetPower,			void, float);
-//	_DECLARE_FUNCTION11	(SetSatiety,		void, float);
+	_DECLARE_FUNCTION11	(SetSatiety,		void, float);
 	_DECLARE_FUNCTION11	(SetRadiation,		void, float);
 	_DECLARE_FUNCTION11	(SetCircumspection,	void, float);
 	_DECLARE_FUNCTION11	(SetMorale,			void, float);
+	_DECLARE_FUNCTION11 (SetAlcohol,		void, float);
 
 			void				set_fov				(float new_fov);
 			void				set_range			(float new_range);
@@ -209,7 +212,16 @@ public:
 			void				ResetActionQueue	();
 	// Actor only
 			void				SetActorPosition	(Fvector pos);
-			void				SetActorDirection	(float dir);
+			void				SetActorDirection	(float dir, float pitch, float roll);
+
+			CScriptGameObject*	GetActorCar();
+			void				attach_actor_Vehicle(u32 id);
+			void				detach_actor_Vehicle();
+	// bones
+			u16					BoneNameToId(LPCSTR name);
+			bool				GetBoneVisible(LPCSTR name);
+			void				SetBoneVisible(LPCSTR name, bool val, bool bRecursive);
+			bool				BoneExist(LPCSTR name);
 	// CCustomMonster
 			bool				CheckObjectVisibility(const CScriptGameObject *tpLuaGameObject);
 			bool				CheckTypeVisibility	(const char *section_name);
@@ -260,7 +272,7 @@ public:
 	// CProjector
 			Fvector				GetCurrentDirection		();
 			bool				IsInvBoxEmpty			();
-	//передача порции информации InventoryOwner
+	//ГЇГҐГ°ГҐГ¤Г Г·Г  ГЇГ®Г°Г¶ГЁГЁ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ InventoryOwner
 			bool				GiveInfoPortion		(LPCSTR info_id);
 			bool				DisableInfoPortion	(LPCSTR info_id);
 			void				GiveGameNews		(LPCSTR caption, LPCSTR news, LPCSTR texture_name, int delay, int show_time);
@@ -268,11 +280,11 @@ public:
 
 			void				AddIconedTalkMessage_old(LPCSTR text, LPCSTR texture_name, LPCSTR templ_name) {};
 			void				AddIconedTalkMessage(LPCSTR caption, LPCSTR text, LPCSTR texture_name, LPCSTR templ_name);
-	//предикаты наличия/отсутствия порции информации у персонажа
+	//ГЇГ°ГҐГ¤ГЁГЄГ ГІГ» Г­Г Г«ГЁГ·ГЁГї/Г®ГІГ±ГіГІГ±ГІГўГЁГї ГЇГ®Г°Г¶ГЁГЁ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Гі ГЇГҐГ°Г±Г®Г­Г Г¦Г 
 			bool				HasInfo				(LPCSTR info_id);
 			bool				DontHasInfo			(LPCSTR info_id);
 			xrTime				GetInfoTime			(LPCSTR info_id);
-	//работа с заданиями
+	//Г°Г ГЎГ®ГІГ  Г± Г§Г Г¤Г Г­ГЁГїГ¬ГЁ
 			ETaskState			GetGameTaskState	(LPCSTR task_id);
 			void				SetGameTaskState	(ETaskState state, LPCSTR task_id);
 			void				GiveTaskToActor		(CGameTask* t, u32 dt, bool bCheckExisting, u32 t_timer);
@@ -685,6 +697,53 @@ public:
 
 			void				take_items_enabled						(bool value);
 			bool				take_items_enabled						() const;
+#ifdef NO_TRADE_TRASH
+			void				set_buy_item_condition_factor(float factor);
+#endif
+			float				GetTotalWeight() const;//-
+			float				Weight() const;//-
+			bool				IsActorOutdoors() const;//-
+
+			//projector
+			void SwitchProjector(bool state);
+			bool ProjectorIsOn() const;
+
+			//ammo
+			u16 GetAmmoBoxCurr() const;
+			u16 GetAmmoBoxSize() const;
+			void SetAmmoBoxCurr(u16 curr);
+
+			//visual
+			LPCSTR GetVisualName();
+			//void CScriptGameObject::SetVisualName(LPCSTR str)
+
+			// functions for CInventoryItem class
+			flags16 GetIIFlags();
+			void SetIIFlags(flags16 flags);
+
+			// KD
+			// functions for CInventoryOwner class
+			void CScriptGameObject::IterateBelt(luabind::functor<void> functor, luabind::object object);
+			CScriptGameObject* ItemOnBelt(u32 item_id) const;
+			CScriptGameObject* ItemInRuck(u32 item_id) const;
+			bool IsOnBelt(CScriptGameObject *obj) const;
+			bool IsInRuck(CScriptGameObject *obj) const;
+			bool IsInSlot(CScriptGameObject *obj) const;
+			void MoveToRuck(CScriptGameObject *obj);
+			void MoveToSlot(CScriptGameObject *obj, bool bNotActivate);
+			void MoveToBelt(CScriptGameObject *obj);
+			u32 BeltSize() const;
+			u32 RuckSize() const;
+
+			void AttachVehicle(CScriptGameObject *obj);
+			void DetachVehicle();
+
+			void HealWounds(float percent);
+			CScriptIniFile* GetVisualIni() const;
+			void OpenInventoryBox(CScriptGameObject *obj) const;
+			LPCSTR GetBoneName(u16 id) const;
+			bool IsZoomAimingMode();
+			CScriptGameObject *active_detector() const;
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
