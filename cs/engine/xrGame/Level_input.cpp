@@ -22,6 +22,11 @@
 #include "xrEngine/xr_input.h"
 #include "saved_game_wrapper.h"
 
+#include "pch_script.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+#include "game_object_space.h"
+
 #include <Include/xrRender/DebugRender.h>
 
 #ifdef DEBUG
@@ -45,6 +50,8 @@ void CLevel::IR_OnMouseWheel( int direction )
 {
 	if(	g_bDisableAllInput	) return;
 
+	if (g_actor) Actor()->callback(GameObject::eOnMouseWheel)(direction>0?1:-1);//+
+	
 	if (HUD().GetUI()->IR_OnMouseWheel(direction)) return;
 	if( Device.Paused()		) return;
 
@@ -70,6 +77,8 @@ void CLevel::IR_OnMouseHold(int btn)
 void CLevel::IR_OnMouseMove( int dx, int dy )
 {
 	if(g_bDisableAllInput)							return;
+	if (g_actor) Actor()->callback(GameObject::eOnMouseMove)(dx, dy);//+
+	
 	if (pHUD->GetUI()->IR_OnMouseMove(dx,dy))		return;
 	if (Device.Paused() && !IsDemoPlay() )	return;
 	if (CURRENT_ENTITY())		{
@@ -94,7 +103,7 @@ public:
 	}}
 }	vtune	;
 
-// Îáðàáîòêà íàæàòèÿ êëàâèø
+// ÃŽÃ¡Ã°Ã Ã¡Ã®Ã²ÃªÃ  Ã­Ã Ã¦Ã Ã²Ã¨Ã¿ ÃªÃ«Ã Ã¢Ã¨Ã¸
 extern bool g_block_pause;
 
 // Lain: added TEMP!!!
@@ -131,7 +140,8 @@ void CLevel::IR_OnKeyboardPress	(int key)
 	}
 
 	if(	g_bDisableAllInput )	return;
-
+	if (g_actor) Actor()->callback(GameObject::eOnKeyPress)(key, _curr);//+
+	
 	switch ( _curr ) 
 	{
 	case kSCREENSHOT:
@@ -432,6 +442,8 @@ void CLevel::IR_OnKeyboardRelease(int key)
 
 	if (!bReady || g_bDisableAllInput	) return;
 	if ( b_ui_exist && pHUD->GetUI()->IR_OnKeyboardRelease(key)) return;
+	
+	if (g_actor) Actor()->callback(GameObject::eOnKeyRelease)(key, get_binded_action(key));
 	if (Device.Paused()		) return;
 	if (game && Game().OnKeyboardRelease(get_binded_action(key)) ) return;
 
@@ -445,6 +457,7 @@ void CLevel::IR_OnKeyboardRelease(int key)
 void CLevel::IR_OnKeyboardHold(int key)
 {
 	if(g_bDisableAllInput) return;
+	if (g_actor) Actor()->callback(GameObject::eOnKeyHold)(key, get_binded_action(key));
 
 #ifdef DEBUG
 	// Lain: added
