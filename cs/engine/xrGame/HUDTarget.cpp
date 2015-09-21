@@ -22,7 +22,7 @@
 #include "inventory.h"
 
 #include "Include/xrRender/UIRender.h"
-
+#include <ai/monsters/poltergeist/poltergeist.h>
 
 u32 C_ON_ENEMY		D3DCOLOR_RGBA(0xff,0,0,0x80);
 u32 C_ON_NEUTRAL	D3DCOLOR_RGBA(0xff,0xff,0x80,0x80);
@@ -90,7 +90,7 @@ ICF static BOOL pick_trace_callback(collide::rq_result& result, LPVOID params)
 		return FALSE;
 	}else
 	{
-		//получить треугольник и узнать его материал
+		//ГЇГ®Г«ГіГ·ГЁГІГј ГІГ°ГҐГіГЈГ®Г«ГјГ­ГЁГЄ ГЁ ГіГ§Г­Г ГІГј ГҐГЈГ® Г¬Г ГІГҐГ°ГЁГ Г«
 		CDB::TRI* T		= Level().ObjectSpace.GetStaticTris()+result.element;
 		
 		SGameMtl* mtl = GMLib.GetMaterialByIdx(T->material);
@@ -174,7 +174,9 @@ void CHUDTarget::Render()
 
 	if (psHUD_Flags.test(HUD_INFO))
 	{ 
-		if(PP.RQ.O && PP.RQ.O->getVisible())
+		bool const is_poltergeist = PP.RQ.O && !!smart_cast<CPoltergeist*> (PP.RQ.O);
+		
+		if(PP.RQ.O && PP.RQ.O->getVisible() || is_poltergeist)
 		{
 			CEntityAlive*	E		= smart_cast<CEntityAlive*>	(PP.RQ.O);
 			CEntityAlive*	pCurEnt = smart_cast<CEntityAlive*>	(Level().CurrentEntity());
@@ -183,7 +185,11 @@ void CHUDTarget::Render()
 			if (IsGameTypeSingle())
 			{
 				CInventoryOwner* our_inv_owner		= smart_cast<CInventoryOwner*>(pCurEnt);
-				if (E && E->g_Alive() && !E->cast_base_monster())
+				if (psHUD_Flags.test(HUD_INFO_MONSTER) && E && E->g_Alive() && E->cast_base_monster())
+				{
+					C = C_ON_ENEMY;
+				}
+				else if (E && E->g_Alive() && !E->cast_base_monster())
 				{
 					CInventoryOwner* others_inv_owner	= smart_cast<CInventoryOwner*>(E);
 
@@ -270,7 +276,7 @@ void CHUDTarget::Render()
 		F->OutNext		("%4.1f - %4.2f - %d",PP.RQ.range, PP.power, PP.pass);
 	}
 
-	//отрендерить кружочек или крестик
+	//Г®ГІГ°ГҐГ­Г¤ГҐГ°ГЁГІГј ГЄГ°ГіГ¦Г®Г·ГҐГЄ ГЁГ«ГЁ ГЄГ°ГҐГ±ГІГЁГЄ
 	if(!m_bShowCrosshair)
 	{
 		
@@ -305,7 +311,7 @@ void CHUDTarget::Render()
 		UIRender->FlushPrimitive();
 
 	}else{
-		//отрендерить прицел
+		//Г®ГІГ°ГҐГ­Г¤ГҐГ°ГЁГІГј ГЇГ°ГЁГ¶ГҐГ«
 		HUDCrosshair.cross_color	= C;
 		HUDCrosshair.OnRender		();
 	}
