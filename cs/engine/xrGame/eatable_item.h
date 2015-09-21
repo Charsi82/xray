@@ -29,17 +29,18 @@ public:
 	virtual	bool			Empty						()						{return PortionsNum()==0;};
 			int				PortionsNum					()	const				{return m_iPortionsNum;}
 protected:	
-	//влияние при поедании вещи на параметры игрока
+	//ГўГ«ГЁГїГ­ГЁГҐ ГЇГ°ГЁ ГЇГ®ГҐГ¤Г Г­ГЁГЁ ГўГҐГ№ГЁ Г­Г  ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЁГЈГ°Г®ГЄГ 
 	float					m_fHealthInfluence;
 	float					m_fPowerInfluence;
 	float					m_fSatietyInfluence;
 	float					m_fRadiationInfluence;
 	float					m_fMaxPowerUpInfluence;
-	//заживление ран на кол-во процентов
+	float					m_fPsyHealthInfluence;
+	//Г§Г Г¦ГЁГўГ«ГҐГ­ГЁГҐ Г°Г Г­ Г­Г  ГЄГ®Г«-ГўГ® ГЇГ°Г®Г¶ГҐГ­ГІГ®Гў
 	float					m_fWoundsHealPerc;
 
-	//количество порций еды, 
-	//-1 - порция одна и больше не бывает (чтоб не выводить надпись в меню)
+	//ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЇГ®Г°Г¶ГЁГ© ГҐГ¤Г», 
+	//-1 - ГЇГ®Г°Г¶ГЁГї Г®Г¤Г­Г  ГЁ ГЎГ®Г«ГјГёГҐ Г­ГҐ ГЎГ»ГўГ ГҐГІ (Г·ГІГ®ГЎ Г­ГҐ ГўГ»ГўГ®Г¤ГЁГІГј Г­Г Г¤ГЇГЁГ±Гј Гў Г¬ГҐГ­Гѕ)
 	int						m_iPortionsNum;
 	int						m_iStartPortionsNum;
 };
