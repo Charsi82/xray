@@ -238,6 +238,12 @@ class_<CScriptGameObject> &script_register_game_object2(class_<CScriptGameObject
 		.def("get_physics_shell",			&CScriptGameObject::get_physics_shell)
 		.def("get_holder_class",			&CScriptGameObject::get_custom_holder)
 		.def("get_current_holder",			&CScriptGameObject::get_current_holder)
+		
+		//car
+		.def("attach_vehicle", &CScriptGameObject::attach_actor_Vehicle)
+		.def("detach_vehicle", &CScriptGameObject::detach_actor_Vehicle)
+		.def("get_actor_car", &CScriptGameObject::GetActorCar)
+
 		//usable object
 		.def("set_tip_text",				&CScriptGameObject::SetTipText)
 		.def("set_tip_text_default",		&CScriptGameObject::SetTipTextDefault)
@@ -310,6 +316,44 @@ class_<CScriptGameObject> &script_register_game_object2(class_<CScriptGameObject
 		.def("start_particles",				&CScriptGameObject::start_particles)
 		.def("stop_particles",				&CScriptGameObject::stop_particles)
 
+///// NEW //////////////////////////////////////////////////////////////
 
+		.def("is_actor_outdoors", &CScriptGameObject::IsActorOutdoors)
+		.def("get_total_weight", &CScriptGameObject::GetTotalWeight)
+		.def("weight", &CScriptGameObject::Weight)
+
+		.def("switch_projector", &CScriptGameObject::SwitchProjector)
+		.def("projector_is_on", &CScriptGameObject::ProjectorIsOn)
+
+		// functions for CInventoryItem class
+		.def("set_inventory_item_flags", &CScriptGameObject::SetIIFlags)
+		.def("get_inventory_item_flags", &CScriptGameObject::GetIIFlags)
+		.def("get_ammo_box_curr", &CScriptGameObject::GetAmmoBoxCurr)
+		.def("get_ammo_box_size", &CScriptGameObject::GetAmmoBoxSize)
+		.def("set_ammo_box_curr", &CScriptGameObject::SetAmmoBoxCurr)
+
+		// functions for CInventoryOwner class
+		.def("iterate_belt", &CScriptGameObject::IterateBelt)
+		.def("item_on_belt", &CScriptGameObject::ItemOnBelt)
+		.def("item_in_ruck", &CScriptGameObject::ItemInRuck)
+		.def("is_on_belt", &CScriptGameObject::IsOnBelt)
+		.def("is_in_ruck", &CScriptGameObject::IsInRuck)
+		.def("is_in_slot", &CScriptGameObject::IsInSlot)
+		.def("move_to_ruck", &CScriptGameObject::MoveToRuck)
+		.def("move_to_belt", &CScriptGameObject::MoveToBelt)
+		.def("move_to_slot", &CScriptGameObject::MoveToSlot)
+		.def("belt_count", &CScriptGameObject::BeltSize)
+		.def("ruck_count", &CScriptGameObject::RuckSize)
+
+		.def("get_visual_name", &CScriptGameObject::GetVisualName)
+
+		.def("attach_vehicle", &CScriptGameObject::AttachVehicle)
+		.def("detach_vehicle", &CScriptGameObject::DetachVehicle)
+
+		.def("heal_wounds", &CScriptGameObject::HealWounds)
+		.def("get_visual_ini", &CScriptGameObject::GetVisualIni)
+
+		.def("open_inventory_box", &CScriptGameObject::OpenInventoryBox)
+		.def("get_bone_name", &CScriptGameObject::GetBoneName)
 	;return	(instance);
 }
