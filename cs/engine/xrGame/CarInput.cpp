@@ -41,7 +41,7 @@ void	CCar::OnMouseMove(int dx, int dy)
 		//что актер видит перед собой
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
 
-		pos.mad(cam_dir, RQ.range>3.f ? RQ.range : 30.f);
+		pos.mad(cam_dir, (RQ.range > 3.0f || (RQ.O && this->ID() == RQ.O->ID())) ? RQ.range : 50.f);
 		SetParam(CCarWeapon::eWpnDesiredPos, pos);
 	};
 }
@@ -130,6 +130,7 @@ void CCar::vfProcessInputKey	(int iCommand, bool bPressed)
 		OnKeyboardRelease		(iCommand);
 }
 
+#include "inventory.h"
 void CCar::OnKeyboardPress(int cmd)
 {
 	if (Remote())								return;
@@ -144,12 +145,14 @@ void CCar::OnKeyboardPress(int cmd)
 	case kFWD:		PressForward();				break;
 	case kBACK:		PressBack();				break;
 	case kR_STRAFE:	PressRight();				if (OwnerActor()) OwnerActor()->steer_Vehicle(1);	break;
-	case kL_STRAFE:	PressLeft();				if (OwnerActor()) OwnerActor()->steer_Vehicle(-1);break;
+	case kL_STRAFE:	PressLeft();				if (OwnerActor()) OwnerActor()->steer_Vehicle(-1);	break;
 	case kJUMP:		PressBreaks();				break;
 	case kDETECTOR:	SwitchEngine();				break;
 	case kTORCH:	m_lights.SwitchHeadLights();break;
 	case kUSE:									break;
-	case kWPN_FUNC: m_repairing = true; break;
+	case kWPN_FUNC: m_repairing = true; 		break;
+	case kWPN_FIRE: if (OwnerActor() && (!Actor()->inventory().ActiveItem()) && !HUD().GetUI()->MainInputReceiver()) Action(CCarWeapon::eWpnFire, 1); break; // shooting on hold lmb
+	case kSPRINT_TOGGLE:	if (!HUD().GetUI()->MainInputReceiver())ShowTrunk();		break;// открытие багажника
 	};
 
 }
@@ -183,8 +186,7 @@ void	CCar::OnKeyboardHold(int cmd)
 	case kDOWN:
 	case kLEFT:
 	case kRIGHT:	active_camera->Move(cmd);	break;
-	case kWPN_FIRE: if (OwnerActor()) Action(CCarWeapon::eWpnFire, 1); break; // shooting on hold lmb
-	
+
 /*
 	case kFWD:		
 		if (ectFree==active_camera->tag)	active_camera->Move(kUP);
