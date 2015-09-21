@@ -1,7 +1,7 @@
 #pragma once
 
 #include "script_export_space.h"
-
+BOOL key_state(int key);
 struct key_binding_registrator{
 
 
