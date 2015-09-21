@@ -92,7 +92,35 @@ void CScriptGameObject::script_register(lua_State *L)
 				value("take_item_from_box",			int(GameObject::eInvBoxItemTake)),
 				value("weapon_no_ammo",				int(GameObject::eWeaponNoAmmoAvailable)),
 				
-				value("map_location_added",			int(GameObject::eMapLocationAdded))
+				value("map_location_added",			int(GameObject::eMapLocationAdded)),
+				
+				/******** added by Ray Twitty (aka Shadows) START *******/
+				// клавиатура/мышь
+				value("on_key_press", int(GameObject::eOnKeyPress)),
+				value("on_key_release", int(GameObject::eOnKeyRelease)),
+				value("on_key_hold", int(GameObject::eOnKeyHold)),
+				value("on_mouse_move", int(GameObject::eOnMouseMove)),
+				value("on_mouse_wheel", int(GameObject::eOnMouseWheel)),
+				// инвентарь
+				value("on_item_belt", int(GameObject::eOnItemBelt)),
+				value("on_item_slot", int(GameObject::eOnItemSlot)),
+				value("on_item_ruck", int(GameObject::eOnItemRuck)),
+				// фонарь
+				value("switch_torch", int(GameObject::eSwitchTorch)),
+				/***** added by Ray Twitty (aka Shadows) END ******/
+
+				value("on_actor_menu_open", int(GameObject::eActorMenuOpen)),
+				value("on_change_slot", int(GameObject::eChangeSlot)),
+				value("on_attach_vehicle", int(GameObject::eAttachVehicle)),
+				value("on_detach_vehicle", int(GameObject::eDetachVehicle)),
+
+				// Added by Cribbledirge
+				value("on_actor_weapon_zoom_in", int(GameObject::eOnActorWeaponZoomIn)),
+				value("on_actor_weapon_zoom_out", int(GameObject::eOnActorWeaponZoomOut)),
+
+				value("on_inv_box_item_take", int(GameObject::eOnInvBoxItemTake)),
+				value("on_inv_box_item_drop", int(GameObject::eOnInvBoxItemDrop)),
+				value("on_throw_grenade", int(GameObject::eOnThrowGrenade))
 			],
 
 		def("buy_condition",				(void (*)(CScriptIniFile*,LPCSTR))(&::buy_condition)),
