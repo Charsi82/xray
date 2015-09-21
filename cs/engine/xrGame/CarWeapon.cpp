@@ -9,6 +9,7 @@
 #include "weaponAmmo.h"
 #include "xr_level_controller.h"
 #include "game_object_space.h"
+#include "holder_custom.h"
 
 void CCarWeapon::BoneCallbackX		(CBoneInstance *B)
 {
@@ -223,7 +224,6 @@ void CCarWeapon::FireEnd()
 	StopFlameParticles	();
 }
 
-#include "holder_custom.h"
 void CCarWeapon::OnShot()
 {
 	CHolderCustom* car = smart_cast<CHolderCustom*>(m_object);
