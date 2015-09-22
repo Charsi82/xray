@@ -625,12 +625,19 @@ void CScriptGameObject::set_sight		(const CMemoryInfo *memory_object, bool	torso
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
+#include "InventoryBox.h"
+#include "car.h"
 u32	CScriptGameObject::GetInventoryObjectCount() const
 {
 	CInventoryOwner		*l_tpInventoryOwner = smart_cast<CInventoryOwner*>(&object());
 	if (l_tpInventoryOwner)
 		return			(l_tpInventoryOwner->inventory().dwfGetObjectCount());
 	else {
+		// Real Wolf. 03.08.2014.
+		if (auto box = smart_cast<CInventoryBox*>(&object()))
+			return box->GetSize();
+		if (auto car = smart_cast<CCar*>(&object()))
+			return car->GetSize();
 		ai().script_engine().script_log			(ScriptStorage::eLuaMessageTypeError,"CScriptGameObject : cannot access class member obj_count!");
 		return			(0);
 	}
