@@ -26,7 +26,7 @@
 #include <process.h>
 // OpenAutomate
 #include "xrSash.h"
-// Ïðèáëóäèíà äëÿ SecuROM-à
+// ÃÃ°Ã¨Ã¡Ã«Ã³Ã¤Ã¨Ã­Ã  Ã¤Ã«Ã¿ SecuROM-Ã 
 #include "securom_api.h"
 
 #ifndef DEDICATED_SERVER
@@ -61,7 +61,7 @@ static bool IntroFinished = false;
 
 void doBenchmark(const char* name);
 
-// Ôóíöèÿ äëÿ òóïûõ òðåáîâàíèé THQ è òóïûõ àìåðèêàíñêèõ ïîëüçîâàòåëåé
+// Ã”Ã³Ã­Ã¶Ã¨Ã¿ Ã¤Ã«Ã¿ Ã²Ã³Ã¯Ã»Ãµ Ã²Ã°Ã¥Ã¡Ã®Ã¢Ã Ã­Ã¨Ã© THQ Ã¨ Ã²Ã³Ã¯Ã»Ãµ Ã Ã¬Ã¥Ã°Ã¨ÃªÃ Ã­Ã±ÃªÃ¨Ãµ Ã¯Ã®Ã«Ã¼Ã§Ã®Ã¢Ã Ã²Ã¥Ã«Ã¥Ã©
 bool IsOutOfVirtualMemory()
 {
     SECUROM_MARKER_HIGH_SECURITY_ON(1)
@@ -71,7 +71,7 @@ bool IsOutOfVirtualMemory()
         return false;
     DWORD pageFileSize = (DWORD)(memStatus.ullTotalPageFile / (1024 * 1024));
     DWORD physMemSize = (DWORD)(memStatus.ullTotalPhys / (1024 * 1024));
-    // Äîâîëüíî îòôîíàðíîå óñëîâèå
+    // Ã„Ã®Ã¢Ã®Ã«Ã¼Ã­Ã® Ã®Ã²Ã´Ã®Ã­Ã Ã°Ã­Ã®Ã¥ Ã³Ã±Ã«Ã®Ã¢Ã¨Ã¥
     if (physMemSize > 500 && pageFileSize + physMemSize > 2500)
         return false;
     HINSTANCE hApp = GetModuleHandle(NULL);
@@ -730,8 +730,9 @@ void CApplication::LoadTitleInt(LPCSTR str)
     PhaseTimer.Start();
     Msg("* phase cmem: %d K", Memory.mem_usage() / 1024);
     Log(app_title);
-    if (g_pGamePersistent->GameType() == EGameIDs::eGameIDSingle &&
-        strstr(Core.Params, "alife"))
+    typedef IGame_Persistent::params params;
+    params    &p = g_pGamePersistent->m_game_params;
+    if (g_pGamePersistent->GameType() == eGameIDSingle && !xr_strcmp(p.m_alife, "alife"))
     {
         max_load_stage = 17;
     }
