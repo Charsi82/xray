@@ -320,6 +320,11 @@ void CScriptGameObject::SetActorPosition			(Fvector pos)
 {
 	CActor* actor = smart_cast<CActor*>(&object());
 	if(actor){
+		
+		CCar* car = smart_cast<CCar*>(actor->Holder());
+		if (car)
+			car->DoExit();
+			
 		Fmatrix F = actor->XFORM();
 		F.c = pos;
 		actor->ForceTransform(F);
@@ -329,14 +334,70 @@ void CScriptGameObject::SetActorPosition			(Fvector pos)
 
 }
 
-void CScriptGameObject::SetActorDirection		(float dir)
+void CScriptGameObject::SetActorDirection		(float dir, float pitch = 0, float roll = 0)
 {
 	CActor* actor = smart_cast<CActor*>(&object());
 	if(actor){
-		actor->cam_Active()->Set(dir,0,0);
+		actor->cam_Active()->Set(dir, pitch, roll);
 //		actor->XFORM().setXYZ(0,dir,0);
 	}else
 		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"ScriptGameObject : attempt to call SetActorDirection method for non-actor object");
+}
+
+CScriptGameObject* CScriptGameObject::GetActorCar()
+{
+	CActor* actor = smart_cast<CActor*>(&object());
+	if (actor)
+	{
+		CCar* car = actor->GetAttachedCar();
+		return car ? car->lua_game_object() : NULL;
+	}
+	ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "ScriptGameObject : attempt to call GetActorCar method for non-actor object");
+	return NULL;
+}
+
+void CScriptGameObject::detach_actor_Vehicle()
+{
+	CActor* actor = smart_cast<CActor*>(&object());
+
+	if (!actor)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CScriptGameObject : attempt to call detach_actor_Vehicle method for non-actor object");
+		return;
+	}
+
+	CCar* car = smart_cast<CCar*>(actor->Holder());
+	if (car)
+		car->DoExit();
+}
+
+void CScriptGameObject::attach_actor_Vehicle(u32 id)
+{
+	CActor* actor = smart_cast<CActor*>(&object());
+	if (!actor)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CScriptGameObject : attempt to call attach_actor_Vehicle method for non-actor object");
+		return;
+	}
+
+	CObject* O = Level().Objects.net_Find(id);
+	if (!O)
+	{
+		Msg("! Error: No object to attach holder [%d]", id);
+		return;
+	}
+
+	CHolderCustom*	holder = smart_cast<CHolderCustom*>(O);
+	if (!holder)
+	{
+		Msg("! Error: Object[%d] is not holder", id);
+		return;
+	}
+
+	CCar* car = smart_cast<CCar*>(holder);
+	R_ASSERT2(car, "object must be a car");
+//	car->DoEnter();
+	actor->attach_Vehicle(holder);
 }
 
 CHolderCustom* CScriptGameObject::get_current_holder()
@@ -347,6 +408,34 @@ CHolderCustom* CScriptGameObject::get_current_holder()
 		return actor->Holder();
 	else
 		return NULL;
+}
+
+u16 CScriptGameObject::BoneNameToId(LPCSTR name)
+{
+	IKinematics		*V = smart_cast<IKinematics*>(object().Visual());
+	VERIFY(V);
+	return (V->LL_BoneID(name));
+}
+
+bool CScriptGameObject::GetBoneVisible(LPCSTR name)
+{
+	IKinematics		*V = smart_cast<IKinematics*>(object().Visual());
+	VERIFY(V);
+	return (TRUE == V->LL_GetBoneVisible(V->LL_BoneID(name)));
+}
+
+void CScriptGameObject::SetBoneVisible(LPCSTR name, bool val, bool bRecursive)
+{
+	IKinematics		*V = smart_cast<IKinematics*>(object().Visual());
+	VERIFY(V);
+	return (V->LL_SetBoneVisible(V->LL_BoneID(name), val, bRecursive));
+}
+
+bool CScriptGameObject::BoneExist(LPCSTR name)
+{
+	IKinematics		*V = smart_cast<IKinematics*>(object().Visual());
+	VERIFY(V);
+	return (V->LL_BoneID(name) != BI_NONE);
 }
 
 void CScriptGameObject::set_ignore_monster_threshold	(float ignore_monster_threshold)
