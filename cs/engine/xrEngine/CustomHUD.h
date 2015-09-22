@@ -14,7 +14,8 @@ ENGINE_API extern Flags32		psHUD_Flags;
 #define HUD_CROSSHAIR_RT2		(1<<9)
 #define HUD_DRAW_RT				(1<<10)
 #define HUD_WEAPON_RT2			(1<<11)
-
+#define HUD_CROSSHAIR_BUILD     (1<<12) // старый стиль курсора
+#define HUD_INFO_MONSTER     (1<<13) // красный прицел на монстрах
 class ENGINE_API IRender_Visual;
 class CUI;
 
@@ -30,6 +31,7 @@ public:
 	
 	virtual		void		Render_First			(){;}
 	virtual		void		Render_Last				(){;}
+	virtual		void		Render_Actor_Shadow(){ ; }	// added by KD
 	
 	virtual		void		OnFrame					(){;}
 	virtual		void		OnEvent					(EVENT E, u64 P1, u64 P2){;}
