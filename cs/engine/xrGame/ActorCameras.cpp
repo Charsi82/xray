@@ -24,6 +24,7 @@
 
 extern BOOL dbg_draw_camera_collision;
 void	collide_camera( CCameraBase & camera, float _viewport_near  );
+static float CurrentHeight = 0.f;//smooth crouch fix
 
 void CActor::cam_Set	(EActorCameras style)
 {
@@ -276,7 +277,17 @@ void CActor::cam_Update(float dt, float fFOV)
 	if( (mstate_real & mcClimb) && (cam_active!=eacFreeLook) )
 		camUpdateLadder(dt);
 	on_weapon_shot_update();
-	Fvector point		= {0,CameraHeight(),0}; 
+
+	// Alex ADD: smooth crouch fix
+	if (!CurrentHeight)CurrentHeight = CameraHeight();
+	float HeightInterpolationSpeed = 9.f;
+	if (CurrentHeight != CameraHeight() && !Device.dwPrecacheFrame)
+	{
+		CurrentHeight = (CurrentHeight * (1.0f - HeightInterpolationSpeed*dt)) + (CameraHeight() * HeightInterpolationSpeed*dt);
+	}
+	Fvector point = { 0, CurrentHeight, 0 };
+	//Fvector point		= {0,CameraHeight(),0}; 
+	
 	Fvector dangle		= {0,0,0};
 	Fmatrix				xform;
 	xform.setXYZ		(0,r_torso.yaw,0);
