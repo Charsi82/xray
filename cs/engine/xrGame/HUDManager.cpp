@@ -214,6 +214,7 @@ void CHUDManager::Render_Last()
 	::Render->set_HUD				(FALSE);
 }
 
+#include "Inventory.h"
 void CHUDManager::Render_Actor_Shadow()	// added by KD
 {
 	if (0 == pUI)						return;
@@ -225,6 +226,10 @@ void CHUDManager::Render_Actor_Shadow()	// added by KD
 	// in other modes actor model already in scene graph and renders well
 	::Render->set_Object(O->H_Root());
 	O->renderable_Render();
+	
+	// active item shadow
+	auto item = A->inventory().ActiveItem();
+	if (item){ ::Render->set_Object(smart_cast<CObject*>(item)); item->renderable_Render(); };
 }
 
 #include "player_hud.h"
