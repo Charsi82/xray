@@ -10,6 +10,7 @@
 #include "script_engine.h"
 #include "ai_space.h"
 #include "script_debugger.h"
+#include "script_additional_libs.h"
 
 using namespace luabind;
 
@@ -188,6 +189,8 @@ ICF	u32	script_time_global	()	{ return 0; }
 #pragma optimize("s",on)
 void CScriptEngine::script_register(lua_State *L)
 {
+	open_additional_libs(L); //RvP
+	
 	module(L)[
 		class_<profile_timer_script>("profile_timer")
 			.def(constructor<>())
