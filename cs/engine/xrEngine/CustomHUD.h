@@ -14,8 +14,8 @@ ENGINE_API extern Flags32		psHUD_Flags;
 #define HUD_CROSSHAIR_RT2		(1<<9)
 #define HUD_DRAW_RT				(1<<10)
 #define HUD_WEAPON_RT2			(1<<11)
-#define HUD_CROSSHAIR_BUILD     (1<<12) // ÑÑ‚Ð°Ñ€Ñ‹Ð¹ ÑÑ‚Ð¸Ð»ÑŒ ÐºÑƒÑ€ÑÐ¾Ñ€Ð°
-#define HUD_INFO_MONSTER     (1<<13) // ÐºÑ€Ð°ÑÐ½Ñ‹Ð¹ Ð¿Ñ€Ð¸Ñ†ÐµÐ» Ð½Ð° Ð¼Ð¾Ð½ÑÑ‚Ñ€Ð°Ñ…
+#define HUD_CROSSHAIR_BUILD     (1<<12) // ñòàðûé ñòèëü êóðñîðà
+#define HUD_INFO_MONSTER     (1<<13) // êðàñíûé ïðèöåë íà ìîíñòðàõ
 class ENGINE_API IRender_Visual;
 class CUI;
 

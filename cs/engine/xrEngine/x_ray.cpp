@@ -26,7 +26,7 @@
 #include <process.h>
 // OpenAutomate
 #include "xrSash.h"
-// ÐŸÑ€Ð¸Ð±Ð»ÑƒÐ´Ð¸Ð½Ð° Ð´Ð»Ñ SecuROM-Ð°
+// Ïðèáëóäèíà äëÿ SecuROM-à
 #include "securom_api.h"
 
 #ifndef DEDICATED_SERVER
@@ -61,7 +61,7 @@ static bool IntroFinished = false;
 
 void doBenchmark(const char* name);
 
-// Ð¤ÑƒÐ½Ñ†Ð¸Ñ Ð´Ð»Ñ Ñ‚ÑƒÐ¿Ñ‹Ñ… Ñ‚Ñ€ÐµÐ±Ð¾Ð²Ð°Ð½Ð¸Ð¹ THQ Ð¸ Ñ‚ÑƒÐ¿Ñ‹Ñ… Ð°Ð¼ÐµÑ€Ð¸ÐºÐ°Ð½ÑÐºÐ¸Ñ… Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹
+// Ôóíöèÿ äëÿ òóïûõ òðåáîâàíèé THQ è òóïûõ àìåðèêàíñêèõ ïîëüçîâàòåëåé
 bool IsOutOfVirtualMemory()
 {
     SECUROM_MARKER_HIGH_SECURITY_ON(1)
@@ -71,7 +71,7 @@ bool IsOutOfVirtualMemory()
         return false;
     DWORD pageFileSize = (DWORD)(memStatus.ullTotalPageFile / (1024 * 1024));
     DWORD physMemSize = (DWORD)(memStatus.ullTotalPhys / (1024 * 1024));
-    // Ð”Ð¾Ð²Ð¾Ð»ÑŒÐ½Ð¾ Ð¾Ñ‚Ñ„Ð¾Ð½Ð°Ñ€Ð½Ð¾Ðµ ÑƒÑÐ»Ð¾Ð²Ð¸Ðµ
+    // Äîâîëüíî îòôîíàðíîå óñëîâèå
     if (physMemSize > 500 && pageFileSize + physMemSize > 2500)
         return false;
     HINSTANCE hApp = GetModuleHandle(NULL);
