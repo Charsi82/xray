@@ -1,0 +1,170 @@
+local function print(txt) news_manager.send_tip(db.actor, "dbg:"..tostring(txt)) end
+--[[local _cbs ={
+	"use_object",
+	"on_key_press",
+	"on_mouse_wheel", 
+	"switch_torch", 
+	"on_key_release", 
+	"on_key_hold", 
+	"on_mouse_move",
+}]]
+
+
+local used_car_id = 0
+function init()
+--[[event("on_actor_weapon_zoom_in"):register(function(e)
+	print("on_actor_weapon_zoom_in")
+end)
+event("on_actor_weapon_zoom_out"):register(function(e)
+	print("on_actor_weapon_zoom_out")
+end)]]
+
+event("on_attach_vehicle"):register(function(e)
+	print("on_attach_vehicle_"..e[1])
+end)
+
+event("on_detach_vehicle"):register(function(e)
+	local car_id = db.actor:get_holder_id()
+	local obj = level.object_by_id(car_id)
+	if not obj then return end
+	print("on_detach_vehicle_"..car_id)
+	local car = obj:get_car()
+	if not car then return end
+	level.add_call(function() 
+	local curVel = car:CurrentVel():magnitude()
+	 print("vel="..curVel)
+	return curVel<0.5 end, function() print("stop") end)
+end)
+
+local act_slot = -1
+event("on_change_slot"):register(function(e)
+	-- print("on_change_slot:"..e[1].."_"..tostring(e[2]))
+
+end)
+
+event("actor_update"):register(
+function()
+	local _asl = db.actor:active_slot()
+	if act_slot~= _asl then
+		act_slot = _asl
+		-- print("on_change_slot:"..act_slot)
+	end
+end)
+
+local ammo_id = 0
+local car_id = 0
+event("on_key_press"):register(function(e)
+	 if e[1]==DIK_keys.DIK_NUMPAD0 then
+			local path = getFS():update_path("$game_scripts$" , "dynamic_test.script")
+			local res, err = pcall(dofile, path)
+			get_console():execute("load ~~dbg:"..( res and "OK" or err))
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD1 then
+		local sobj = alife():create("vehicle_btr", db.actor:position():add(db.actor:direction():mul(3)),db.actor:level_vertex_id(), db.actor:game_vertex_id())
+		car_id = sobj.id
+		-- alife():create("wpn_addon_scope",vector(),0,0,0)
+		-- alife():create("wpn_svd",vector(),0,0,0)
+--[[		local obj = db.actor:object("ammo_5.45x39_fmj")
+		if obj then ammo_id = obj:id() end]]
+--[[		print ("test medusa on belt")
+		local obj = db.actor:object("af_medusa")
+		if obj then
+			print (db.actor:is_on_belt(obj))
+		end]]
+--[[		local npc = level_object_by_sid(410)
+		if npc then
+			if npc.buy_item_condition_factor then
+				npc:buy_item_condition_factor(0.2)
+			else
+				print("no_buy_item_condition_factor")
+			end
+		end]]
+		-- level.change_game_time( -1,-2,-3 )
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD2 then
+--[[			local f = db.actor.attach_vehicle
+			local auto = level.object_by_id(used_car_id)
+			if used_car_id~=0 and f and auto and type(f)=='function' then db.actor:attach_vehicle(auto) end]]
+--[[			if ammo_id>0 then
+				local obj = level.object_by_id(ammo_id)
+				local func = obj.set_position
+				if func and type(func) == 'function' then print("ok") obj:set_position( db.actor:position():add(db.actor:direction():mul(3)) ) end
+			end]]
+--[[			local npc = level_object_by_sid(303)
+			if npc then npc:set_position( db.actor:position():add(db.actor:direction():mul(3)) ) end]]
+--[[			print("test pm in slot")
+		local obj = db.actor:object("wpn_pm")
+		if obj then
+			print (db.actor:is_in_slot(obj))
+		end]]
+		--level.set_time()
+		if car_id~=0 then
+			local car = level.object_by_id(car_id)
+			if car then
+				db.actor:attach_vehicle(car)
+			end
+		end
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD3 then
+		--alife():create("vehicle_btr", db.actor:position():add(db.actor:direction():mul(3)),db.actor:level_vertex_id(), db.actor:game_vertex_id())
+		
+--[[		local f = db.actor.detach_vehicle
+		if f and type(f)=='function' then db.actor:detach_vehicle() end]]
+--[[		print("test move pm to slot false")
+		local obj = db.actor:object("wpn_pm")
+		if obj then
+			db.actor:move_to_slot(obj, false)
+		end
+		db.actor:reset_menu()]]
+		-- level.change_game_time( 1,2,3 )
+		if car_id~=0 then
+			local car = level.object_by_id(car_id)
+			if car then
+				db.actor:detach_vehicle()
+			end
+		end
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD4 then
+		--alife():create("vehicle_btr", db.actor:position():add(db.actor:direction():mul(3)),db.actor:level_vertex_id(), db.actor:game_vertex_id())
+		
+--[[		local f = db.actor.switch_zoom_inert_effector
+		if f and type(f)=='function' then print( 'off' )
+			print(db.actor:switch_zoom_inert_effector())
+		local wpn = db.actor:active_item()
+		end]]
+--[[		local wpn = db.actor:active_item()
+		if wpn and type(db.actor.switch_ezi)=='function' then print( db.actor:switch_ezi( true ) ) end]]
+		-- alife():create("wpn_m134", vector(),0,0,0)
+		-- print("test pm move to slot true")
+--[[		local obj = db.actor:object("wpn_pm")
+		if obj then
+			-- db.actor:move_to_slot(obj, true)
+			obj:set_condition(0.1)
+		end]]
+		db.actor:set_actor_direction_vector( vector():set(0,0,0) )
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD5 then
+		-- alife():create("vehicle_btr", db.actor:position():add(db.actor:direction():mul(3)),db.actor:level_vertex_id(), db.actor:game_vertex_id())
+		
+--[[		local wpn = db.actor:active_item()
+		if wpn and type(db.actor.switch_ezi)=='function' then print( db.actor:switch_ezi( false ) ) end]]
+--[[		print("test move pm to ruck")
+		local obj = db.actor:object("wpn_pm")
+		if obj then
+			db.actor:move_to_ruck(obj)
+		end
+		db.actor:reset_menu()]]
+		db.actor:set_actor_direction_vector( vector():set(0,1,0) )
+	 end
+	 if e[1]==DIK_keys.DIK_NUMPAD6 then
+--[[		print("move medusa to belt")
+		local obj = db.actor:object("af_medusa")
+		if obj then
+			db.actor:move_to_belt(obj)
+		end]]
+		-- db.actor:switch_to_trade()
+		db.actor:set_actor_direction_vector( vector():set(0,-1,0) )
+	 end
+
+end)
+end
