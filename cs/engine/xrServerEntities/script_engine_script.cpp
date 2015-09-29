@@ -18,6 +18,8 @@ void LuaLog(LPCSTR caMessage)
 {
 #ifndef MASTER_GOLD
 	ai().script_engine().script_log	(ScriptStorage::eLuaMessageTypeMessage,"%s",caMessage);
+#else
+	Log(caMessage);
 #endif // #ifndef MASTER_GOLD
 
 #ifdef USE_DEBUGGER
@@ -28,9 +30,17 @@ void LuaLog(LPCSTR caMessage)
 #endif // #ifdef USE_DEBUGGER
 }
 
+//AVO:
+void PrintStack()
+{
+	ai().script_engine().print_stack();
+}
+//-AVO
+
 void ErrorLog(LPCSTR caMessage)
 {
 	ai().script_engine().error_log("%s",caMessage);
+	ai().script_engine().print_stack();
 #ifdef USE_DEBUGGER
 #	ifndef USE_LUA_STUDIO
 		if( ai().script_engine().debugger() ){
@@ -42,8 +52,8 @@ void ErrorLog(LPCSTR caMessage)
 
 void FlushLogs()
 {
-#ifdef DEBUG
 	FlushLog();
+#ifdef DEBUG
 	ai().script_engine().flush_log();
 #endif // DEBUG
 }
@@ -205,6 +215,7 @@ void CScriptEngine::script_register(lua_State *L)
 
 	function	(L,	"log",							LuaLog);
 	function	(L,	"error_log",					ErrorLog);
+	function	(L, "print_stack",					PrintStack);
 	function	(L,	"flush",						FlushLogs);
 	function	(L,	"prefetch",						prefetch_module);
 	function	(L,	"verify_if_thread_is_running",	verify_if_thread_is_running);

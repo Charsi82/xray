@@ -269,9 +269,9 @@ void CScriptStorage::reinit	()
 	luajit::open_lib	(lua(),	LUA_MATHLIBNAME,	luaopen_math);
 	luajit::open_lib	(lua(),	LUA_STRLIBNAME,		luaopen_string);
 
-#ifdef DEBUG
+//#ifdef DEBUG
 	luajit::open_lib	(lua(),	LUA_DBLIBNAME,		luaopen_debug);
-#endif // #ifdef DEBUG
+//#endif // #ifdef DEBUG
 
 	if (!strstr(Core.Params,"-nojit")) {
 		luajit::open_lib(lua(),	LUA_JITLIBNAME,		luaopen_jit);
@@ -297,12 +297,12 @@ int CScriptStorage::vscript_log		(ScriptStorage::ELuaMessageType tLuaMessageType
 #	endif
 #endif
 
-#ifndef PRINT_CALL_STACK
-	return		(0);
-#else // #ifdef PRINT_CALL_STACK
+//#ifndef PRINT_CALL_STACK
+	//return		(0);
+//#else // #ifdef PRINT_CALL_STACK
 #	ifndef NO_XRGAME_SCRIPT_ENGINE
-		if (!psAI_Flags.test(aiLua) && (tLuaMessageType != ScriptStorage::eLuaMessageTypeError))
-			return(0);
+		//if (!psAI_Flags.test(aiLua) && (tLuaMessageType != ScriptStorage::eLuaMessageTypeError))
+			//return(0);
 #	endif // #ifndef NO_XRGAME_SCRIPT_ENGINE
 
 	LPCSTR		S = "", SS = "";
@@ -369,10 +369,10 @@ int CScriptStorage::vscript_log		(ScriptStorage::ELuaMessageType tLuaMessageType
 #endif // #ifdef DEBUG
 
 	return	(l_iResult);
-#endif // #ifdef PRINT_CALL_STACK
+//#endif // #ifdef PRINT_CALL_STACK
 }
 
-#ifdef PRINT_CALL_STACK
+//#ifdef PRINT_CALL_STACK
 void CScriptStorage::print_stack		()
 {
 #ifdef DEBUG
@@ -387,15 +387,26 @@ void CScriptStorage::print_stack		()
 	for (int i=0; lua_getstack(L,i,&l_tDebugInfo);++i ) {
 		lua_getinfo			(L,"nSlu",&l_tDebugInfo);
 		if (!l_tDebugInfo.name)
-			script_log		(ScriptStorage::eLuaMessageTypeError,"%2d : [%s] %s(%d) : %s",i,l_tDebugInfo.what,l_tDebugInfo.short_src,l_tDebugInfo.currentline,"");
+			script_log_no_stack(ScriptStorage::eLuaMessageTypeError, "%2d : [%s] %s(%d) : %s", i, l_tDebugInfo.what, l_tDebugInfo.short_src, l_tDebugInfo.currentline, "");
 		else
 			if (!xr_strcmp(l_tDebugInfo.what,"C"))
-				script_log	(ScriptStorage::eLuaMessageTypeError,"%2d : [C  ] %s",i,l_tDebugInfo.name);
+				script_log_no_stack(ScriptStorage::eLuaMessageTypeError, "%2d : [C  ] %s", i, l_tDebugInfo.name);
 			else
-				script_log	(ScriptStorage::eLuaMessageTypeError,"%2d : [%s] %s(%d) : %s",i,l_tDebugInfo.what,l_tDebugInfo.short_src,l_tDebugInfo.currentline,l_tDebugInfo.name);
+				script_log_no_stack(ScriptStorage::eLuaMessageTypeError, "%2d : [%s] %s(%d) : %s", i, l_tDebugInfo.what, l_tDebugInfo.short_src, l_tDebugInfo.currentline, l_tDebugInfo.name);
 	}
 }
-#endif // #ifdef PRINT_CALL_STACK
+//#endif // #ifdef PRINT_CALL_STACK
+
+//AVO: added to stop duplicate stack output prints in log
+int __cdecl CScriptStorage::script_log_no_stack(ScriptStorage::ELuaMessageType tLuaMessageType, LPCSTR caFormat, ...)
+{
+	va_list	 marker;
+	va_start(marker, caFormat);
+	int result = vscript_log(tLuaMessageType, caFormat, marker);
+	va_end(marker);
+	return result;
+}
+//-AVO
 
 int __cdecl CScriptStorage::script_log	(ScriptStorage::ELuaMessageType tLuaMessageType, LPCSTR caFormat, ...)
 {

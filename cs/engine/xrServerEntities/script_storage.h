@@ -54,9 +54,12 @@ protected:
 			void				reinit						();
 
 public:
-#ifdef PRINT_CALL_STACK
+//#ifdef PRINT_CALL_STACK
 			void				print_stack					();
-#endif // #ifdef PRINT_CALL_STACK
+			//AVO: added to stop duplicate stack output prints in log
+			static int __cdecl script_log_no_stack(ScriptStorage::ELuaMessageType tLuaMessageType, LPCSTR caFormat, ...);
+			//-AVO
+//#endif // #ifdef PRINT_CALL_STACK
 
 public:
 								CScriptStorage				();
