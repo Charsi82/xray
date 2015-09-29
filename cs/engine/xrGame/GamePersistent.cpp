@@ -429,7 +429,7 @@ void CGamePersistent::WeathersUpdate()
 void CGamePersistent::start_logo_intro		()
 {
 #ifdef MASTER_GOLD
-	if ((0 != strstr(Core.Params, "-nointro")) || g_SASH.IsRunning())
+	if ((0 != strstr(Core.Params, "-nointro")) || g_SASH.IsRunning()) // fix -nointro
 #else	// #ifdef MASTER_GOLD
 	if ((0!=strstr(Core.Params,"-nointro")) || g_SASH.IsRunning())
 #endif	// #ifdef MASTER_GOLD

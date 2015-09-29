@@ -182,16 +182,16 @@ public:
 	_DECLARE_FUNCTION10	(GetBleeding		,			float);
 	_DECLARE_FUNCTION10	(GetMorale			,			float);
 	_DECLARE_FUNCTION10 (GetSatiety			,			float);
-	_DECLARE_FUNCTION10 (GetAlcohol			,			float);
+	_DECLARE_FUNCTION10 (GetAlcohol			,			float);//+
 
 	_DECLARE_FUNCTION11	(SetHealth,			void, float);
 	_DECLARE_FUNCTION11	(SetPsyHealth,		void, float);
 	_DECLARE_FUNCTION11	(SetPower,			void, float);
-	_DECLARE_FUNCTION11	(SetSatiety,		void, float);
+	_DECLARE_FUNCTION11	(SetSatiety,		void, float);//*
 	_DECLARE_FUNCTION11	(SetRadiation,		void, float);
 	_DECLARE_FUNCTION11	(SetCircumspection,	void, float);
 	_DECLARE_FUNCTION11	(SetMorale,			void, float);
-	_DECLARE_FUNCTION11 (SetAlcohol,		void, float);
+	_DECLARE_FUNCTION11 (SetAlcohol,		void, float);//+
 
 			void				set_fov				(float new_fov);
 			void				set_range			(float new_range);
@@ -272,7 +272,7 @@ public:
 	// CProjector
 			Fvector				GetCurrentDirection		();
 			bool				IsInvBoxEmpty			();
-	//ГЇГҐГ°ГҐГ¤Г Г·Г  ГЇГ®Г°Г¶ГЁГЁ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ InventoryOwner
+	//передача порции информации InventoryOwner
 			bool				GiveInfoPortion		(LPCSTR info_id);
 			bool				DisableInfoPortion	(LPCSTR info_id);
 			void				GiveGameNews		(LPCSTR caption, LPCSTR news, LPCSTR texture_name, int delay, int show_time);
@@ -280,11 +280,11 @@ public:
 
 			void				AddIconedTalkMessage_old(LPCSTR text, LPCSTR texture_name, LPCSTR templ_name) {};
 			void				AddIconedTalkMessage(LPCSTR caption, LPCSTR text, LPCSTR texture_name, LPCSTR templ_name);
-	//ГЇГ°ГҐГ¤ГЁГЄГ ГІГ» Г­Г Г«ГЁГ·ГЁГї/Г®ГІГ±ГіГІГ±ГІГўГЁГї ГЇГ®Г°Г¶ГЁГЁ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Гі ГЇГҐГ°Г±Г®Г­Г Г¦Г 
+	//предикаты наличия/отсутствия порции информации у персонажа
 			bool				HasInfo				(LPCSTR info_id);
 			bool				DontHasInfo			(LPCSTR info_id);
 			xrTime				GetInfoTime			(LPCSTR info_id);
-	//Г°Г ГЎГ®ГІГ  Г± Г§Г Г¤Г Г­ГЁГїГ¬ГЁ
+	//работа с заданиями
 			ETaskState			GetGameTaskState	(LPCSTR task_id);
 			void				SetGameTaskState	(ETaskState state, LPCSTR task_id);
 			void				GiveTaskToActor		(CGameTask* t, u32 dt, bool bCheckExisting, u32 t_timer);

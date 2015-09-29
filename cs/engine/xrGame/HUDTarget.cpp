@@ -90,7 +90,7 @@ ICF static BOOL pick_trace_callback(collide::rq_result& result, LPVOID params)
 		return FALSE;
 	}else
 	{
-		//ГЇГ®Г«ГіГ·ГЁГІГј ГІГ°ГҐГіГЈГ®Г«ГјГ­ГЁГЄ ГЁ ГіГ§Г­Г ГІГј ГҐГЈГ® Г¬Г ГІГҐГ°ГЁГ Г«
+		//получить треугольник и узнать его материал
 		CDB::TRI* T		= Level().ObjectSpace.GetStaticTris()+result.element;
 		
 		SGameMtl* mtl = GMLib.GetMaterialByIdx(T->material);
@@ -276,7 +276,7 @@ void CHUDTarget::Render()
 		F->OutNext		("%4.1f - %4.2f - %d",PP.RQ.range, PP.power, PP.pass);
 	}
 
-	//Г®ГІГ°ГҐГ­Г¤ГҐГ°ГЁГІГј ГЄГ°ГіГ¦Г®Г·ГҐГЄ ГЁГ«ГЁ ГЄГ°ГҐГ±ГІГЁГЄ
+	//отрендерить кружочек или крестик
 	if(!m_bShowCrosshair)
 	{
 		
@@ -311,7 +311,7 @@ void CHUDTarget::Render()
 		UIRender->FlushPrimitive();
 
 	}else{
-		//Г®ГІГ°ГҐГ­Г¤ГҐГ°ГЁГІГј ГЇГ°ГЁГ¶ГҐГ«
+		//отрендерить прицел
 		HUDCrosshair.cross_color	= C;
 		HUDCrosshair.OnRender		();
 	}

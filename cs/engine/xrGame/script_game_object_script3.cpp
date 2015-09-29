@@ -316,7 +316,7 @@ class_<CScriptGameObject> &script_register_game_object2(class_<CScriptGameObject
 		.def("start_particles",				&CScriptGameObject::start_particles)
 		.def("stop_particles",				&CScriptGameObject::stop_particles)
 
-///// NEW //////////////////////////////////////////////////////////////
+		// NEW functions /////////////////////////////////////////////
 
 		.def("is_actor_outdoors", &CScriptGameObject::IsActorOutdoors)
 		.def("get_total_weight", &CScriptGameObject::GetTotalWeight)
@@ -346,6 +346,7 @@ class_<CScriptGameObject> &script_register_game_object2(class_<CScriptGameObject
 		.def("ruck_count", &CScriptGameObject::RuckSize)
 
 		.def("get_visual_name", &CScriptGameObject::GetVisualName)
+		
 
 		.def("attach_vehicle", &CScriptGameObject::AttachVehicle)
 		.def("detach_vehicle", &CScriptGameObject::DetachVehicle)

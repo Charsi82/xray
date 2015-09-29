@@ -42,6 +42,8 @@ extern	BOOL death_anim_debug;
 #define USE_SMART_HITS
 #define USE_IK
 
+extern Flags32 g_uCommonFlags;
+
 void  NodynamicsCollide( bool& do_colide, bool bo1, dContact& c, SGameMtl * /*material_1*/, SGameMtl * /*material_2*/ )
 {
 	dBodyID body1=dGeomGetBody( c.geom.g1 );
@@ -1092,7 +1094,12 @@ void	CCharacterPhysicsSupport::	CreateShell						( CObject* who, Fvector& dp, Fv
 	if(IsGameTypeSingle())
 	{
 		m_pPhysicsShell->SetPrefereExactIntegration	();//use exact integration for ragdolls in single
+		//AVO: turn on collision with dead bodies (thanks malandrinus)
+//#ifdef DEAD_BODY_COLLISION
+		if (!g_uCommonFlags.test(2)) //flDeadBodyCollision
 		m_pPhysicsShell->SetRemoveCharacterCollLADisable();
+//#endif
+		//-AVO
 	}
 	else
 		m_pPhysicsShell->SetIgnoreDynamic();

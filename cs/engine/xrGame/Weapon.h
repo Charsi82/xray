@@ -85,7 +85,7 @@ public:
 	virtual bool			NeedToDestroyObject	() const; 
 	virtual ALife::_TIME_ID	TimePassedAfterIndependant() const;
 protected:
-	//ГўГ°ГҐГ¬Гї ГіГ¤Г Г«ГҐГ­ГЁГї Г®Г°ГіГ¦ГЁГї
+	//время удаления оружия
 	ALife::_TIME_ID			m_dwWeaponRemoveTime;
 	ALife::_TIME_ID			m_dwWeaponIndependencyTime;
 
@@ -143,13 +143,13 @@ public:
 
 	virtual bool UseScopeTexture() {return true;};
 
-	//Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГўГЁГ¤ГЁГ¬Г®Г±ГІГЁ Г¤Г«Гї ГЄГ®Г±ГІГ®Г·ГҐГЄ Г Г¤Г¤Г®Г­Г®Гў
+	//обновление видимости для косточек аддонов
 			void UpdateAddonsVisibility();
 			void UpdateHUDAddonsVisibility();
-	//ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї Г±ГўГ®Г©Г±ГІГў ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГҐГ­Г­Г»Гµ Г Г¤Г¤Г®Г­Г®Гў
+	//инициализация свойств присоединенных аддонов
 	virtual void InitAddons();
 
-	//Г¤Г«Гї Г®ГІГ®ГЎГ°Г®Г Г¦ГҐГ­ГЁГї ГЁГЄГ®Г­Г®ГЄ Г ГЇГЈГ°ГҐГ©Г¤Г®Гў Гў ГЁГ­ГІГҐГ°ГґГҐГ©Г±ГҐ
+	//для отоброажения иконок апгрейдов в интерфейсе
 	int	GetScopeX() {return m_iScopeX;}
 	int	GetScopeY() {return m_iScopeY;}
 	int	GetSilencerX() {return m_iSilencerX;}
@@ -166,20 +166,20 @@ public:
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}//dont use!!! for buy menu only!!!
 protected:
-	//Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­Г­Г»Гµ Г Г¤Г¤Г®Г­Г®Гў
+	//состояние подключенных аддонов
 	u8 m_flagsAddOnState;
 
-	//ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГј ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­ГЁГї Г°Г Г§Г«ГЁГ·Г­Г»Гµ Г Г¤Г¤Г®Г­Г®Гў
+	//возможность подключения различных аддонов
 	ALife::EWeaponAddonStatus	m_eScopeStatus;
 	ALife::EWeaponAddonStatus	m_eSilencerStatus;
 	ALife::EWeaponAddonStatus	m_eGrenadeLauncherStatus;
 
-	//Г­Г Г§ГўГ Г­ГЁГї Г±ГҐГЄГ¶ГЁГ© ГЇГ®Г¤ГЄГ«ГѕГ·Г ГҐГ¬Г»Гµ Г Г¤Г¤Г®Г­Г®Гў
+	//названия секций подключаемых аддонов
 	shared_str		m_sScopeName;
 	shared_str		m_sSilencerName;
 	shared_str		m_sGrenadeLauncherName;
 
-	//Г±Г¬ГҐГ№ГҐГ­ГЁГҐ ГЁГЄГ®Г­Г®Гў Г ГЇГЈГ°ГҐГ©Г¤Г®Гў Гў ГЁГ­ГўГҐГ­ГІГ Г°ГҐ
+	//смещение иконов апгрейдов в инвентаре
 	int	m_iScopeX, m_iScopeY;
 	int	m_iSilencerX, m_iSilencerY;
 	int	m_iGrenadeLauncherX, m_iGrenadeLauncherY;
@@ -188,16 +188,16 @@ protected:
 
 	struct SZoomParams
 	{
-		bool			m_bZoomEnabled;			//Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ Г°ГҐГ¦ГЁГ¬Г  ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­ГЁГї
+		bool			m_bZoomEnabled;			//разрешение режима приближения
 		bool			m_bHideCrosshairInZoom;
 		bool			m_bZoomDofEnabled;
 
-		bool			m_bIsZoomModeNow;		//ГЄГ®ГЈГ¤Г  Г°ГҐГ¦ГЁГ¬ ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­ГЁГї ГўГЄГ«ГѕГ·ГҐГ­
-		float			m_fCurrentZoomFactor;	//ГІГҐГЄГіГ№ГЁГ© ГґГ ГЄГІГ®Г° ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­ГЁГї
-		float			m_fZoomRotateTime;		//ГўГ°ГҐГ¬Гї ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­ГЁГї
+		bool			m_bIsZoomModeNow;		//когда режим приближения включен
+		float			m_fCurrentZoomFactor;	//текущий фактор приближения
+		float			m_fZoomRotateTime;		//время приближения
 	
-		float			m_fIronSightZoomFactor;	//ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГўГҐГ«ГЁГ·ГҐГ­ГЁГї ГЇГ°ГЁГ¶ГҐГ«ГЁГўГ Г­ГЁГї
-		float			m_fScopeZoomFactor;		//ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГўГҐГ«ГЁГ·ГҐГ­ГЁГї ГЇГ°ГЁГ¶ГҐГ«Г 
+		float			m_fIronSightZoomFactor;	//коэффициент увеличения прицеливания
+		float			m_fScopeZoomFactor;		//коэффициент увеличения прицела
 
 		float			m_fZoomRotationFactor;
 		
@@ -224,7 +224,7 @@ public:
 	IC void					SetZoomFactor		(float f) 		{m_zoom_params.m_fCurrentZoomFactor = f;}
 
 	virtual	float			CurrentZoomFactor	();
-	//ГЇГ®ГЄГ Г§Г»ГўГ ГҐГІ, Г·ГІГ® Г®Г°ГіГ¦ГЁГҐ Г­Г ГµГ®Г¤ГЁГІГ±Гї Гў Г±Г®Г®Г±ГІГ®ГїГ­ГЁГЁ ГЇГ®ГўГ®Г°Г®ГІГ  Г¤Г«Гї ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­Г­Г®ГЈГ® ГЇГ°ГЁГ¶ГҐГ«ГЁГўГ Г­ГЁГї
+	//показывает, что оружие находится в соостоянии поворота для приближенного прицеливания
 			bool			IsRotatingToZoom	() const		{	return (m_zoom_params.m_fZoomRotationFactor<1.f);}
 
 	virtual	u8				GetCurrentHudOffsetIdx ();
@@ -249,12 +249,12 @@ protected:
 	bool					m_can_be_strapped;
 
 	Fmatrix					m_Offset;
-	// 0-ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГІГ±Гї ГЎГҐГ§ ГіГ·Г Г±ГІГЁГї Г°ГіГЄ, 1-Г®Г¤Г­Г  Г°ГіГЄГ , 2-Г¤ГўГҐ Г°ГіГЄГЁ
+	// 0-используется без участия рук, 1-одна рука, 2-две руки
 	EHandDependence			eHandDependence;
 	bool					m_bIsSingleHanded;
 
 public:
-	//Г§Г ГЈГ°ГіГ¦Г ГҐГ¬Г»ГҐ ГЇГ Г°Г Г¬ГҐГІГ°Г»
+	//загружаемые параметры
 	Fvector					vLoadedFirePoint;
 	Fvector					vLoadedFirePoint2;
 
@@ -288,7 +288,7 @@ protected:
 	virtual void			OnStateSwitch			(u32 S);
 	virtual void			OnAnimationEnd			(u32 state);
 
-	//ГІГ°Г Г±Г±ГЁГ°Г®ГўГ Г­ГЁГҐ ГЇГ®Г«ГҐГІГ  ГЇГіГ«ГЁ
+	//трассирование полета пули
 	virtual	void			FireTrace			(const Fvector& P, const Fvector& D);
 	virtual float			GetWeaponDeterioration	();
 
@@ -299,7 +299,7 @@ protected:
 			void			StopShooting		();
     
 
-	// Г®ГЎГ°Г ГЎГ®ГІГЄГ  ГўГЁГ§ГіГ Г«ГЁГ§Г Г¶ГЁГЁ ГўГ»Г±ГІГ°ГҐГ«Г 
+	// обработка визуализации выстрела
 	virtual void			OnShot				(){};
 	virtual void			AddShotEffector		();
 	virtual void			RemoveShotEffector	();
@@ -312,7 +312,7 @@ public:
 	virtual	int				ShotsFired			() { return 0; }
 	virtual	int				GetCurrentFireMode	() { return 1; }
 
-	//ГЇГ Г°Г Г¬ГҐГІГ» Г®Г°ГіГ¦ГЁГї Гў Г§Г ГўГЁГ±ГЁГ¬Г®ГІГЁ Г®ГІ ГҐГЈГ® Г±Г®Г±ГІГ®ГїГ­ГЁГї ГЁГ±ГЇГ°Г ГўГ­Г®Г±ГІГЁ
+	//параметы оружия в зависимоти от его состояния исправности
 	float					GetConditionDispersionFactor	() const;
 	float					GetConditionMisfireProbability	() const;
 	virtual	float			GetConditionToShow				() const;
@@ -322,13 +322,13 @@ public:
 	CameraRecoil			zoom_cam_recoil;	// using zoom =(ironsight or scope)
 
 protected:
-	//ГґГ ГЄГІГ®Г° ГіГўГҐГ«ГЁГ·ГҐГ­ГЁГї Г¤ГЁГ±ГЇГҐГ°Г±ГЁГЁ ГЇГ°ГЁ Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®Г© ГЁГ§Г­Г®ГёГҐГ­Г®Г±ГІГЁ 
-	//(Г­Г  Г±ГЄГ®Г«ГјГЄГ® ГЇГ°Г®Г¶ГҐГ­ГІГ®Гў ГіГўГҐГ«ГЁГ·ГЁГІГ±Гї Г¤ГЁГ±ГЇГҐГ°Г±ГЁГї)
+	//фактор увеличения дисперсии при максимальной изношености 
+	//(на сколько процентов увеличится дисперсия)
 	float					fireDispersionConditionFactor;
-	//ГўГҐГ°Г®ГїГІГ­Г®Г±ГІГј Г®Г±ГҐГ·ГЄГЁ ГЇГ°ГЁ Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®Г© ГЁГ§Г­Г®ГёГҐГ­Г®Г±ГІГЁ
+	//вероятность осечки при максимальной изношености
 	float					misfireProbability;
 	float					misfireConditionK;
-	//ГіГўГҐГ«ГЁГ·ГҐГ­ГЁГҐ ГЁГ§Г­Г®ГёГҐГ­Г®Г±ГІГЁ ГЇГ°ГЁ ГўГ»Г±ГІГ°ГҐГ«ГҐ
+	//увеличение изношености при выстреле
 	float					conditionDecreasePerShot;
 	
 	struct SPDM
@@ -344,22 +344,22 @@ protected:
 	float					m_crosshair_inertion;
 	first_bullet_controller	m_first_bullet_controller;
 protected:
-	//Г¤Г«Гї Г®ГІГ¤Г Г·ГЁ Г®Г°ГіГ¦ГЁГї
+	//для отдачи оружия
 	Fvector					m_vRecoilDeltaAngle;
 
-	//Г¤Г«Гї Г±ГІГ Г«ГЄГҐГ°Г®Гў, Г·ГІГ®ГЎ Г®Г­ГЁ Г§Г­Г Г«ГЁ ГЅГґГґГҐГЄГІГЁГўГ­Г»ГҐ ГЈГ°Г Г­ГЁГ¶Г» ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГї 
-	//Г®Г°ГіГ¦ГЁГї
+	//для сталкеров, чтоб они знали эффективные границы использования 
+	//оружия
 	float					m_fMinRadius;
 	float					m_fMaxRadius;
 
 protected:	
-	//Г¤Г«Гї ГўГІГ®Г°Г®ГЈГ® Г±ГІГўГ®Г«Г 
+	//для второго ствола
 			void			StartFlameParticles2();
 			void			StopFlameParticles2	();
 			void			UpdateFlameParticles2();
 protected:
 	shared_str				m_sFlameParticles2;
-	//Г®ГЎГєГҐГЄГІ ГЇГ Г°ГІГЁГЄГ«Г®Гў Г¤Г«Гї Г±ГІГ°ГҐГ«ГјГЎГ» ГЁГ§ 2-ГЈГ® Г±ГІГўГ®Г«Г 
+	//объект партиклов для стрельбы из 2-го ствола
 	CParticlesObject*		m_pFlameParticles2;
 
 public:
@@ -387,9 +387,9 @@ protected:
 	int						iAmmoElapsed;		// ammo in magazine, currently
 	int						iMagazineSize;		// size (in bullets) of magazine
 
-	//Г¤Г«Гї ГЇГ®Г¤Г±Г·ГҐГІГ  Гў GetSuitableAmmoTotal
+	//для подсчета в GetSuitableAmmoTotal
 	mutable int				iAmmoCurrent;
-	mutable u32				m_dwAmmoCurrentCalcFrame;	//ГЄГ Г¤Г° Г­Г  ГЄГ®ГІГ®Г°Г®Г¬ ГЇГ°Г®Г±Г·ГЁГІГ Г«ГЁ ГЄГ®Г«-ГўГ® ГЇГ ГІГ°Г®Г­Г®Гў
+	mutable u32				m_dwAmmoCurrentCalcFrame;	//кадр на котором просчитали кол-во патронов
 	bool					m_bAmmoWasSpawned;
 
 	virtual bool			IsNecessaryItem	    (const shared_str& item_sect);

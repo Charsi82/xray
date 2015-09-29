@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////
-// script_game_object_inventory_owner.Г±pp :	ГґГіГ­ГЄГ¶ГЁГЁ Г¤Г«Гї inventory owner
+// script_game_object_inventory_owner.сpp :	функции для inventory owner
 //////////////////////////////////////////////////////////////////////////
 
 #include "pch_script.h"
@@ -323,9 +323,9 @@ void CScriptGameObject::DropItem			(CScriptGameObject* pItem)
 	CInventoryOwner* owner = smart_cast<CInventoryOwner*>(&object());
 	CInventoryItem* item = smart_cast<CInventoryItem*>(&pItem->object());
 
-	// Real Wolf: Р”Р»СЏ СЏС‰РёРєРѕРІ С‚РѕР¶Рµ РїСѓСЃС‚СЊ СЂР°Р±РѕС‚Р°РµС‚. 02.08.2014.
+	// Real Wolf: Для ящиков тоже пусть работает. 02.08.2014.
 	auto box = smart_cast<CInventoryBox*>(&object());
-	if ((!box && !owner) || !item){ //if(!owner||!item){
+	if ((!box && !owner) || !item){//if(!owner||!item){
 		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"CScriptGameObject::DropItem non-CInventoryOwner object !!!");
 		return;
 	}
@@ -371,7 +371,7 @@ void CScriptGameObject::MakeItemActive(CScriptGameObject* pItem)
 
 }
 
-//ГЇГҐГ°ГҐГ¤Г Г·ГҐ ГўГҐГ№ГЁ ГЁГ§ Г±ГўГ®ГҐГЈГ® ГЁГ­ГўГҐГ­ГІГ Г°Гї Гў ГЁГ­ГўГҐГ­ГІГ Г°Гј ГЇГ Г°ГІГ­ГҐГ°Г 
+//передаче вещи из своего инвентаря в инвентарь партнера
 void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject* pForWho)
 {
 	if (!pItem || !pForWho) {
@@ -386,17 +386,16 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 		return ;
 	}
 
-	// ГўГ»ГЎГ°Г®Г±ГЁГІГј Гі Г±ГҐГЎГї 
+	// выбросить у себя 
 	NET_Packet						P;
-	if (NULL != pItem->object().H_Parent() && this != pItem) // РёР· СЃРєСЂРёРїС‚РѕРІ С‡Р°СЃС‚Рѕ РїРѕРґР±РёСЂР°СЋС‚СЃСЏ "РЅРµР·Р°РІРёСЃРёРјС‹Рµ" РїСЂРµРґРјРµС‚С‹
+	if (NULL != pItem->object().H_Parent() && this != pItem) // из скриптов часто подбираются "независимые" предметы
 	{
 		CGameObject::u_EventGen(P, GE_OWNERSHIP_REJECT, object().ID());
 		P.w_u16(pIItem->object().ID());
 		CGameObject::u_EventSend(P);
 	}
-
-	// Г®ГІГ¤Г ГІГј ГЇГ Г°ГІГ­ГҐГ°Гі
-	CGameObject::u_EventGen			(P,GE_OWNERSHIP_TAKE, pForWho->object().ID());
+	// отдать партнеру
+	CGameObject::u_EventGen(P, GE_OWNERSHIP_TAKE, pForWho->object().ID());
 	P.w_u16							(pIItem->object().ID());
 	CGameObject::u_EventSend		(P);
 }
@@ -709,7 +708,7 @@ void  CScriptGameObject::SwitchToTrade		()
 {
 	CActor* pActor = smart_cast<CActor*>(&object());	if(!pActor) return;
 
-	//ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ Г­Г ГµГ®Г¤ГЁГ¬Г±Гї Гў Г°ГҐГ¦ГЁГ¬ГҐ single
+	//только если находимся в режиме single
 	CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 	if(!pGameSP) return;
 
@@ -723,7 +722,7 @@ void  CScriptGameObject::SwitchToUpgrade		()
 {
 	CActor* pActor = smart_cast<CActor*>(&object());	if(!pActor) return;
 
-	//ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ Г­Г ГµГ®Г¤ГЁГ¬Г±Гї Гў Г°ГҐГ¦ГЁГ¬ГҐ single
+	//только если находимся в режиме single
 	CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 	if(!pGameSP) return;
 
@@ -1378,7 +1377,7 @@ void CScriptGameObject::set_buy_item_condition_factor(float factor)
 	pInventoryOwner->trade_parameters().buy_item_condition_factor = factor;
 }
 #endif
-// РїРѕР»СѓС‡РёС‚СЊ СЃСѓРјРјР°СЂРЅС‹Р№ РІРµСЃ РёРЅРІРµРЅС‚Р°СЂСЏ
+// получить суммарный вес инвентаря
 float CScriptGameObject::GetTotalWeight() const
 {
 	CInventoryBox *inventory_box = smart_cast<CInventoryBox*>(&object());
@@ -1403,7 +1402,7 @@ float CScriptGameObject::GetTotalWeight() const
 	return				(inventory_owner->inventory().TotalWeight());
 }
 
-// РїРѕР»СѓС‡РёС‚СЊ РІРµСЃ РїСЂРµРґРјРµС‚Р°
+// получить вес предмета
 float CScriptGameObject::Weight() const
 {
 	CInventoryItem		*inventory_item = smart_cast<CInventoryItem*>(&object());

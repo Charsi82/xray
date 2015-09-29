@@ -96,19 +96,19 @@ public:
 	
 	virtual void				OnEvent				(NET_Packet& P, u16 type);
 	
-	virtual bool				Useful				() const;									// !!! ГЏГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј. (Г±Г¬. Гў Inventory.cpp)
+	virtual bool				Useful				() const;									// !!! Переопределить. (см. в Inventory.cpp)
 	virtual bool				Attach				(PIItem pIItem, bool b_send_event) {return false;}
 	virtual bool				Detach				(PIItem pIItem) {return false;}
-	//ГЇГ°ГЁ Г¤ГҐГІГ Г·ГҐ Г±ГЇГ ГіГ­ГЁГІГ±Гї Г­Г®ГўГ Гї ГўГҐГ№Гј ГЇГ°ГЁ Г§Г Г¤Г Г­Г­Г® Г­Г Г§ГўГ Г­ГЁГЁ Г±ГҐГЄГ¶ГЁГЁ
+	//при детаче спаунится новая вещь при заданно названии секции
 	virtual bool				Detach				(const char* item_section_name, bool b_spawn_item);
 	virtual bool				CanAttach			(PIItem pIItem) {return false;}
 	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
 
 	virtual EHandDependence		HandDependence		()	const	{return hd1Hand;};
 	virtual bool				IsSingleHanded		()	const	{return true;};	
-	virtual bool				ActivateItem		();									// !!! ГЏГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј. (Г±Г¬. Гў Inventory.cpp)
-	virtual void				DeactivateItem		();								// !!! ГЏГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј. (Г±Г¬. Гў Inventory.cpp)
-	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true ГҐГ±Г«ГЁ ГЁГ§ГўГҐГ±ГІГ­Г Гї ГЄГ®Г¬Г Г­Г¤Г , ГЁГ­Г Г·ГҐ false
+	virtual bool				ActivateItem		();									// !!! Переопределить. (см. в Inventory.cpp)
+	virtual void				DeactivateItem		();								// !!! Переопределить. (см. в Inventory.cpp)
+	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true если известная команда, иначе false
 
 
 	virtual void				OnH_B_Chield		();

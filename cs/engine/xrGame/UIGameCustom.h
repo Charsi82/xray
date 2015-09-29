@@ -137,7 +137,7 @@ public:
 			SDrawStaticStruct*	AddCustomStatic		(LPCSTR id, bool bSingleInstance);
 			SDrawStaticStruct*	GetCustomStatic		(LPCSTR id);
 			void				RemoveCustomStatic	(LPCSTR id);
-			void				SetCustomStaticToTop(LPCSTR id);
+			void				BringCustomStaticToTop(LPCSTR id);//+
 
 	virtual	shared_str	shedule_Name				() const		{ return shared_str("CUIGameCustom"); };
 	virtual bool		shedule_Needed				()				{return true;};

@@ -73,7 +73,7 @@ CCar::CCar()
 	m_exhaust_particles	="vehiclefx\\exhaust_1";
 	m_car_sound			= new SCarSound(this);
 
-	//Сѓ РјР°С€РёРЅС‹ СЃР»РѕС‚РѕРІ РІ РёРЅРІРµРЅС‚Р°СЂРµ РЅРµС‚
+	//у машины слотов в инвентаре нет
 	//inventory			= new CInventory();
 	//inventory->SetSlotsUseful(false);
 	m_doors_torque_factor = 2.f;
@@ -216,7 +216,7 @@ void CCar::SpawnInitPhysics	(CSE_Abstract	*D)
 	SetDefaultNetState				(so);
 	CPHUpdateObject::Activate       ();
 
-	m_pPhysicsShell->applyImpulse(Fvector().set(0,-1.f,0), 0.1);// С…РёС‚ РїРѕ С„РёР·. РѕР±РѕР»РѕС‡РєРµ, С‡С‚РѕР±С‹ РЅРµ РІРёСЃРµР»Р° РІ РІРѕР·РґСѓС…Рµ
+	m_pPhysicsShell->applyImpulse(Fvector().set(0,-1.f,0), 0.1);// хит по физ. оболочке, чтобы не висела в воздухе
 }
 
 void	CCar::net_Destroy()
@@ -1711,7 +1711,7 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 	inherited::OnEvent		(P,type);
 	CExplosive::OnEvent		(P,type);
 
-	//РѕР±СЂР°Р±РѕС‚РєР° СЃРѕРѕР±С‰РµРЅРёР№, РЅСѓР¶РЅС‹С… РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р±Р°РіР°Р¶РЅРёРєРѕРј РјР°С€РёРЅС‹
+	//обработка сообщений, нужных для работы с багажником машины
 /*	u16 id;
 	switch (type)
 	{

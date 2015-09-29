@@ -37,7 +37,7 @@ void CGrenade::Load(LPCSTR section)
 	m_sounds.LoadSound(section,"snd_checkout","sndCheckout",m_eSoundCheckout);
 
 	//////////////////////////////////////
-	//ГўГ°ГҐГ¬Гї ГіГЎГЁГ°Г Г­ГЁГї Г®Г°ГіГ¦ГЁГї Г± ГіГ°Г®ГўГ­Гї
+	//время убирания оружия с уровня
 	if(pSettings->line_exist(section,"grenade_remove_time"))
 		m_dwGrenadeRemoveTime = pSettings->r_u32(section,"grenade_remove_time");
 	else
@@ -170,13 +170,12 @@ void CGrenade::Throw()
 	if (pGrenade) 
 	{
 		pGrenade->set_destroy_time(m_dwDestroyTimeMax);
-//ГіГ±ГІГ Г­Г®ГўГЁГІГј ID ГІГ®ГЈГ® ГЄГІГ® ГЄГЁГ­ГіГ« ГЈГ°Г Г­Г ГІГі
+//установить ID того кто кинул гранату
 		pGrenade->SetInitiator( H_Parent()->ID() );
 	}
 	inherited::Throw			();
 	m_fake_missile->processing_activate();//@sliph
 	m_thrown = true;
-	
 	// Real Wolf.Start.18.12.14
 	auto parent = smart_cast<CGameObject*>(H_Parent());
 	auto obj = smart_cast<CGameObject*>(m_fake_missile);
@@ -217,7 +216,7 @@ void CGrenade::PutNextToSlot()
 	if (OnClient()) return;
 //	Msg ("* PutNextToSlot : %d", ID());	
 	VERIFY									(!getDestroy());
-	//ГўГ»ГЄГЁГ­ГіГІГј ГЈГ°Г Г­Г ГІГі ГЁГ§ ГЁГ­ГўГҐГ­ГІГ Г°Гї
+	//выкинуть гранату из инвентаря
 	NET_Packet						P;
 	if (m_pInventory)
 	{
@@ -276,7 +275,7 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 
 	switch(cmd) 
 	{
-	//ГЇГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГІГЁГЇГ  ГЈГ°Г Г­Г ГІГ»
+	//переключение типа гранаты
 	case kWPN_NEXT:
 		{
             if(flags&CMD_START) 

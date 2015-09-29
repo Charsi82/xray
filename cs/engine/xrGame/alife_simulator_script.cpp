@@ -66,6 +66,16 @@ CSE_ALifeDynamicObject *alife_object		(const CALifeSimulator *self, ALife::_OBJE
 	return			(self->objects().object(id,no_assert));
 }
 
+
+void iterate_objects(const CALifeSimulator *self, luabind::functor<void> functor)
+{
+	VERIFY(self);
+	for (CALifeObjectRegistry::OBJECT_REGISTRY::const_iterator it = self->objects().objects().begin(); it != self->objects().objects().end(); it++) {
+		CSE_ALifeDynamicObject	*obj = it->second;
+		functor(obj);
+	}
+}
+
 CSE_ALifeDynamicObject *alife_story_object	(const CALifeSimulator *self, ALife::_STORY_ID id)
 {
 	return			(self->story_objects().object(id,true));
@@ -333,6 +343,7 @@ void CALifeSimulator::script_register			(lua_State *L)
 	module(L)
 	[
 		class_<CALifeSimulator>("alife_simulator")
+			.def("iterate_objects",			&iterate_objects)
 			.def("valid_object_id",			&valid_object_id)
 			.def("level_id",				&get_level_id)
 			.def("level_name",				&get_level_name)

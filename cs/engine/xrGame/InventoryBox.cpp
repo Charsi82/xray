@@ -29,7 +29,7 @@ void CInventoryBox::OnEvent(NET_Packet& P, u16 type)
 			itm->setVisible		(FALSE);
 			itm->setEnabled		(FALSE);
 
-			// Real Wolf: РљРѕР»Р»Р±РµРє РґР»СЏ СЏС‰РёРєР° РЅР° РїРѕР»СѓС‡РµРЅРёРµ РїСЂРµРґРјРµС‚Р°. 02.08.2014.
+			// Real Wolf: Коллбек для ящика на получение предмета. 02.08.2014.
 			if (auto obj = smart_cast<CGameObject*>(itm))
 			{
 				this->callback(GameObject::eOnInvBoxItemTake)(obj->lua_game_object());
@@ -53,7 +53,7 @@ void CInventoryBox::OnEvent(NET_Packet& P, u16 type)
 			itm->H_SetParent	(NULL, dont_create_shell);
 
 			CGameObject* GO		= smart_cast<CGameObject*>(itm);
-			// Real Wolf: РљРѕР»Р»Р±РµРє РґР»СЏ СЏС‰РёРєР° РЅР° РїРѕС‚РµСЂСЋ РїСЂРµРґРјРµС‚Р°. 02.08.2014.
+			// Real Wolf: Коллбек для ящика на потерю предмета. 02.08.2014.
 			if (GO)
 			{
 				this->callback(GameObject::eOnInvBoxItemDrop)(GO->lua_game_object());

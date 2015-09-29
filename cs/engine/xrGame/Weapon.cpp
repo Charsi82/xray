@@ -23,6 +23,7 @@
 #include "clsid_game.h"
 #include "ui/UIWindow.h"
 
+// Headers included by Cribbledirge (for callbacks).
 #include "pch_script.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
@@ -242,9 +243,9 @@ void CWeapon::Load		(LPCSTR section)
 	iMagazineSize		= pSettings->r_s32		(section,"ammo_mag_size"	);
 	
 	////////////////////////////////////////////////////
-	// Ã¤Ã¨Ã±Ã¯Ã¥Ã°Ã±Ã¨Ã¿ Ã±Ã²Ã°Ã¥Ã«Ã¼Ã¡Ã»
+	// äèñïåðñèÿ ñòðåëüáû
 
-	//Ã¯Ã®Ã¤Ã¡Ã°Ã Ã±Ã»Ã¢Ã Ã­Ã¨Ã¥ ÃªÃ Ã¬Ã¥Ã°Ã» Ã¢Ã® Ã¢Ã°Ã¥Ã¬Ã¿ Ã®Ã²Ã¤Ã Ã·Ã¨
+	//ïîäáðàñûâàíèå êàìåðû âî âðåìÿ îòäà÷è
 	u8 rm = READ_IF_EXISTS( pSettings, r_u8, section, "cam_return", 1 );
 	cam_recoil.ReturnMode = (rm == 1);
 	
@@ -292,8 +293,8 @@ void CWeapon::Load		(LPCSTR section)
 	
 	cam_recoil.DispersionFrac	= _abs( READ_IF_EXISTS( pSettings, r_float, section, "cam_dispersion_frac", 0.7f ) );
 
-	//Ã¯Ã®Ã¤Ã¡Ã°Ã Ã±Ã»Ã¢Ã Ã­Ã¨Ã¥ ÃªÃ Ã¬Ã¥Ã°Ã» Ã¢Ã® Ã¢Ã°Ã¥Ã¬Ã¿ Ã®Ã²Ã¤Ã Ã·Ã¨ Ã¢ Ã°Ã¥Ã¦Ã¨Ã¬Ã¥ zoom ==> ironsight or scope
-	//zoom_cam_recoil.Clone( cam_recoil ); ==== Ã­Ã¥Ã«Ã¼Ã§Ã¿ !!!!!!!!!!
+	//ïîäáðàñûâàíèå êàìåðû âî âðåìÿ îòäà÷è â ðåæèìå zoom ==> ironsight or scope
+	//zoom_cam_recoil.Clone( cam_recoil ); ==== íåëüçÿ !!!!!!!!!!
 	zoom_cam_recoil.RelaxSpeed		= cam_recoil.RelaxSpeed;
 	zoom_cam_recoil.RelaxSpeed_AI	= cam_recoil.RelaxSpeed_AI;
 	zoom_cam_recoil.DispersionFrac	= cam_recoil.DispersionFrac;
@@ -378,7 +379,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_fMaxRadius		= pSettings->r_float		(section,"max_radius");
 
 
-	// Ã¨Ã­Ã´Ã®Ã°Ã¬Ã Ã¶Ã¨Ã¿ Ã® Ã¢Ã®Ã§Ã¬Ã®Ã¦Ã­Ã»Ãµ Ã Ã¯Ã£Ã°Ã¥Ã©Ã¤Ã Ãµ Ã¨ Ã¨Ãµ Ã¢Ã¨Ã§Ã³Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¨ Ã¢ Ã¨Ã­Ã¢Ã¥Ã­Ã²Ã Ã°Ã¥
+	// èíôîðìàöèÿ î âîçìîæíûõ àïãðåéäàõ è èõ âèçóàëèçàöèè â èíâåíòàðå
 	m_eScopeStatus			 = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"scope_status");
 	m_eSilencerStatus		 = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"silencer_status");
 	m_eGrenadeLauncherStatus = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"grenade_launcher_status");
@@ -506,7 +507,7 @@ void CWeapon::net_Destroy	()
 {
 	inherited::net_Destroy	();
 
-	//Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã» Ã¯Ã Ã°Ã²Ã¨ÃªÃ«Ã®Ã¢
+	//óäàëèòü îáúåêòû ïàðòèêëîâ
 	StopFlameParticles	();
 	StopFlameParticles2	();
 	StopLight			();
@@ -704,7 +705,7 @@ void CWeapon::OnActiveItem ()
 //-
 
 	inherited::OnActiveItem		();
-	//Ã¥Ã±Ã«Ã¨ Ã¬Ã» Ã§Ã Ã­Ã°Ã³Ã¦Ã Ã¥Ã¬Ã±Ã¿ Ã¨ Ã®Ã°Ã³Ã¦Ã¨Ã¥ Ã¡Ã»Ã«Ã® Ã¢ Ã°Ã³ÃªÃ Ãµ
+	//åñëè ìû çàíðóæàåìñÿ è îðóæèå áûëî â ðóêàõ
 //.	SetState					(eIdle);
 //.	SetNextState				(eIdle);
 }
@@ -759,10 +760,10 @@ void CWeapon::UpdateCL		()
 {
 	inherited::UpdateCL		();
 	UpdateHUDAddonsVisibility();
-	//Ã¯Ã®Ã¤Ã±Ã¢Ã¥Ã²ÃªÃ  Ã®Ã² Ã¢Ã»Ã±Ã²Ã°Ã¥Ã«Ã 
+	//ïîäñâåòêà îò âûñòðåëà
 	UpdateLight				();
 
-	//Ã­Ã Ã°Ã¨Ã±Ã®Ã¢Ã Ã²Ã¼ Ã¯Ã Ã°Ã²Ã¨ÃªÃ«Ã»
+	//íàðèñîâàòü ïàðòèêëû
 	UpdateFlameParticles	();
 	UpdateFlameParticles2	();
 
@@ -796,11 +797,11 @@ void CWeapon::renderable_Render		()
 {
 	UpdateXForm				();
 
-	//Ã­Ã Ã°Ã¨Ã±Ã®Ã¢Ã Ã²Ã¼ Ã¯Ã®Ã¤Ã±Ã¢Ã¥Ã²ÃªÃ³
+	//íàðèñîâàòü ïîäñâåòêó
 
 	RenderLight				();	
 
-	//Ã¥Ã±Ã«Ã¨ Ã¬Ã» Ã¢ Ã°Ã¥Ã¦Ã¨Ã¬Ã¥ Ã±Ã­Ã Ã©Ã¯Ã¥Ã°ÃªÃ¨, Ã²Ã® Ã±Ã Ã¬ HUD Ã°Ã¨Ã±Ã®Ã¢Ã Ã²Ã¼ Ã­Ã¥ Ã­Ã Ã¤Ã®
+	//åñëè ìû â ðåæèìå ñíàéïåðêè, òî ñàì HUD ðèñîâàòü íå íàäî
 	if(IsZoomed() && !IsRotatingToZoom() && ZoomTexture())
 		RenderHud		(FALSE);
 	else
@@ -843,7 +844,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 	{
 		case kWPN_FIRE: 
 			{
-				//Ã¥Ã±Ã«Ã¨ Ã®Ã°Ã³Ã¦Ã¨Ã¥ Ã·Ã¥Ã¬-Ã²Ã® Ã§Ã Ã­Ã¿Ã²Ã®, Ã²Ã® Ã­Ã¨Ã·Ã¥Ã£Ã® Ã­Ã¥ Ã¤Ã¥Ã«Ã Ã²Ã¼
+				//åñëè îðóæèå ÷åì-òî çàíÿòî, òî íè÷åãî íå äåëàòü
 				{				
 					if(IsPending())		
 						return				false;
@@ -1003,7 +1004,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 	int l_count = iAmmoElapsed;
 	if(!m_pInventory) return l_count;
 
-	//Ã·Ã²Ã®Ã¡ Ã­Ã¥ Ã¤Ã¥Ã«Ã Ã²Ã¼ Ã«Ã¨Ã¸Ã­Ã¨Ãµ Ã¯Ã¥Ã°Ã¥Ã±Ã·Ã¥Ã²Ã®Ã¢
+	//÷òîá íå äåëàòü ëèøíèõ ïåðåñ÷åòîâ
 	if(m_pInventory->ModifyFrame()<=m_dwAmmoCurrentCalcFrame)
 		return l_count + iAmmoCurrent;
 
@@ -1052,7 +1053,7 @@ int CWeapon::GetCurrentTypeAmmoTotal() const
 		return l_count;
 	}
 
-	//Ã·Ã²Ã®Ã¡ Ã­Ã¥ Ã¤Ã¥Ã«Ã Ã²Ã¼ Ã«Ã¨Ã¸Ã­Ã¨Ãµ Ã¯Ã¥Ã°Ã¥Ã±Ã·Ã¥Ã²Ã®Ã¢
+	//÷òîá íå äåëàòü ëèøíèõ ïåðåñ÷åòîâ
 	if ( m_pInventory->ModifyFrame() <= m_dwAmmoCurrentCalcFrame )
 	{
 		return l_count + iAmmoCurrent;

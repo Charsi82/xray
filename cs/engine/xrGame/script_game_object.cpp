@@ -535,7 +535,6 @@ void CScriptGameObject::invulnerable		(bool invulnerable)
 	monster->invulnerable	(invulnerable);
 }
 
-
 bool CScriptGameObject::IsActorOutdoors() const
 {
 	// Check to make sure all the params are available (we're in game and such).
@@ -550,9 +549,9 @@ bool CScriptGameObject::IsActorOutdoors() const
 		return FALSE;
 	}
 
-	// Now do the real check! This is a copy out of another section of code that is also hard coded.
-	// I don't know what the proper limit for this is supposed to be, but this seems good enough.
-	return e->renderable_ROS()->get_luminocity_hemi() > 0.05f;
+	collide::rq_result	RQ;
+	g_pGameLevel->ObjectSpace.RayPick(e->Position(), Fvector().set(0, 1, 0), 1000, collide::rqtBoth, RQ, e);
+	return RQ.element==-1;
 }
 
 #include "searchlight.h"

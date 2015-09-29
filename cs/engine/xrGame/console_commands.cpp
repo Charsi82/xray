@@ -128,7 +128,8 @@ extern float	dbg_imotion_draw_velocity_scale;
 int g_AI_inactive_time = 0;
 Flags32 g_uCommonFlags;
 enum E_COMMON_FLAGS{
-	flAiUseTorchDynamicLights = 1
+	flAiUseTorchDynamicLights = 1,
+	flDeadBodyCollision = 2
 };
 
 CUIOptConCom g_OptConCom;
@@ -1584,8 +1585,8 @@ void CCC_RegisterCommands()
 
 	psHUD_Flags.set(HUD_CROSSHAIR_BUILD, true);
 	psHUD_Flags.set(HUD_INFO_MONSTER, true);
-	CMD3(CCC_Mask, "hud_crosshair_build", &psHUD_Flags, HUD_CROSSHAIR_BUILD); // Р±РёР»РґРѕРєСѓСЂСЃРѕСЂ
-	CMD3(CCC_Mask, "hud_info_monster", &psHUD_Flags, HUD_INFO_MONSTER); // РґРµР»Р°С‚СЊ РєСЂР°СЃРЅС‹Рј РєСѓСЂСЃРѕСЂ РЅР° РјРѕРЅСЃС‚СЂР°С…
+	CMD3(CCC_Mask, "hud_crosshair_build", &psHUD_Flags, HUD_CROSSHAIR_BUILD); // билдокурсор
+	CMD3(CCC_Mask, "hud_info_monster", &psHUD_Flags, HUD_INFO_MONSTER); // делать красным курсор на монстрах
 
 	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,	HUD_WEAPON);
 	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,	HUD_INFO);
@@ -1902,6 +1903,9 @@ CMD4(CCC_FloatBlock,		"dbg_text_height_scale",	&dbg_text_height_scale	,			0.2f	,
 	g_uCommonFlags.set(flAiUseTorchDynamicLights, TRUE);
 
 	CMD3(CCC_Mask,		"ai_use_torch_dynamic_lights",	&g_uCommonFlags, flAiUseTorchDynamicLights);
+
+	g_uCommonFlags.set(flDeadBodyCollision, TRUE);
+	CMD3(CCC_Mask, "ph_deadbody", &g_uCommonFlags, flDeadBodyCollision);
 
 #ifndef MASTER_GOLD
 	CMD4(CCC_Vector3,		"psp_cam_offset",				&CCameraLook2::m_cam_offset, Fvector().set(-1000,-1000,-1000),Fvector().set(1000,1000,1000));

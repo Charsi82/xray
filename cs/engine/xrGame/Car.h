@@ -540,7 +540,7 @@ public:
 	bool					Use							(const Fvector& pos,const Fvector& dir,const Fvector& foot_pos);
 	
 	void					DoExit();//+
-	//	void					DoEnter();
+//	void					DoEnter();
 	
 	u16						DriverAnimationType 		();
 	// Core events

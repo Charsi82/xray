@@ -203,7 +203,7 @@ void CTorch::Switch	(bool light_on)
 		if (!pA)light_omni->set_active(light_on);
 	}
 
-	if (pA){// Ð¾Ð·Ð²ÑƒÑ‡ÐºÐ° Ð°ÐºÑ‚Ð¾Ñ€ÑÐºÐ¾Ð³Ð¾ Ñ„Ð¾Ð½Ð°Ñ€Ð¸ÐºÐ°
+	if (pA){// îçâó÷êà àêòîðñêîãî ôîíàðèêà
 		bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
 		if (m_switched_on){
 			if (pSettings->line_exist(cNameSect(), "snd_torch_on"))
@@ -279,7 +279,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 	glow_render->set_color	(clr);
 	glow_render->set_radius	(pUserData->r_float					("torch_definition","glow_radius"));
 
-	//Ã¢ÃªÃ«Ã¾Ã·Ã¨Ã²Ã¼/Ã¢Ã»ÃªÃ«Ã¾Ã·Ã¨Ã²Ã¼ Ã´Ã®Ã­Ã Ã°Ã¨Ãª
+	//âêëþ÷èòü/âûêëþ÷èòü ôîíàðèê
 	Switch					(torch->m_active);
 	VERIFY					(!torch->m_active || (torch->ID_Parent != 0xffff));
 	
@@ -433,7 +433,7 @@ void CTorch::UpdateCL()
 	if (!lanim)							return;
 
 	int						frame;
-	// Ã¢Ã®Ã§Ã¢Ã°Ã Ã¹Ã Ã¥Ã² Ã¢ Ã´Ã®Ã°Ã¬Ã Ã²Ã¥ BGR
+	// âîçâðàùàåò â ôîðìàòå BGR
 	u32 clr					= lanim->CalculateBGR(Device.fTimeGlobal,frame); 
 
 	Fcolor					fclr;

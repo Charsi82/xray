@@ -24,7 +24,7 @@
 
 extern BOOL dbg_draw_camera_collision;
 void	collide_camera( CCameraBase & camera, float _viewport_near  );
-static float CurrentHeight = 0.f;//smooth crouch fix
+static float CurrentHeight = 0.f; //smooth crouch fix
 
 void CActor::cam_Set	(EActorCameras style)
 {

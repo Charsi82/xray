@@ -7455,6 +7455,9 @@
     <ClInclude Include="$(SolutionDir)engine\xrGameSpy\gamespy\md5.h">
       <Filter>Core\Client\Level\ClientDigestComputer</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UIArtefactPanel.h" />
+    <ClInclude Include="raypick.h" />
+    <ClInclude Include="script_additional_libs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11096,6 +11099,10 @@
     <ClCompile Include="$(SolutionDir)engine\xrGameSpy\gamespy\md5c.c">
       <Filter>Core\Client\Level\ClientDigestComputer</Filter>
     </ClCompile>
+    <ClCompile Include="ui\UIArtefactPanel.cpp" />
+    <ClCompile Include="raypick.cpp" />
+    <ClCompile Include="car_trunk.cpp" />
+    <ClCompile Include="script_additional_libs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="graph_abstract.h">

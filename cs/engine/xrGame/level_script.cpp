@@ -669,20 +669,67 @@ script_rq_result GetCurrentRQ()
 	return res;
 }
 
-void LevelPressAction(EGameActions cmd)
+CScriptGameObject* GetCurrentRQ_obj()
 {
-	Level().IR_OnKeyboardPress(cmd);
+	if (HUD().GetUI())
+	{
+		collide::rq_result r = HUD().GetCurrentRayQuery();
+		if (CGameObject* res = smart_cast<CGameObject*>(r.O))
+		{
+			return res->lua_game_object();
+		};
+	}
+	return NULL;
 }
 
-void LevelReleaseAction(EGameActions cmd)
+float GetCurrentRQ_dist()
 {
-	Level().IR_OnKeyboardRelease(cmd);
+	if (HUD().GetUI())
+	{
+		collide::rq_result r = HUD().GetCurrentRayQuery();
+		return r.range;
+	}
+	return 0;
 }
 
-void LevelHoldAction(EGameActions cmd)
+int GetCurrentRQ_e()
 {
-	Level().IR_OnKeyboardHold(cmd);
+	if (HUD().GetUI())
+	{
+		collide::rq_result r = HUD().GetCurrentRayQuery();
+		return r.element;
+	}
+	return -1;
 }
+
+Fvector2 PointProjection(Fvector pos)
+{
+	u32 scr_w = Device.dwWidth;
+	u32 scr_h = Device.dwHeight;
+	Fvector ppp = pos.sub(Device.vCameraPosition);
+	float dp = ppp.dotproduct(Device.vCameraDirection);
+	float tanf_fov2 = tanf((Device.fFOV / 2) * (PI / 180))*dp;
+
+	return Fvector2().set(
+		512 + (ppp.dotproduct(Device.vCameraRight) *  0.5f * Device.dwHeight * 1024) / (Device.dwWidth * tanf_fov2),
+		384 - (ppp.dotproduct(Device.vCameraTop)   *  0.5f * 768) / (tanf_fov2));
+}
+
+void LevelPressAction(int dik)
+{
+	Level().IR_OnKeyboardPress(dik);
+}
+
+void LevelReleaseAction(int dik)
+{
+	Level().IR_OnKeyboardRelease(dik);
+}
+
+void LevelHoldAction(int dik)
+{
+	Level().IR_OnKeyboardHold(dik);
+}
+
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
 {
@@ -719,7 +766,7 @@ void CLevel::script_register(lua_State *L)
 		def("get_time_days",					get_time_days),
 		def("get_time_hours",					get_time_hours),
 		def("get_time_minutes",					get_time_minutes),
-		def("change_game_time", change_game_time),
+		def("change_game_time", change_game_time),//+
 
 		def("high_cover_in_direction",			high_cover_in_direction),
 		def("low_cover_in_direction",			low_cover_in_direction),
@@ -780,6 +827,10 @@ void CLevel::script_register(lua_State *L)
 		
 		def("vertex_id",						&vertex_id),
 		def("hud_target",						&GetCurrentRQ),//+
+		def("hud_target_obj",					&GetCurrentRQ_obj),//+
+		def("hud_target_dist",					&GetCurrentRQ_dist),//+
+		def("hud_target_element",				&GetCurrentRQ_e),//+
+		def("point_projection",					&PointProjection),//+
 		def("press_action",						&LevelPressAction),//+
 		def("release_action",					&LevelReleaseAction),//+
 		def("hold_action",						&LevelHoldAction),//+
@@ -803,7 +854,7 @@ void CLevel::script_register(lua_State *L)
 		 		class_<CRayPick>("ray_pick")
  		.def(constructor<>())
 
-		//error C2664: "CRayPick::CRayPick(const CRayPick &)": РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ Р°СЂРіСѓРјРµРЅС‚ 1 РёР· "const Fvector" РІ "Fvector &"
+		//error C2664: "CRayPick::CRayPick(const CRayPick &)": невозможно преобразовать аргумент 1 из "const Fvector" в "Fvector &"
  		//.def(constructor<Fvector&, Fvector&, float, collide::rq_target, CScriptGameObject*>())//??
 
 		.def("set_position",					&CRayPick::set_position)

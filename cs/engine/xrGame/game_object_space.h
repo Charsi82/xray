@@ -51,24 +51,24 @@ namespace GameObject {
 
 		eInvBoxItemTake,
 		eWeaponNoAmmoAvailable,
-		// РєР»Р°РІРёР°С‚СѓСЂР°
+		// клавиатура
 		eOnKeyPress,//+
 		eOnKeyRelease,//+
 		eOnKeyHold,//+
 
-		//РјС‹С€СЊ
+		//мышь
 		eOnMouseMove,//+
 		eOnMouseWheel,//+
 
-		// РёРЅРІРµРЅС‚Р°СЂСЊ
+		// инвентарь
 		eOnItemBelt,//+
 		eOnItemSlot,//+
 		eOnItemRuck,//+
 
-		// С„РѕРЅР°СЂСЊ
+		// фонарь
 		eSwitchTorch,//+
 
-		//СЃРјРµРЅР° СЃР»РѕС‚Р°
+		//смена слота
 		eChangeSlot,
 
 		// Called when the player zooms their weapon in or out.

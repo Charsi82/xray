@@ -59,6 +59,7 @@
 #endif
 
 ENGINE_API bool g_dedicated_server;
+ENGINE_API BOOL	g_bootComplete;
 
 extern BOOL	g_bDebugDumpPhysicsStep;
 extern CUISequencer * g_tutorial;
@@ -67,6 +68,24 @@ extern CUISequencer * g_tutorial2;
 CPHWorld	*ph_world			= 0;
 float		g_cl_lvInterp		= 0;
 u32			lvInterpSteps		= 0;
+
+u16	GetSpawnInfo(NET_Packet &P, u16 &parent_id)
+{
+	u16 dummy16, id;
+	P.r_begin(dummy16);
+	shared_str	s_name;
+	P.r_stringZ(s_name);
+	CSE_Abstract*	E = F_entity_Create(*s_name);
+	E->Spawn_Read(P);
+	if (E->s_flags.is(M_SPAWN_UPDATE))
+		E->UPDATE_Read(P);
+	id = E->ID;
+	parent_id = E->ID_Parent;
+	F_entity_Destroy(E);
+	P.r_pos = 0;
+	return id;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -82,6 +101,9 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 
 	game						= NULL;
 	game_events					= new NET_Queue_Event();
+#ifdef   SPAWN_ANTIFREEZE
+	spawn_events = new NET_Queue_Event();
+#endif
 
 	game_configured				= FALSE;
 	m_bGameConfigStarted		= FALSE;
@@ -271,7 +293,9 @@ CLevel::~CLevel()
 
 	xr_delete					(game);
 	xr_delete					(game_events);
-
+#ifdef   SPAWN_ANTIFREEZE
+	xr_delete(spawn_events);
+#endif
 
 	//by Dandy
 	//destroy fog of war
@@ -437,6 +461,23 @@ void CLevel::cl_Process_Event				(u16 dest, u16 type, NET_Packet& P)
 		};
 	}
 };
+#ifdef   SPAWN_ANTIFREEZE
+bool CLevel::PostponedSpawn(u16 id)
+{
+	for (auto it = spawn_events->queue.begin(); it != spawn_events->queue.end(); ++it)
+	{
+		const NET_Event& E = *it;
+		NET_Packet P;
+		if (M_SPAWN != E.ID) continue;
+		E.implication(P);
+		u16 parent_id;
+		if (id == GetSpawnInfo(P, parent_id))
+			return true;
+	}
+
+	return false;
+}
+#endif
 
 void CLevel::ProcessGameEvents		()
 {
@@ -449,12 +490,46 @@ void CLevel::ProcessGameEvents		()
 		if (!game_events->queue.empty())	
 			Msg("- d[%d],ts[%d] -- E[svT=%d],[evT=%d]",Device.dwTimeGlobal,timeServer(),svT,game_events->queue.begin()->timestamp);
 		*/
+#ifdef   SPAWN_ANTIFREEZE
+		while (spawn_events->available(svT))
+		{
+			u16 ID, dest, type;
+			spawn_events->get(ID, dest, type, P);
+			game_events->insert(P);
+		}
+		u32 avail_time = 5;
+		u32 elps = Device.frame_elapsed();
+		if (elps < 30) avail_time = 33 - elps;
+		u32 work_limit = elps + avail_time;
 
+#endif
 		while	(game_events->available(svT))
 		{
 			u16 ID,dest,type;
 			game_events->get	(ID,dest,type,P);
 
+#ifdef   SPAWN_ANTIFREEZE
+			// не отправлять события не заспавненным объектам
+			if (g_bootComplete && M_EVENT == ID && PostponedSpawn(dest))
+			{
+				spawn_events->insert(P);
+				continue;
+			}
+			if (g_bootComplete && M_SPAWN == ID && Device.frame_elapsed() > work_limit) // alpet: позволит плавнее выводить объекты в онлайн, без заметных фризов
+			{
+				u16 parent_id;
+				GetSpawnInfo(P, parent_id);
+				//-------------------------------------------------				
+				if (parent_id < 0xffff) // откладывать спавн только объектов в контейнеры
+				{
+					if (!spawn_events->available(svT))
+						Msg("* ProcessGameEvents, spawn event postponed. Events rest = %d", game_events->queue.size());
+
+					spawn_events->insert(P);
+					continue;
+				}
+			}
+#endif
 			switch (ID)
 			{
 			case M_SPAWN:

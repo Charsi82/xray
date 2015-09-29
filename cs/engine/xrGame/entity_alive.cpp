@@ -24,26 +24,26 @@
 #define SMALL_ENTITY_RADIUS		0.6f
 #define BLOOD_MARKS_SECT		"bloody_marks"
 
-//Г®ГІГ¬ГҐГІГЄГЁ ГЄГ°Г®ГўГЁ Г­Г  Г±ГІГҐГ­Г Гµ 
+//отметки крови на стенах 
 FactoryPtr<IWallMarkArray>* CEntityAlive::m_pBloodMarksVector = NULL;
 float CEntityAlive::m_fBloodMarkSizeMin = 0.f;
 float CEntityAlive::m_fBloodMarkSizeMax = 0.f;
 float CEntityAlive::m_fBloodMarkDistance = 0.f;
 float CEntityAlive::m_fNominalHit = 0.f;
 
-//ГЄГ ГЇГ Г­ГЁГҐ ГЄГ°Г®ГўГЁ
+//капание крови
 FactoryPtr<IWallMarkArray>* CEntityAlive::m_pBloodDropsVector = NULL;
 float CEntityAlive::m_fStartBloodWoundSize = 0.3f;
 float CEntityAlive::m_fStopBloodWoundSize = 0.1f;
 float CEntityAlive::m_fBloodDropSize = 0.03f;
 
 
-//Г¬ГЁГ­ГЁГ¬Г Г«ГјГ­Г»Г© Г°Г Г§Г¬ГҐГ° Г®Г¦ГҐГЈГ , ГЇГ®Г±Г«ГҐ ГЄГ®ГІГ®Г°Г®ГЈГ® ГЈГ®Г°ГїГІ ГЇГ Г°ГІГЁГЄГ«Г»
-//Г¬ГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ ГўГ°ГҐГ¬Гї ГЈГ®Г°ГҐГ­ГЁГї
+//минимальный размер ожега, после которого горят партиклы
+//минимальное время горения
 u32	  CEntityAlive::m_dwMinBurnTime = 10000;
-//Г°Г Г§Г¬ГҐГ° Г°Г Г­Г», Г·ГІГ®ГЎ Г§Г ГЇГіГ±ГІГЁГІГј ГЇГ Г°ГІГЁГЄГ«Г»
+//размер раны, чтоб запустить партиклы
 float CEntityAlive::m_fStartBurnWoundSize = 0.3f;
-//Г°Г Г§Г¬ГҐГ° Г°Г Г­Г», Г·ГІГ®ГЎ Г®Г±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°ГІГЁГЄГ«Г»
+//размер раны, чтоб остановить партиклы
 float CEntityAlive::m_fStopBurnWoundSize = 0.1f;
 
 STR_VECTOR* CEntityAlive::m_pFireParticlesVector = NULL;
@@ -90,7 +90,7 @@ void CEntityAlive::Load		(LPCSTR section)
 	if(0==m_pFireParticlesVector)
 		LoadFireParticles	("entity_fire_particles");
 
-	//ГЎГЁГ®Г«Г®ГЈ. ГўГЁГ¤ ГЄ ГІГ®Г°Г®Г¬Гі ГЇГ°ГЁГ­Г Г¤Г«ГҐГ¦ГЁГІ Г¬Г®Г­Г±ГІГ° ГЁГ«ГЁ ГЇГҐГ°Г±Г®Г­Г Г¦
+	//биолог. вид к торому принадлежит монстр или персонаж
 	monster_community->set	(pSettings->r_string(section, "species"));
 }
 
@@ -101,7 +101,7 @@ void CEntityAlive::LoadBloodyWallmarks (LPCSTR section)
 	m_pBloodMarksVector		= new FactoryPtr<IWallMarkArray> ();
 	m_pBloodDropsVector		= new FactoryPtr<IWallMarkArray> ();
 	
-	//ГЄГ°Г®ГўГ ГўГ»ГҐ Г®ГІГ¬ГҐГІГЄГЁ Г­Г  Г±ГІГҐГ­Г Гµ
+	//кровавые отметки на стенах
 	string256	tmp;
 	LPCSTR wallmarks_name = pSettings->r_string(section, "wallmarks"); 
 	
@@ -127,7 +127,7 @@ void CEntityAlive::LoadBloodyWallmarks (LPCSTR section)
 
 
 
-	//ГЄГ ГЇГ«ГЁ ГЄГ°Г®ГўГЁ Г± Г®ГІГЄГ°Г»ГІГ»Гµ Г°Г Г­
+	//капли крови с открытых ран
 	wallmarks_name = pSettings->r_string(section, "blood_drops");
 	cnt		=_GetItemCount(wallmarks_name);
 
@@ -217,14 +217,14 @@ void CEntityAlive::shedule_Update(u32 dt)
 	//condition update with the game time pass
 	conditions().UpdateConditionTime	();
 	conditions().UpdateCondition		();
-	//ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГЇГ Г°ГІГЁГЄГ«Г®Гў Г®ГЈГ­Гї
+	//Обновление партиклов огня
 	UpdateFireParticles	();
-	//ГЄГ ГЇГ«ГЁ ГЄГ°Г®ГўГЁ
+	//капли крови
 	UpdateBloodDrops	();
-	//Г®ГЎГ­Г®ГўГЁГІГј Г°Г Г­Г»
+	//обновить раны
 	conditions().UpdateWounds		();
 
-	//ГіГЎГЁГІГј Г±ГіГ№Г­Г®Г±ГІГј
+	//убить сущность
 	if(Local() && !g_Alive() && !AlreadyDie())
 	{
 		if(conditions().GetWhoHitLastTime()) {
@@ -240,7 +240,7 @@ void CEntityAlive::shedule_Update(u32 dt)
 
 BOOL CEntityAlive::net_Spawn	(CSE_Abstract* DC)
 {
-	//ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЄГ®Г¬Г Г­Г¤Гі Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГЁ Г± community
+	//установить команду в соответствии с community
 /*	if(monster_community->team() != 255)
 		id_Team = monster_community->team();*/
 
@@ -250,7 +250,7 @@ BOOL CEntityAlive::net_Spawn	(CSE_Abstract* DC)
 	m_BloodWounds.clear			();
 	m_ParticleWounds.clear		();
 
-	//Г¤Г®ГЎГ ГўГЁГІГј ГЄГ°Г®ГўГј ГЁ Г®ГЈГ®Г­Гј Г­Г  ГЇГ Г°ГІГЁГЄГ«Г», ГҐГ±Г«ГЁ Г­ГіГ¦Г­Г®
+	//добавить кровь и огонь на партиклы, если нужно
 	for(WOUND_VECTOR::const_iterator it = conditions().wounds().begin(); conditions().wounds().end() != it; ++it)
 	{
 		CWound					*pWound = *it;
@@ -282,7 +282,7 @@ void	CEntityAlive::Hit							(SHit* pHDS)
 	//-------------------------------------------------------------------
 	CDamageManager::HitScale(HDS.boneID, conditions().hit_bone_scale(), conditions().wound_bone_scale(),pHDS->aim_bullet);
 
-	//ГЁГ§Г¬ГҐГ­ГЁГІГј Г±Г®Г±ГІГ®ГїГ­ГЁГҐ, ГЇГҐГ°ГҐГ¤ ГІГҐГ¬ ГЄГ ГЄ Г°Г®Г¤ГЁГІГҐГ«ГјГ±ГЄГЁГ© ГЄГ«Г Г±Г± Г®ГЎГ°Г ГЎГ®ГІГ ГҐГІ ГµГЁГІ
+	//изменить состояние, перед тем как родительский класс обработает хит
 	CWound* pWound = conditions().ConditionHit(&HDS);
 
 	if(pWound){
@@ -293,7 +293,7 @@ void	CEntityAlive::Hit							(SHit* pHDS)
 	}
 
 	if (HDS.hit_type != ALife::eHitTypeTelepatic){
-		//Г¤Г®ГЎГ ГўГЁГІГј ГЄГ°Г®ГўГј Г­Г  Г±ГІГҐГ­Г»
+		//добавить кровь на стены
 		if (!use_simplified_visual())
 			BloodyWallmarks (HDS.damage(), HDS.dir, HDS.bone(), HDS.p_in_bone_space);
 	}
@@ -334,14 +334,14 @@ void CEntityAlive::Die	(CObject* who)
 	ISpatial* self	= smart_cast<ISpatial*> (this);
 	if (self)		self->spatial.type &=~STYPE_REACTTOSOUND;
 	
-	CActor* pActor = smart_cast<CActor*>(this);//fix death in car
+	CActor* pActor = smart_cast<CActor*>(this);//+
 	if (pActor && pActor->Holder()) return;//+
 	
 	if(character_physics_support())
 		character_physics_support()->in_Die();
 }
 
-//ГўГ»ГўГ§Г»ГўГ ГҐГІ ГЇГ°ГЁ ГЇГ®Г¤Г±Г·ГҐГІГҐ ГµГЁГІГ 
+//вывзывает при подсчете хита
 float CEntityAlive::CalcCondition(float /**hit/**/)
 {	
 	conditions().UpdateCondition();
@@ -373,14 +373,14 @@ void CEntityAlive::PHFreeze()
 }
 //////////////////////////////////////////////////////////////////////
 
-//Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГҐ ГЄГ°Г®ГўГ ГўГ»Гµ Г®ГІГ¬ГҐГІГ®ГЄ Г­Г  Г±ГІГҐГ­Г Гµ, ГЇГ®Г±Г«ГҐ ГЇГ®Г«ГіГ·ГҐГ­ГЁГї ГµГЁГІГ 
+//добавление кровавых отметок на стенах, после получения хита
 void CEntityAlive::BloodyWallmarks (float P, const Fvector &dir, s16 element, 
 									const Fvector& position_in_object_space)
 {
 	if(BI_NONE == (u16)element)
 		return;
 
-	//ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ» ГЇГ®ГЇГ Г¤Г Г­ГЁГї
+	//вычислить координаты попадания
 	IKinematics* V = smart_cast<IKinematics*>(Visual());
 		
 	Fvector start_pos = position_in_object_space;
@@ -423,7 +423,7 @@ void CEntityAlive::PlaceBloodWallmark(const Fvector& dir, const Fvector& start_p
 		&&
 		!result.O;
 
-	//ГҐГ±Г«ГЁ ГЄГ°Г®ГўГј Г¤Г®Г«ГҐГІГҐГ«Г  Г¤Г® Г±ГІГ ГІГЁГ·ГҐГ±ГЄГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
+	//если кровь долетела до статического объекта
 	if(reach_wall)
 	{
 		CDB::TRI*	pTri	= Level().ObjectSpace.GetStaticTris()+result.element;
@@ -431,10 +431,10 @@ void CEntityAlive::PlaceBloodWallmark(const Fvector& dir, const Fvector& start_p
 
 		if(pMaterial->Flags.is(SGameMtl::flBloodmark))
 		{
-			//ГўГ»Г·ГЁГ±Г«ГЁГІГј Г­Г®Г°Г¬Г Г«Гј ГЄ ГЇГ®Г°Г Г¦ГҐГ­Г­Г®Г© ГЇГ®ГўГҐГ°ГµГ­Г®Г±ГІГЁ
+			//вычислить нормаль к пораженной поверхности
 			Fvector*	pVerts	= Level().ObjectSpace.GetStaticVerts();
 
-			//ГўГ»Г·ГЁГ±Г«ГЁГІГј ГІГ®Г·ГЄГі ГЇГ®ГЇГ Г¤Г Г­ГЁГї
+			//вычислить точку попадания
 			Fvector end_point;
 			end_point.set(0,0,0);
 			end_point.mad(start_pos, dir, result.range);
@@ -443,7 +443,7 @@ void CEntityAlive::PlaceBloodWallmark(const Fvector& dir, const Fvector& start_p
 			//ref_shader wallmarkShader = wallmarks_vector[::Random.randI(wallmarks_vector.size())];
 			VERIFY(!pwallmarks_vector->empty());
 			{
-				//Г¤Г®ГЎГ ГўГЁГІГј Г®ГІГ¬ГҐГІГЄГі Г­Г  Г¬Г ГІГҐГ°ГЁГ Г«ГҐ
+				//добавить отметку на материале
 				//::Render->add_StaticWallmark(wallmarkShader, end_point, wallmark_size, pTri, pVerts);
 				::Render->add_StaticWallmark(pwallmarks_vector, end_point, wallmark_size, pTri, pVerts);
 			}

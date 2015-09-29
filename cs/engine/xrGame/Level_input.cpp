@@ -103,7 +103,7 @@ public:
 	}}
 }	vtune	;
 
-// ÃŽÃ¡Ã°Ã Ã¡Ã®Ã²ÃªÃ  Ã­Ã Ã¦Ã Ã²Ã¨Ã¿ ÃªÃ«Ã Ã¢Ã¨Ã¸
+// Îáðàáîòêà íàæàòèÿ êëàâèø
 extern bool g_block_pause;
 
 // Lain: added TEMP!!!
@@ -441,9 +441,9 @@ void CLevel::IR_OnKeyboardRelease(int key)
 	bool b_ui_exist = (pHUD && pHUD->GetUI());
 
 	if (!bReady || g_bDisableAllInput	) return;
-	if ( b_ui_exist && pHUD->GetUI()->IR_OnKeyboardRelease(key)) return;
 	
-	if (g_actor) Actor()->callback(GameObject::eOnKeyRelease)(key, get_binded_action(key));
+	if (g_actor) Actor()->callback(GameObject::eOnKeyRelease)(key, get_binded_action(key));//+
+	if ( b_ui_exist && pHUD->GetUI()->IR_OnKeyboardRelease(key)) return;
 	if (Device.Paused()		) return;
 	if (game && Game().OnKeyboardRelease(get_binded_action(key)) ) return;
 
@@ -457,7 +457,7 @@ void CLevel::IR_OnKeyboardRelease(int key)
 void CLevel::IR_OnKeyboardHold(int key)
 {
 	if(g_bDisableAllInput) return;
-	if (g_actor) Actor()->callback(GameObject::eOnKeyHold)(key, get_binded_action(key));
+	if (g_actor) Actor()->callback(GameObject::eOnKeyHold)(key, get_binded_action(key));//+
 
 #ifdef DEBUG
 	// Lain: added

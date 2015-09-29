@@ -38,7 +38,7 @@ void	CCar::OnMouseMove(int dx, int dy)
 		Fvector pos = active_camera->Position();
 		Fvector cam_dir = active_camera->Direction();
 
-		//С‡С‚Рѕ Р°РєС‚РµСЂ РІРёРґРёС‚ РїРµСЂРµРґ СЃРѕР±РѕР№
+		//что актер видит перед собой
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
 
 		pos.mad(cam_dir, (RQ.range > 3.0f || (RQ.O && this->ID() == RQ.O->ID())) ? RQ.range : 50.f);
@@ -152,7 +152,7 @@ void CCar::OnKeyboardPress(int cmd)
 	case kUSE:									break;
 	case kWPN_FUNC: m_repairing = true; 		break;
 	case kWPN_FIRE: if (OwnerActor() && (!Actor()->inventory().ActiveItem()) && !HUD().GetUI()->MainInputReceiver()) Action(CCarWeapon::eWpnFire, 1); break; // shooting on hold lmb
-	case kSPRINT_TOGGLE:	if (!HUD().GetUI()->MainInputReceiver())ShowTrunk();		break;// РѕС‚РєСЂС‹С‚РёРµ Р±Р°РіР°Р¶РЅРёРєР°
+	case kSPRINT_TOGGLE:	if (!HUD().GetUI()->MainInputReceiver())ShowTrunk();		break;// открытие багажника
 	};
 
 }

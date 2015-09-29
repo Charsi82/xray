@@ -68,7 +68,7 @@ bool CEatableItem::Useful() const
 {
 	if(!inherited::Useful()) return false;
 
-	//Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã­Ã¥ Ã¢Ã±Ã¥ Ã«Ã¨ Ã¥Ã¹Ã¥ Ã±ÃºÃ¥Ã¤Ã¥Ã­Ã®
+	//ïðîâåðèòü íå âñå ëè åùå ñúåäåíî
 	if(m_iPortionsNum == 0) return false;
 
 	return true;
@@ -105,10 +105,10 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 	entity_alive->conditions().ChangeSatiety	(m_fSatietyInfluence);
 	entity_alive->conditions().ChangeRadiation	(m_fRadiationInfluence);
 	entity_alive->conditions().ChangeBleeding	(m_fWoundsHealPerc);
-	entity_alive->conditions().ChangePsyHealth  (m_fPsyHealthInfluence);
+	entity_alive->conditions().ChangePsyHealth  (m_fPsyHealthInfluence);//+
 	entity_alive->conditions().SetMaxPower( entity_alive->conditions().GetMaxPower()+m_fMaxPowerUpInfluence );
 	
-	//Ã³Ã¬Ã¥Ã­Ã¼Ã¸Ã¨Ã²Ã¼ ÃªÃ®Ã«Ã¨Ã·Ã¥Ã±Ã²Ã¢Ã® Ã¯Ã®Ã°Ã¶Ã¨Ã©
+	//óìåíüøèòü êîëè÷åñòâî ïîðöèé
 	if(m_iPortionsNum > 0)
 		--(m_iPortionsNum);
 	else

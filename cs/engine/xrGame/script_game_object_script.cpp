@@ -95,17 +95,17 @@ void CScriptGameObject::script_register(lua_State *L)
 				value("map_location_added",			int(GameObject::eMapLocationAdded)),
 				
 				/******** added by Ray Twitty (aka Shadows) START *******/
-				// РєР»Р°РІРёР°С‚СѓСЂР°/РјС‹С€СЊ
+				// клавиатура/мышь
 				value("on_key_press", int(GameObject::eOnKeyPress)),
 				value("on_key_release", int(GameObject::eOnKeyRelease)),
 				value("on_key_hold", int(GameObject::eOnKeyHold)),
 				value("on_mouse_move", int(GameObject::eOnMouseMove)),
 				value("on_mouse_wheel", int(GameObject::eOnMouseWheel)),
-				// РёРЅРІРµРЅС‚Р°СЂСЊ
+				// инвентарь
 				value("on_item_belt", int(GameObject::eOnItemBelt)),
 				value("on_item_slot", int(GameObject::eOnItemSlot)),
 				value("on_item_ruck", int(GameObject::eOnItemRuck)),
-				// С„РѕРЅР°СЂСЊ
+				// фонарь
 				value("switch_torch", int(GameObject::eSwitchTorch)),
 				/***** added by Ray Twitty (aka Shadows) END ******/
 

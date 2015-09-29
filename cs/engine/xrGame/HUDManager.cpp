@@ -255,7 +255,7 @@ void   CHUDManager::RenderActiveItemUI()
 }
 
 extern ENGINE_API BOOL bShowPauseString;
-//Г®ГІГ°ГЁГ±Г®ГўГЄГ  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г 
+//отрисовка элементов интерфейса
 #include "string_table.h"
 void  CHUDManager::RenderUI()
 {

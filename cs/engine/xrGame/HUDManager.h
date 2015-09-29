@@ -66,11 +66,11 @@ public:
 				void		net_Relcase			( CObject* obj );
 
 	CFontManager&			Font				()							{return *(UI()->Font());}
-	//ГІГҐГЄГіГ№ГЁГ© ГЇГ°ГҐГ¤Г¬ГҐГІ Г­Г  ГЄГ®ГІГ®Г°Г»Г© Г±Г¬Г®ГІГ°ГЁГІ HUD
+	//текущий предмет на который смотрит HUD
 	collide::rq_result&		GetCurrentRayQuery	();
 
 
-	//ГіГ±ГІГ Г­ГўГЄГ  ГўГ­ГҐГёГ­ГҐГЈГ® ГўГЁГ¤Г  ГЇГ°ГЁГ¶ГҐГ«Г  Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ ГІГҐГЄГіГ№ГҐГ© Г¤ГЁГ±ГЇГҐГ°Г±ГЁГЁ
+	//устанвка внешнего вида прицела в зависимости от текущей дисперсии
 	void					SetCrosshairDisp	(float dispf, float disps = 0.f);
 #ifdef DEBUG
 	void					SetFirstBulletCrosshairDisp(float fbdispf);
