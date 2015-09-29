@@ -26,7 +26,7 @@
 #include <process.h>
 // OpenAutomate
 #include "xrSash.h"
-// Ïðèáëóäèíà äëÿ SecuROM-à
+// Приблудина для SecuROM-а
 #include "securom_api.h"
 
 #ifndef DEDICATED_SERVER
@@ -46,7 +46,7 @@ ENGINE_API bool g_dedicated_server = true;
 #else
 ENGINE_API bool g_dedicated_server = false;
 #endif
-
+extern	ENGINE_API BOOL			g_bootComplete = FALSE;
 ENGINE_API BOOL g_appLoaded = FALSE;
 ENGINE_API CInifile* pGameIni = nullptr; // declared in stdafx.h
 ENGINE_API CApplication* pApp = nullptr;
@@ -61,7 +61,7 @@ static bool IntroFinished = false;
 
 void doBenchmark(const char* name);
 
-// Ôóíöèÿ äëÿ òóïûõ òðåáîâàíèé THQ è òóïûõ àìåðèêàíñêèõ ïîëüçîâàòåëåé
+// Фунция для тупых требований THQ и тупых американских пользователей
 bool IsOutOfVirtualMemory()
 {
     SECUROM_MARKER_HIGH_SECURITY_ON(1)
@@ -71,7 +71,7 @@ bool IsOutOfVirtualMemory()
         return false;
     DWORD pageFileSize = (DWORD)(memStatus.ullTotalPageFile / (1024 * 1024));
     DWORD physMemSize = (DWORD)(memStatus.ullTotalPhys / (1024 * 1024));
-    // Äîâîëüíî îòôîíàðíîå óñëîâèå
+    // Довольно отфонарное условие
     if (physMemSize > 500 && pageFileSize + physMemSize > 2500)
         return false;
     HINSTANCE hApp = GetModuleHandle(NULL);
@@ -676,6 +676,7 @@ void CApplication::LoadBegin()
     if (ll_dwReference == 1)
     {
         g_appLoaded = FALSE;
+		g_bootComplete = FALSE;
     #ifndef DEDICATED_SERVER
         _InitializeFont(pFontSystem, "ui_font_graffiti19_russian", 0);
         m_pRender->LoadBegin();
@@ -703,6 +704,7 @@ void CApplication::LoadEnd()
 void CApplication::destroy_loading_shaders()
 {
     m_pRender->destroy_loading_shaders();
+	g_bootComplete = TRUE;
 }
 
 PROTECT_API void CApplication::LoadDraw()

@@ -36,6 +36,8 @@ ENGINE_API BOOL g_bRendering = FALSE;
 BOOL		g_bLoaded = FALSE;
 ref_light	precache_light = 0;
 
+extern bool IsMainMenuActive(); //ECO_RENDER add
+
 BOOL CRenderDevice::Begin	()
 {
 #ifndef DEDICATED_SERVER
@@ -289,8 +291,23 @@ void CRenderDevice::on_idle		()
 	// Release start point - allow thread to run
 	mt_csLeave.Enter			();
 	mt_csEnter.Leave			();
-	Sleep						(0);
 
+#ifdef ECO_RENDER // ECO_RENDER START
+	static u32 time_frame = 0;
+	u32 time_curr = timeGetTime();
+	u32 time_diff = time_curr - time_frame;
+	time_frame = time_curr;
+	u32 optimal = 10;
+	if (Device.Paused() || IsMainMenuActive())
+		optimal = 32;
+	if (time_diff < optimal)
+		Sleep(optimal - time_diff);
+#else
+	Sleep						(0);
+#endif // ECO_RENDER END
+#ifdef SPAWN_ANTIFREEZE
+	frame_timer.Start();
+#endif
 #ifndef DEDICATED_SERVER
 	Statistic->RenderTOTAL_Real.FrameStart	();
 	Statistic->RenderTOTAL_Real.Begin		();

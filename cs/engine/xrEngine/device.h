@@ -42,7 +42,9 @@ private:
 	CTimer_paused							Timer;
 	CTimer_paused							TimerGlobal;
 	CTimer									TimerMM;
-
+#ifdef   SPAWN_ANTIFREEZE
+	CTimer									frame_timer;
+#endif
 	void									_Create		(LPCSTR shName);
 	void									_Destroy	(BOOL	bKeepTextures);
 	void									_SetupStates();
@@ -196,7 +198,9 @@ public:
 		if (I != seqParallel.end())
 			seqParallel.erase	(I);
 	}
-
+#ifdef   SPAWN_ANTIFREEZE
+	IC		u32				frame_elapsed()			{ return frame_timer.GetElapsed_ms(); }
+#endif
 public:
 			void xr_stdcall		on_idle				();
 			bool xr_stdcall		on_message			(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT &result);
