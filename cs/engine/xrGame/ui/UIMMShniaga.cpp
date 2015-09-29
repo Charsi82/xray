@@ -277,7 +277,7 @@ bool CUIMMShniaga::OnKeyboard(int dik, EUIMessages keyboard_action){
 					SelectBtn(m_selected_btn + 1);
 				return true;
 			
-			// ÑƒĞ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ğµ Ñ‚Ñ€ĞµĞºĞ°Ğ¼Ğ¸
+			// óïğàâëåíèå òğåêàìè
 			case DIK_LEFT:
 				m_sound->music_prev_track();
 				return true;

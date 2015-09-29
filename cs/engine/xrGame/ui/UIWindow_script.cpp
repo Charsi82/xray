@@ -22,7 +22,7 @@ CGameFont* GetFontMedium()
 {return mngr().pFontMedium;}
 CGameFont* GetFontDI()
 {return mngr().pFontDI;}
-//ГёГ°ГЁГґГІГ» Г¤Г«Гї ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г 
+//шрифты для интерфейса
 CGameFont* GetFontGraffiti19Russian()
 {return mngr().pFontGraffiti19Russian;}
 CGameFont* GetFontGraffiti22Russian()

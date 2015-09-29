@@ -135,10 +135,10 @@ void CUIMainIngameWnd::Init()
 	m_iPickUpItemIconY			= UIPickUpItemIcon.GetWndRect().top;
 	//---------------------------------------------------------
 
-	//ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г» 
+	//индикаторы 
 	UIZoneMap->Init				();
 
-	// ГЏГ®Г¤Г±ГЄГ Г§ГЄГЁ, ГЄГ®ГІГ®Г°Г»ГҐ ГўГ®Г§Г­ГЁГЄГ ГѕГІ ГЇГ°ГЁ Г­Г ГўГҐГ¤ГҐГ­ГЁГЁ ГЇГ°ГЁГ¶ГҐГ«Г  Г­Г  Г®ГЎГєГҐГЄГІ
+	// Подсказки, которые возникают при наведении прицела на объект
 	AttachChild					(&UIStaticQuickHelp);
 	xml_init.InitStatic			(uiXml, "quick_info", 0, &UIStaticQuickHelp);
 
@@ -148,7 +148,7 @@ void CUIMainIngameWnd::Init()
 	xml_init.InitScrollView		(uiXml, "icons_scroll_view", 0, m_UIIcons);
 	AttachChild					(m_UIIcons);
 
-	// Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГЁГЄГ®Г­ГЄГЁ 
+	// Загружаем иконки 
 /*	if ( IsGameTypeSingle() )
 	{
 		xml_init.InitStatic		(uiXml, "starvation_static", 0, &UIStarvationIcon);
@@ -188,11 +188,11 @@ void CUIMainIngameWnd::Init()
 		"artefact"
 	};
 
-	// Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГЇГ®Г°Г®ГЈГ®ГўГ»ГҐ Г§Г­Г Г·ГҐГ­ГЁГї Г¤Г«Гї ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г®Гў
+	// Загружаем пороговые значения для индикаторов
 	EWarningIcons j = ewiWeaponJammed;
 	while (j < ewiInvincible)
 	{
-		// Г—ГЁГІГ ГҐГ¬ Г¤Г Г­Г­Г»ГҐ ГЇГ®Г°Г®ГЈГ®Гў Г¤Г«Гї ГЄГ Г¦Г¤Г®ГЈГ® ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г 
+		// Читаем данные порогов для каждого индикатора
 		shared_str cfgRecord = pSettings->r_string("main_ingame_indicators_thresholds", *warningStrings[static_cast<int>(j) - 1]);
 		u32 count = _GetItemCount(*cfgRecord);
 
@@ -423,16 +423,16 @@ void CUIMainIngameWnd::Update()
 
 		xr_vector<float>::reverse_iterator	rit;
 
-		// Г‘Г­Г Г·Г Г«Г  ГЇГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г  ГІГ®Г·Г­Г®ГҐ Г±Г®Г®ГІГўГҐГІГ±ГўГЁГҐ
+		// Сначала проверяем на точное соответсвие
 		rit  = std::find( m_Thresholds[i].rbegin(), m_Thresholds[i].rend(), value );
 
-		// Г…Г±Г«ГЁ ГҐГЈГ® Г­ГҐГІ, ГІГ® ГЎГҐГ°ГҐГ¬ ГЇГ®Г±Г«ГҐГ¤Г­ГҐГҐ Г¬ГҐГ­ГјГёГҐГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ()
+		// Если его нет, то берем последнее меньшее значение ()
 		if ( rit == m_Thresholds[i].rend() )
 		{
 			rit = std::find_if(m_Thresholds[i].rbegin(), m_Thresholds[i].rend(), std::bind2nd(std::less<float>(), value));
 		}
 
-		// ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ ГЁ Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГї ГЈГ°Г Г­ГЁГ¶Г»
+		// Минимальное и максимальное значения границы
 		float min = m_Thresholds[i].front();
 		float max = m_Thresholds[i].back();
 
@@ -576,7 +576,7 @@ void CUIMainIngameWnd::SetWarningIconColor(EWarningIcons icon, const u32 cl)
 {
 	bool bMagicFlag = true;
 
-	// Г‡Г Г¤Г ГҐГ¬ Г¶ГўГҐГІ ГІГ°ГҐГЎГіГҐГ¬Г®Г© ГЁГЄГ®Г­ГЄГЁ
+	// Задаем цвет требуемой иконки
 	switch(icon)
 	{
 	case ewiAll:
@@ -619,7 +619,7 @@ void CUIMainIngameWnd::TurnOffWarningIcon(EWarningIcons icon)
 
 void CUIMainIngameWnd::SetFlashIconState_(EFlashingIcons type, bool enable)
 {
-	// Г‚ГЄГ«ГѕГ·Г ГҐГ¬ Г Г­ГЁГ¬Г Г¶ГЁГѕ ГІГ°ГҐГЎГіГҐГ¬Г®Г© ГЁГЄГ®Г­ГЄГЁ
+	// Включаем анимацию требуемой иконки
 	FlashingIcons_it icon = m_FlashingIcons.find(type);
 	R_ASSERT2(icon != m_FlashingIcons.end(), "Flashing icon with this type not existed");
 	icon->second->Show(enable);
@@ -632,14 +632,14 @@ void CUIMainIngameWnd::InitFlashingIcons(CUIXml* node)
 
 	CUIXmlInit xml_init;
 	CUIStatic *pIcon = NULL;
-	// ГЏГ°Г®ГЎГҐГЈГ ГҐГ¬Г±Гї ГЇГ® ГўГ±ГҐГ¬ Г­Г®Г¤Г Г¬ ГЁ ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ ГЁГ§ Г­ГЁГµ Г±ГІГ ГІГЁГЄГЁ
+	// Пробегаемся по всем нодам и инициализируем из них статики
 	for (int i = 0; i < staticsCount; ++i)
 	{
 		pIcon = new CUIStatic();
 		xml_init.InitStatic(*node, flashingIconNodeName, i, pIcon);
 		shared_str iconType = node->ReadAttrib(flashingIconNodeName, i, "type", "none");
 
-		// Г’ГҐГЇГҐГ°Гј Г§Г ГЇГ®Г¬ГЁГ­Г ГҐГ¬ ГЁГЄГ®Г­ГЄГі ГЁ ГҐГҐ ГІГЁГЇ
+		// Теперь запоминаем иконку и ее тип
 		EFlashingIcons type = efiPdaTask;
 
 		if		(iconType == "pda")		type = efiPdaTask;
@@ -761,7 +761,7 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 
 	UIPickUpItemIcon.SetStretchTexture(true);
 
-	// Real Wolf: РСЃРїСЂР°РІР»СЏРµРј СЂР°СЃС‚СЏРіРёРІР°РЅРёРµ. 10.08.2014.
+	// Real Wolf: Исправляем растягивание. 10.08.2014.
 	scale_x = Device.fASPECT / 0.75f;
 
 	UIPickUpItemIcon.SetWidth(m_iGridWidth*INV_GRID_WIDTH*scale*scale_x);
@@ -770,7 +770,7 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 	UIPickUpItemIcon.SetWndPos(Fvector2().set(	m_iPickUpItemIconX+(m_iPickUpItemIconWidth-UIPickUpItemIcon.GetWidth())/2.0f,
 												m_iPickUpItemIconY+(m_iPickUpItemIconHeight-UIPickUpItemIcon.GetHeight())/2.0f) );
 
-	// Real Wolf: Р”РѕР±Р°РІР»СЏРµРј Рє РёРєРѕРЅРєРµ Р°РґРґРѕРЅС‹ РѕСЂСѓР¶РёСЏ. 10.08.2014.
+	// Real Wolf: Добавляем к иконке аддоны оружия. 10.08.2014.
 	if (auto wpn = m_pPickUpItem->cast_weapon())
 	{
 		auto cell_item = new CUIWeaponCellItem(wpn);
@@ -799,7 +799,7 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 		UIPickUpItemIcon.DetachAll();
 	}
 	
-	UIPickUpItemIcon.SetColor(color_rgba(255,255,255,192));
+	UIPickUpItemIcon.SetColor(color_rgba(255, 255, 255, 192));
 	UIPickUpItemIcon.Show(true);
 };
 

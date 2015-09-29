@@ -76,7 +76,7 @@ public:
 
 
 	////////////////////////////////////
-	//Г°Г ГЎГ®ГІГ  Г± Г¤Г®Г·ГҐГ°Г­ГЁГ¬ГЁ ГЁ Г°Г®Г¤ГЁГІГҐГ«ГјГ±ГЄГЁГ¬ГЁ Г®ГЄГ­Г Г¬ГЁ
+	//работа с дочерними и родительскими окнами
 	virtual void			AttachChild			(CUIWindow* pChild);
 	virtual void			DetachChild			(CUIWindow* pChild);
 	virtual bool			IsChild				(CUIWindow* pChild) const;
@@ -86,17 +86,17 @@ public:
 	void					SetParent			(CUIWindow* pNewParent);
 	CUIWindow*				GetParent			()	const							{return m_pParentWnd;}
 	
-	//ГЇГ®Г«ГіГ·ГЁГІГј Г®ГЄГ­Г® Г±Г Г¬Г®ГЈГ® ГўГҐГ°ГµГ­ГҐГЈГ® ГіГ°Г®ГўГ­Гї
+	//получить окно самого верхнего уровня
 	CUIWindow*				GetTop				()								{if(m_pParentWnd == NULL) return  this; 
 																				else return  m_pParentWnd->GetTop();}
 	CUIWindow*				GetCurrentMouseHandler();
 	CUIWindow*				GetChildMouseHandler();
 
 
-	//ГЇГ®Г¤Г­ГїГІГј Г­Г  ГўГҐГ°ГёГЁГ­Гі Г±ГЇГЁГ±ГЄГ  ГўГ»ГЎГ°Г Г­Г­Г®ГҐ Г¤Г®Г·ГҐГ°Г­ГҐГҐ Г®ГЄГ­Г®
+	//поднять на вершину списка выбранное дочернее окно
 	bool					BringToTop			(CUIWindow* pChild);
 
-	//ГЇГ®Г¤Г­ГїГІГј Г­Г  ГўГҐГ°ГёГЁГ­Гі Г±ГЇГЁГ±ГЄГ  ГўГ±ГҐГµ Г°Г®Г¤ГЁГІГҐГ«ГҐГ© Г®ГЄГ­Г  ГЁ ГҐГЈГ® Г±Г Г¬Г®ГЈГ®
+	//поднять на вершину списка всех родителей окна и его самого
 	void					BringAllToTop		();
 	
 
@@ -112,41 +112,41 @@ public:
 	
 			bool 			HasChildMouseHandler();
 
-	//Г§Г ГµГўГ ГІГЁГІГј/Г®Г±ГўГ®ГЎГ®Г¤ГЁГІГј Г¬Г»ГёГј Г®ГЄГ­Г®Г¬
-	//Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ ГЇГ®Г±Г»Г«Г ГҐГІГ±Гї Г¤Г®Г·ГҐГ°Г­ГЁГ¬ Г®ГЄГ­Г®Г¬ Г°Г®Г¤ГЁГІГҐГ«ГјГ±ГЄГ®Г¬Гі
+	//захватить/освободить мышь окном
+	//сообщение посылается дочерним окном родительскому
 	void					SetCapture			(CUIWindow* pChildWindow, bool capture_status);
 	CUIWindow*				GetMouseCapturer	()													{return m_pMouseCapturer;}
 
-	//Г®ГЄГ®ГёГЄГ®, ГЄГ®ГІГ®Г°Г®Г¬Гі ГЇГҐГ°ГҐГ±Г»Г«Г ГѕГІГ±Гї Г±Г®Г®ГЎГ№ГҐГ­ГЁГї,
-	//ГҐГ±Г«ГЁ NULL, ГІГ® ГёГ«ГҐГ¬ Г­Г  GetParent()
+	//окошко, которому пересылаются сообщения,
+	//если NULL, то шлем на GetParent()
 	void					SetMessageTarget	(CUIWindow* pWindow)								{m_pMessageTarget = pWindow;}
 	CUIWindow*				GetMessageTarget	();
 
-	//Г°ГҐГ ГЄГ¶ГЁГї Г­Г  ГЄГ«Г ГўГЁГ ГІГіГ°Гі
+	//реакция на клавиатуру
 	virtual bool			OnKeyboard			(int dik, EUIMessages keyboard_action);
 	virtual bool			OnKeyboardHold		(int dik);
 	virtual void			SetKeyboardCapture	(CUIWindow* pChildWindow, bool capture_status);
 
 	
 	
-	//Г®ГЎГ°Г ГЎГ®ГІГЄГ  Г±Г®Г®ГЎГ№ГҐГ­ГЁГ© Г­ГҐ ГЇГ°ГҐГ¤ГіГ±Г¬Г®ГІГ°ГҐГ­Г»Гµ Г±ГІГ Г­Г¤Г Г°ГІГ­Г»Г¬ГЁ Г®ГЎГ°Г ГЎГ®ГІГ·ГЁГЄГ Г¬ГЁ
-	//Гґ-Г¶ГЁГї Г¤Г®Г«Г¦Г­Г  ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГїГІГјГ±Гї
-	//pWnd - ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г®ГЄГ­Г®, ГЄГ®ГІГ®Г°Г®ГҐ ГЇГ®Г±Г«Г Г«Г® Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ
-	//pData - ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г»ГҐ Г¤Г Г­Г­Г»ГҐ, ГЄГ®ГІГ®Г°Г»ГҐ Г¬Г®ГЈГіГІ ГЇГ®Г­Г Г¤Г®ГЎГЁГІГјГ±Гї
+	//обработка сообщений не предусмотреных стандартными обработчиками
+	//ф-ция должна переопределяться
+	//pWnd - указатель на окно, которое послало сообщение
+	//pData - указатель на дополнительные данные, которые могут понадобиться
 	virtual void			SendMessage			(CUIWindow* pWnd, s16 msg, void* pData = NULL);
 	
 	
 
-	//Г§Г ГЇГ°ГҐГ№ГҐГ­ГЁГҐ/Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ Г­Г  ГўГўГ®Г¤ Г± ГЄГ«Г ГўГЁГ ГІГіГ°Г»
+	//запрещение/разрешение на ввод с клавиатуры
 	virtual void			Enable				(bool status)									{m_bIsEnabled=status;}
 	virtual bool			IsEnabled			()												{return m_bIsEnabled;}
 
-	//ГіГЎГ°Г ГІГј/ГЇГ®ГЄГ Г§Г ГІГј Г®ГЄГ­Г® ГЁ ГҐГЈГ® Г¤Г®Г·ГҐГ°Г­ГЁГҐ Г®ГЄГ­Г 
+	//убрать/показать окно и его дочерние окна
 	virtual void			Show				(bool status)									{SetVisible(status); Enable(status); }
 	IC		bool			IsShown				()												{return this->GetVisible();}
 			void			ShowChildren		(bool show);
 	
-	//Г ГЎГ±Г®Г«ГѕГІГ­Г»ГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ»
+	//абсолютные координаты
 	IC void					GetAbsoluteRect		(Frect& r) ;
 	IC void					GetAbsolutePos		(Fvector2& p) 	{Frect abs; GetAbsoluteRect(abs); p.set(abs.x1,abs.y1);}
 
@@ -157,18 +157,17 @@ public:
 			
 			Frect			GetWndRect_script()													{ return CUISimpleWindow::GetWndRect(); };
 			void			Init(float x, float y, float w, float h)							{ m_wndPos.set(x, y); m_wndSize.set(w, h); };
-			
-	//ГЇГ°Г®Г°ГЁГ±Г®ГўГЄГ  Г®ГЄГ­Г 
+	//прорисовка окна
 	virtual void			Draw				();
 	virtual void			Draw				(float x, float y);
-	//Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ Г®ГЄГ­Г  ГЇГҐГ°ГҐГ¤ГЇГ°Г®Г°ГЁГ±Г®ГўГЄГ®Г©
+	//обновление окна передпрорисовкой
 	virtual void			Update				();
 
 
 			void			SetPPMode			();
 			void			ResetPPMode			();
 	IC		bool			GetPPMode			()		{return m_bPP;};
-	//Г¤Г«Гї ГЇГҐГ°ГҐГўГ®Г¤Г  Г®ГЄГ­Г  ГЁ ГЇГ®ГІГ®Г¬ГЄГ®Гў Гў ГЁГ±ГµГ®Г¤Г­Г®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
+	//для перевода окна и потомков в исходное состояние
 	virtual void			Reset				();
 			void			ResetAll			();
 
@@ -205,45 +204,45 @@ protected:
 	IC void					SafeRemoveChild(CUIWindow* child)				{WINDOW_LIST_it it = std::find(m_ChildWndList.begin(),m_ChildWndList.end(),child); if(it!=m_ChildWndList.end())m_ChildWndList.erase(it);};
 
 	shared_str				m_windowName;
-	//Г±ГЇГЁГ±Г®ГЄ Г¤Г®Г·ГҐГ°Г­ГЁГµ Г®ГЄГ®Г­
+	//список дочерних окон
 	WINDOW_LIST				m_ChildWndList;
 	
-	//ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г°Г®Г¤ГЁГІГҐГ«ГјГ±ГЄГ®ГҐ Г®ГЄГ­Г®
+	//указатель на родительское окно
 	CUIWindow*				m_pParentWnd;
 
-	//Г¤Г®Г·ГҐГ°Г­ГҐГҐ Г®ГЄГ­Г® ГЄГ®ГІГ®Г°Г®ГҐ, Г§Г ГµГўГ ГІГЁГ«Г® ГўГўГ®Г¤ Г¬Г»ГёГЁ
+	//дочернее окно которое, захватило ввод мыши
 	CUIWindow*				m_pMouseCapturer;
 	
-	//ГЄГІГ® ГЁГ§Г­Г Г·Г Г«ГјГ­Г® ГЁГ­ГЁГ¶ГЁГ°Г®ГўГ Г«
-	//Г§Г ГµГўГ ГІ ГґГ®ГЄГіГ±Г , ГІГ®Г«ГјГЄГ® Г®Г­ ГІГҐГЇГҐГ°Гј
-	//Г¬Г®Г¦ГҐГІ ГўГҐГ±Гј ГґГ®ГЄГіГ± ГЁ Г®Г±ГўГ®ГЎГ®Г¤ГЁГІГј
+	//кто изначально иницировал
+	//захват фокуса, только он теперь
+	//может весь фокус и освободить
 	CUIWindow*				m_pOrignMouseCapturer;
 
-	//Г¤Г®Г·ГҐГ°Г­ГҐГҐ Г®ГЄГ­Г® ГЄГ®ГІГ®Г°Г®ГҐ, Г§Г ГµГўГ ГІГЁГ«Г® ГўГўГ®Г¤ ГЄГ«Г ГўГЁГ ГІГіГ°Г»
+	//дочернее окно которое, захватило ввод клавиатуры
 	CUIWindow*				m_pKeyboardCapturer;
 
-	//ГЄГ®Г¬Гі ГёГ«ГҐГ¬ Г±Г®Г®ГЎГ№ГҐГ­ГЁГї
+	//кому шлем сообщения
 	CUIWindow*				m_pMessageTarget;
 
 
 	CGameFont*				m_pFont;
 
-	// ГЏГ®Г±Г«ГҐГ¤Г­ГїГї ГЇГ®Г§ГЁГ¶ГЁГї Г¬Г»ГёГЄГЁ
+	// Последняя позиция мышки
 	Fvector2 cursor_pos;
 
-	//ГўГ°ГҐГ¬Гї ГЇГ°Г®ГёГ«Г®ГЈГ® ГЄГ«ГЁГЄГ  Г¬Г»ГёГЄГЁ
-	//Г¤Г«Гї Г®ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГї DoubleClick
+	//время прошлого клика мышки
+	//для определения DoubleClick
 	u32						m_dwLastClickTime;
 	u32						m_dwFocusReceiveTime;
 
-	//ГґГ«Г ГЈ Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГ®ГЈГ® ГіГ¤Г Г«ГҐГ­ГЁГї ГўГ® ГўГ°ГҐГ¬Гї ГўГ»Г§Г®ГўГ  Г¤ГҐГ±ГІГ°ГіГЄГІГ®Г°Г 
+	//флаг автоматического удаления во время вызова деструктора
 	bool					m_bAutoDelete;
 
 	bool					m_bPP;
-	//Г°Г Г§Г°ГҐГёГҐГ­ Г«ГЁ ГўГўГ®Г¤ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гї
+	//разрешен ли ввод пользователя
 	bool					m_bIsEnabled;
 
-	// Г…Г±Г«ГЁ ГЄГіГ°Г±Г®Г° Г­Г Г¤ Г®ГЄГ­Г®Г¬
+	// Если курсор над окном
 	bool					m_bCursorOverWindow;
 	bool					m_bClickable;
 	bool					m_bCustomDraw;

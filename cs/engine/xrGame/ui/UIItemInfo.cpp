@@ -305,7 +305,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 	}
 	if(UIItemImage)
 	{
-		// Ã‡Ã Ã£Ã°Ã³Ã¦Ã Ã¥Ã¬ ÃªÃ Ã°Ã²Ã¨Ã­ÃªÃ³
+		// Çàãðóæàåì êàðòèíêó
 		UIItemImage->SetShader				(InventoryUtilities::GetEquipmentIconsShader());
 
 		Irect item_grid_rect				= pInvItem->GetInvGridRect();

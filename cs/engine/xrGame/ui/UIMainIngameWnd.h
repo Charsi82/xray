@@ -48,7 +48,7 @@ protected:
 	CUIMotionIcon		UIMotionIcon;
 	CUIZoneMap*			UIZoneMap;
 
-	//ГЁГЄГ®Г­ГЄГ , ГЇГ®ГЄГ Г§Г»ГўГ ГѕГ№Г Гї ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г ГЄГІГЁГўГ­Г»Гµ PDA
+	//иконка, показывающая количество активных PDA
 //	CUIStatic			UIPdaOnline;
 	
 	CUIHudStatesWnd*	m_ui_hud_states;
@@ -63,12 +63,12 @@ public:
 
 protected:
 
-	// 5 Г±ГІГ ГІГЁГЄГ®Гў Г¤Г«Гї Г®ГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГї ГЁГЄГ®Г­Г®ГЄ:
-	// - Г±Г«Г®Г¬Г Г­Г­Г®ГЈГ® Г®Г°ГіГ¦ГЁГї
-	// - Г°Г Г¤ГЁГ Г¶ГЁГЁ
-	// - Г°Г Г­ГҐГ­ГЁГї
-	// - ГЈГ®Г«Г®Г¤Г 
-	// - ГіГ±ГІГ Г«Г®Г±ГІГЁ
+	// 5 статиков для отображения иконок:
+	// - сломанного оружия
+	// - радиации
+	// - ранения
+	// - голода
+	// - усталости
 	CUIStatic			UIWeaponJammedIcon;
 //	CUIStatic			UIRadiaitionIcon;
 //	CUIStatic			UIWoundIcon;
@@ -86,7 +86,7 @@ public:
 #ifdef AF_PANEL
 	CUIArtefactPanel*    m_artefactPanel;
 #endif
-	// Г…Г­ГіГ¬Г» Г±Г®Г®ГІГўГҐГІГ±ГўГіГѕГ№ГЁГҐ ГЇГ°ГҐГ¤ГіГЇГ°ГҐГ¦Г¤Г ГѕГ№ГЁГ¬ ГЁГЄГ®Г­ГЄГ Г¬ 
+	// Енумы соответсвующие предупреждающим иконкам 
 	enum EWarningIcons
 	{
 		ewiAll				= 0,
@@ -102,16 +102,16 @@ public:
 
 	void				SetMPChatLog					(CUIWindow* pChat, CUIWindow* pLog);
 
-	// Г‡Г Г¤Г ГҐГ¬ Г¶ГўГҐГІ Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГѕГ№ГҐГ© ГЁГЄГ®Г­ГЄГҐ
+	// Задаем цвет соответствующей иконке
 	void				SetWarningIconColor				(EWarningIcons icon, const u32 cl);
 	void				TurnOffWarningIcon				(EWarningIcons icon);
 
-	// ГЏГ®Г°Г®ГЈГЁ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї Г¶ГўГҐГІГ  ГЁГ­Г¤ГЁГЄГ ГІГ®Г°Г®Гў, Г§Г ГЈГ°ГіГ¦Г ГҐГ¬Г»ГҐ ГЁГ§ system.ltx
+	// Пороги изменения цвета индикаторов, загружаемые из system.ltx
 	typedef				xr_map<EWarningIcons, xr_vector<float> >	Thresholds;
 	typedef				Thresholds::iterator						Thresholds_it;
 	Thresholds			m_Thresholds;
 
-	// Г…Г­ГіГ¬ ГЇГҐГ°ГҐГ·ГЁГ±Г«ГҐГ­ГЁГї ГўГ®Г§Г¬Г®Г¦Г­Г»Гµ Г¬ГЁГЈГ ГѕГ№ГЁГµ ГЁГЄГ®Г­Г®ГЄ
+	// Енум перечисления возможных мигающих иконок
 	enum EFlashingIcons
 	{
 		efiPdaTask	= 0,
@@ -132,9 +132,9 @@ protected:
 	void				UpdateFlashingIcons				();
 //	void				UpdateActiveItemInfo			();
 
-//	void				SetAmmoIcon						(const shared_str& seГ±t_name);
+//	void				SetAmmoIcon						(const shared_str& seсt_name);
 
-	// first - ГЁГЄГ®Г­ГЄГ , second - Г Г­ГЁГ¬Г Г¶ГЁГї
+	// first - иконка, second - анимация
     using FlashingIcons = xr_map<EFlashingIcons, CUIStatic*>;
     using FlashingIcons_it = FlashingIcons::iterator;
 	FlashingIcons		m_FlashingIcons;
@@ -143,7 +143,7 @@ protected:
 	CMissile*			m_pGrenade;
 	CInventoryItem*		m_pItem;
 
-	// ГЋГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГҐ ГЇГ®Г¤Г±ГЄГ Г§Г®ГЄ ГЇГ°ГЁ Г­Г ГўГҐГ¤ГҐГ­ГЁГЁ ГЇГ°ГЁГ¶ГҐГ«Г  Г­Г  Г®ГЎГєГҐГЄГІ
+	// Отображение подсказок при наведении прицела на объект
 	void				RenderQuickInfos();
 
 public:

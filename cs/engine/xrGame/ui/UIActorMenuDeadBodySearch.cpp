@@ -21,12 +21,12 @@
 void move_item_from_to (u16 from_id, u16 to_id, u16 what_id)
 {
 	NET_Packet P;
-	CGameObject::u_EventGen					(P, GE_OWNERSHIP_REJECT, from_id);
+	CGameObject::u_EventGen(P, GE_OWNERSHIP_REJECT, from_id);
 	P.w_u16									(what_id);
 	CGameObject::u_EventSend				(P);
 
-	//Г¤Г°ГіГЈГ®Г¬Гі ГЁГ­ГўГҐГ­ГІГ Г°Гѕ - ГўГ§ГїГІГј ГўГҐГ№Гј 
-	CGameObject::u_EventGen					(P, GE_OWNERSHIP_TAKE, to_id);
+	//другому инвентарю - взять вещь 
+	CGameObject::u_EventGen(P, GE_OWNERSHIP_TAKE, to_id);
 	P.w_u16									(what_id);
 	CGameObject::u_EventSend				(P);
 }

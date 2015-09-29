@@ -249,7 +249,7 @@ void CUIActorMenu::Update()
 	m_ItemInfo->Update();
 	m_hint_wnd->Update();
 }
-bool CUIActorMenu::StopAnyMove()  // true = Г ГЄГІВёГ° Г­ГҐ ГЁГ¤ВёГІ ГЇГ°ГЁ Г®ГІГЄГ°Г»ГІГ®Г¬ Г¬ГҐГ­Гѕ
+bool CUIActorMenu::StopAnyMove()  // true = актёр не идёт при открытом меню
 {
 	switch ( m_currMenuMode )
 	{

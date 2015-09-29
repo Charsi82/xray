@@ -691,13 +691,13 @@ void CUIActorMenu::TryHidePropertiesBox()
 void CUIActorMenu::ActivatePropertiesBox()
 {
 	TryHidePropertiesBox();
-	if ( !(m_currMenuMode == mmInventory || m_currMenuMode == mmDeadBodySearch || m_currMenuMode == mmUpgrade) )
+	PIItem item = CurrentIItem();
+	if ( !item ) 
 	{
 		return;
 	}
 	
-	PIItem item = CurrentIItem();
-	if ( !item ) 
+	if (!(m_currMenuMode == mmTrade || m_currMenuMode == mmInventory || m_currMenuMode == mmDeadBodySearch || m_currMenuMode == mmUpgrade))
 	{
 		return;
 	}
@@ -717,10 +717,31 @@ void CUIActorMenu::ActivatePropertiesBox()
 	else if ( m_currMenuMode == mmDeadBodySearch )
 	{
 		PropertiesBoxForUsing( item, b_show );
+		if (cell_item->OwnerList() != m_pDeadBodyBagList){
+			PropertiesBoxForSlots(item, b_show);
+			PropertiesBoxForWeapon(cell_item, item, b_show);
+			PropertiesBoxForAddon(item, b_show);
+		};
 	}
 	else if ( m_currMenuMode == mmUpgrade )
 	{
 		PropertiesBoxForRepair( item, b_show );
+		//+
+		PropertiesBoxForSlots(item, b_show);
+		PropertiesBoxForWeapon(cell_item, item, b_show);
+		PropertiesBoxForAddon(item, b_show);
+		PropertiesBoxForUsing(item, b_show);
+	}
+	else if (m_currMenuMode == mmTrade)
+	{
+		PropertiesBoxForSlots(item, b_show);
+		if (cell_item->OwnerList() == m_pTradeActorBagList || cell_item->OwnerList() == m_pTradeActorList)
+		{
+			PropertiesBoxForDonate(item, b_show);
+			PropertiesBoxForWeapon(cell_item, item, b_show);
+			PropertiesBoxForAddon(item, b_show);
+			PropertiesBoxForUsing(item, b_show);
+		}
 	}
 	
 	if ( b_show )
@@ -739,12 +760,21 @@ void CUIActorMenu::ActivatePropertiesBox()
 	}
 }
 
+void CUIActorMenu::PropertiesBoxForDonate(PIItem item, bool& b_show)
+{
+	if (item/*->CanTrade() && m_pPartnerInvOwner->get_money()<item->Cost()*/)
+	{
+		m_UIPropertiesBox->AddItem("st_donate", NULL, INVENTORY_DONATE_ACTION);
+		b_show = true;
+	}
+};
+
 void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 {
 	CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>( item );
 	CInventory*  inv = &m_pActorInvOwner->inventory();
 
-	// Г”Г«Г ГЈ-ГЇГ°ГЁГ§Г­Г ГЄ Г¤Г«Гї Г­ГҐГўГ«ГѕГ·ГҐГ­ГЁГї ГЇГіГ­ГЄГІГ  ГЄГ®Г­ГІГҐГЄГ±ГІГ­Г®ГЈГ® Г¬ГҐГ­Гѕ: Dreess Outfit, ГҐГ±Г«ГЁ ГЄГ®Г±ГІГѕГ¬ ГіГ¦ГҐ Г­Г Г¤ГҐГІ
+	// Флаг-признак для невлючения пункта контекстного меню: Dreess Outfit, если костюм уже надет
 	bool bAlreadyDressed = false;
 	u32 const cur_slot = item->GetSlot();
 
@@ -783,7 +813,7 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 
 void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, bool& b_show )
 {
-	//Г®ГІГ±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г Г¤Г¤Г®Г­Г®Гў Г®ГІ ГўГҐГ№ГЁ
+	//отсоединение аддонов от вещи
 	CWeapon*	pWeapon = smart_cast<CWeapon*>( item );
 	if ( !pWeapon )
 	{
@@ -830,7 +860,7 @@ void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, 
 
 void CUIActorMenu::PropertiesBoxForAddon( PIItem item, bool& b_show )
 {
-	//ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г Г¤Г¤Г®Г­Г®Гў ГЄ Г ГЄГІГЁГўГ­Г®Г¬Гі Г±Г«Г®ГІГі (2 ГЁГ«ГЁ 3)
+	//присоединение аддонов к активному слоту (2 или 3)
 
 	CScope*				pScope				= smart_cast<CScope*>			(item);
 	CSilencer*			pSilencer			= smart_cast<CSilencer*>		(item);
@@ -1003,7 +1033,7 @@ void CUIActorMenu::PropertiesBoxForRepair( PIItem item, bool& b_show )
 		b_show = true;
 	}
 }
-
+bool move_item_check(PIItem itm, CInventoryOwner* from, CInventoryOwner* to, bool weight_check);
 void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 {
 	PIItem			item		= CurrentIItem();
@@ -1083,6 +1113,11 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		{
 			TryRepairItem(this,0);
 			return;
+			break;
+		}
+	case INVENTORY_DONATE_ACTION:
+		{
+			move_item_check(item, m_pActorInvOwner, m_pPartnerInvOwner, true);
 			break;
 		}
 	}//switch

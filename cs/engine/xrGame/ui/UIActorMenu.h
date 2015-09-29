@@ -169,7 +169,7 @@ private:
 	void						PropertiesBoxForUsing		(PIItem item, bool& b_show);
 	void						PropertiesBoxForDrop		(CUICellItem* cell_item, PIItem item, bool& b_show);
 	void						PropertiesBoxForRepair		(PIItem item, bool& b_show);
-
+	void						PropertiesBoxForDonate		(PIItem item, bool& b_show);
 protected:			
 	void						Construct					();
 	void						InitCallbacks				();

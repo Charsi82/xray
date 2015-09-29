@@ -47,7 +47,7 @@ public:
 
 	void				UpdateQuestions();
 	void				NeedUpdateQuestions();
-	//ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГЁ Г­Г Г·Г Г«ГјГ­Г®ГЈГ® Г¤ГЁГ Г«Г®ГЈГ  Г±Г®ГЎГҐГ±ГҐГ¤Г­ГЁГЄГ 
+	//инициализации начального диалога собеседника
 	void				InitOthersStartDialog();
 	virtual bool		IR_OnKeyboardPress(int dik);
 	virtual bool		OnKeyboard(int dik, EUIMessages keyboard_action);
@@ -56,13 +56,13 @@ public:
 	void				AddIconedMessage(LPCSTR caption, LPCSTR text, LPCSTR texture_name, LPCSTR templ_name);
 
 protected:
-	//Г¤ГЁГ Г«Г®ГЈ
+	//диалог
 	void				InitTalkDialog			();
 	void				AskQuestion				();
 
 	void				SayPhrase				(const shared_str& phrase_id);
 
-	// Г”ГіГ­ГЄГ¶ГЁГЁ Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГї Г±ГІГ°Г®ГЄ Гў Г«ГЁГ±ГІГ» ГўГ®ГЇГ°Г®Г±Г®Гў ГЁ Г®ГІГўГҐГІГ®Гў
+	// Функции добавления строк в листы вопросов и ответов
 public:
 #ifdef NUM_PHRASES
 	void				AddQuestion				(const shared_str& text, const shared_str& id, int number);
@@ -83,7 +83,7 @@ protected:
 
 	bool				m_bNeedToUpdateQuestions;
 
-	//ГІГҐГЄГіГ№ГЁГ© Г¤ГЁГ Г«Г®ГЈ, ГҐГ±Г«ГЁ NULL, ГІГ® ГЇГҐГ°ГҐГµГ®Г¤ГЁГ¬ Гў Г°ГҐГ¦ГЁГ¬ ГўГ»ГЎГ®Г°Г  ГІГҐГ¬Г»
+	//текущий диалог, если NULL, то переходим в режим выбора темы
 	DIALOG_SHARED_PTR	m_pCurrentDialog;
 	bool				TopicMode				();
 	void				ToTopicMode				();
