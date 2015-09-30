@@ -1373,7 +1373,7 @@ void CScriptGameObject::set_buy_item_condition_factor(float factor)
 		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CInventoryOwner : cannot access class member buy_item_condition_factor!");
 		return;
 	};
-
+	clamp(factor, 0.f, 1.0f);
 	pInventoryOwner->trade_parameters().buy_item_condition_factor = factor;
 }
 #endif
