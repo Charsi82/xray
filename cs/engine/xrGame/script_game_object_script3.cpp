@@ -356,5 +356,9 @@ class_<CScriptGameObject> &script_register_game_object2(class_<CScriptGameObject
 
 		.def("open_inventory_box", &CScriptGameObject::OpenInventoryBox)
 		.def("get_bone_name", &CScriptGameObject::GetBoneName)
+
+		.def("get_silencer_status", &CScriptGameObject::SilencerState)
+		.def("get_gl_status", &CScriptGameObject::GrenadeLauncherState)
+		.def("get_scope_status", &CScriptGameObject::ScopeState)
 	;return	(instance);
 }

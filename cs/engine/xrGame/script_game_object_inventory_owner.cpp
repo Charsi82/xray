@@ -1633,3 +1633,33 @@ void CScriptGameObject::IterateBelt(luabind::functor<void> functor, luabind::obj
 	for (; I != E; ++I)
 		functor(object, (*I)->object().lua_game_object());
 }
+
+bool CScriptGameObject::SilencerState()
+{
+	CWeaponMagazined			*item = smart_cast<CWeaponMagazined*>(&this->object());
+	if (!item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CScriptGameObject::SilenserStatus non-CWeaponMagazined object !!!");
+		return false;
+	}
+	return item->IsSilencerAttached();
+}
+
+bool CScriptGameObject::GrenadeLauncherState()
+{
+	CWeaponMagazined			*item = smart_cast<CWeaponMagazined*>(&this->object());
+	if (!item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CScriptGameObject::SilenserStatus non-CWeaponMagazined object !!!");
+		return false;
+	}
+	return item->IsGrenadeLauncherAttached();
+}
+
+bool CScriptGameObject::ScopeState()
+{
+	CWeaponMagazined			*item = smart_cast<CWeaponMagazined*>(&this->object());
+	if (!item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CScriptGameObject::SilenserStatus non-CWeaponMagazined object !!!");
+		return false;
+	}
+	return item->IsScopeAttached();
+}

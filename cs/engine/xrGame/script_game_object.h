@@ -698,7 +698,7 @@ public:
 			void				take_items_enabled						(bool value);
 			bool				take_items_enabled						() const;
 #ifdef NO_TRADE_TRASH
-			void				set_buy_item_condition_factor(float factor);
+			void				set_buy_item_condition_factor(float factor = 0.7f);
 #endif
 			float				GetTotalWeight() const;//-
 			float				Weight() const;//-
@@ -720,6 +720,11 @@ public:
 			// functions for CInventoryItem class
 			flags16 GetIIFlags();
 			void SetIIFlags(flags16 flags);
+
+			// addon status
+			bool SilencerState();
+			bool GrenadeLauncherState();
+			bool ScopeState();
 
 			// KD
 			// functions for CInventoryOwner class
