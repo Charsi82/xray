@@ -1263,8 +1263,16 @@ void CActor::shedule_Update	(u32 DT)
 			else
 			{
 				if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && m_pPersonWeLookingAt->IsTalkEnabled())
+				{
 					m_sDefaultObjAction = m_sCharacterUseAction;
+				}
+				else if (m_pUsableObject)
+				{
+					bool b_allow_drag = !!pSettings->line_exist("ph_capture_visuals", game_object->cNameVisual());
 
+					if (b_allow_drag)
+						m_sDefaultObjAction = "st_physic_shell_use";
+				}
 				else if (pEntityAlive && !pEntityAlive->g_Alive())
 				{
 					bool b_allow_drag = !!pSettings->line_exist("ph_capture_visuals",pEntityAlive->cNameVisual());
