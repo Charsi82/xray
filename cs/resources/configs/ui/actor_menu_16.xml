@@ -142,7 +142,7 @@
           unlimited="1" group_similar="1" always_show_scroll="1"/>
 
   <dragdrop_belt x="303" y="97" width="38" height="320"
-          cell_width="38" cell_height="45" rows_num="5" cols_num="1"
+          cell_width="38" cell_height="45" rows_num="8" cols_num="1"
 		  cell_sp_x="0" cell_sp_y="20" a="0"/>
 
   <dragdrop_outfit x="379" y="160" width="68" height="123"
