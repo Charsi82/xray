@@ -47,3 +47,6 @@
 
 // alpet отложенный спавн предметов в ящики
 #define SPAWN_ANTIFREEZE
+
+// расширенный пояс
+#define EXT_BELT
