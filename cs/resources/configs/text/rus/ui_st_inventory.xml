@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="windows-1251" ?>
 <string_table>
+	<string id="st_physic_shell_use">
+		<text>Тащить объект (SHIFT+$$ACTION_USE$$)</text>
+	</string>
+	<string id="st_donate">
+		<text>подарить</text>
+	</string>
 	<string id="st_no_trade_tip_1">
 		<text>Торговец не интересуется подобными предметами.</text>
 	</string>
