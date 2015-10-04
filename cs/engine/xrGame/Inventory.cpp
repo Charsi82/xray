@@ -1277,7 +1277,24 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 	return	true;
 }
 
-
+#ifdef EXT_BELT
+#include "ui/UIActorMenu.h"
+u32  CInventory::BeltWidth() const
+{
+	u32 result = 0;
+	CActor* pActor = smart_cast<CActor*>( m_pOwner );
+	if ( pActor )
+	{
+		result = HUD().GetUI()->UIGame()->ActorMenu().e_af_count_base;
+		CCustomOutfit* outfit = pActor->GetOutfit();
+		if ( outfit )
+		{
+			result += outfit->get_artefact_count();
+		}
+	}
+	return result; //m_iMaxBelt;
+}
+#else //EXT_BELT
 u32  CInventory::BeltWidth() const
 {
 	CActor* pActor = smart_cast<CActor*>( m_pOwner );
@@ -1291,6 +1308,7 @@ u32  CInventory::BeltWidth() const
 	}
 	return 0; //m_iMaxBelt;
 }
+#endif //EXT_BELT
 
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
