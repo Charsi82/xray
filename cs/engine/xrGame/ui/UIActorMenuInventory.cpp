@@ -1128,6 +1128,21 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 
 void CUIActorMenu::UpdateOutfit()
 {
+#ifdef EXT_BELT
+	u32 af_count = m_pActorInvOwner->inventory().BeltWidth(); // базовый пояс + броник
+	while (m_pInventoryBeltList->ItemsCount() > af_count)
+	{
+		CUICellItem* ci = m_pInventoryBeltList->GetItemIdx(m_pInventoryBeltList->ItemsCount() - 1);
+		VERIFY(ci && ci->m_pData);
+		ToBag(ci, false);
+	}
+
+	for (u32 i = 0; i < e_af_count; ++i)
+		m_belt_list_over[i]->SetVisible(i >= af_count );
+
+	m_pInventoryBeltList->SetCellsCapacity(Ivector2().set(1, af_count)); // ?
+#else // EXT_BELT
+
 	for ( u8 i = 0; i < e_af_count ; ++i )
 	{
 		m_belt_list_over[i]->SetVisible( true );
@@ -1153,10 +1168,12 @@ void CUIActorMenu::UpdateOutfit()
 	{
 		m_belt_list_over[i]->SetVisible( false );
 	}
+#endif // EXT_BELT
 }
 
 void CUIActorMenu::MoveArtefactsToBag()
 {
+#ifndef EXT_BELT
 	while ( m_pInventoryBeltList->ItemsCount() )
 	{
 		CUICellItem* ci = m_pInventoryBeltList->GetItemIdx(0);
@@ -1164,4 +1181,5 @@ void CUIActorMenu::MoveArtefactsToBag()
 		ToBag( ci, false );
 	}//for i
 	m_pInventoryBeltList->ClearAll( true );
+#endif // EXT_BELT
 }

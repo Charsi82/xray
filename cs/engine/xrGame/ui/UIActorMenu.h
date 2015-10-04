@@ -105,8 +105,15 @@ protected:
 #ifdef DRAG_DROP_TRASH
 	CUIDragDropListEx*			m_pTrashList;
 #endif
+
+#ifdef EXT_BELT
+	//размер пояса
+	u32							e_af_count;
+	xr_vector<CUIStatic*>		m_belt_list_over;
+#else //EXT_BELT
 	enum						{e_af_count = 5};
 	CUIStatic*					m_belt_list_over[e_af_count];
+#endif //EXT_BELT
 
 	CUIInventoryUpgradeWnd*		m_pUpgradeWnd;
 	
@@ -156,6 +163,9 @@ protected:
 	bool						m_repair_mode;
 	u32							m_trade_partner_inventory_state;
 public:
+#ifdef EXT_BELT
+	u32							e_af_count_base;
+#endif
 	void						SetMenuMode					(EMenuMode mode);
 	void						SetActor					(CInventoryOwner* io);
 	void						SetPartner					(CInventoryOwner* io);

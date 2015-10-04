@@ -35,7 +35,9 @@ CUIActorMenu::~CUIActorMenu()
 	xr_delete			(m_UIPropertiesBox);
 	xr_delete			(m_hint_wnd);
 	xr_delete			(m_ItemInfo);
-
+#ifdef EXT_BELT
+	m_belt_list_over.clear_and_free();
+#endif
 	ClearAllLists		();
 }
 
@@ -107,6 +109,13 @@ void CUIActorMenu::Construct()
 	m_pTrashList->m_f_item_drop = CUIDragDropListEx::DRAG_DROP_EVENT(this, &CUIActorMenu::OnItemDrop);
 	m_pTrashList->m_f_drag_event = CUIDragDropListEx::DRAG_ITEM_EVENT(this, &CUIActorMenu::OnDragItemOnTrash);
 #endif
+
+#ifdef EXT_BELT
+	e_af_count = uiXml.ReadAttribInt("dragdrop_belt", 0, "rows_num", 5); //+
+	clamp(e_af_count, u32(5), u32(16));
+	e_af_count_base = e_af_count - 5;// reserv for outfit
+	m_belt_list_over.resize(e_af_count);
+#endif //EXT_BELT
 
 	m_belt_list_over[0] = UIHelper::CreateStatic(uiXml, "belt_list_over", this);
 	Fvector2 pos;
