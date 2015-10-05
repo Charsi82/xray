@@ -142,13 +142,28 @@
           unlimited="1" group_similar="1" always_show_scroll="1"/>
 
   <dragdrop_belt x="303" y="97" width="38" height="320"
-          cell_width="38" cell_height="45" rows_num="8" cols_num="1"
+          cell_width="38" cell_height="45" rows_num="6" cols_num="1"
 		  cell_sp_x="0" cell_sp_y="20" a="0"/>
 
   <dragdrop_outfit x="379" y="160" width="68" height="123"
           cell_width="34" cell_height="41" rows_num="3" cols_num="2"
           custom_placement="0" a="0"/>
   
+  <dragdrop_knife x="326" y="50" width="68" height="41"
+          cell_width="41" cell_height="41" rows_num="1" cols_num="2"
+          custom_placement="0" a="0">
+		  </dragdrop_knife>
+		  
+  <dragdrop_torch x="388" y="50" width="68" height="41"
+          cell_width="41" cell_height="41" rows_num="1" cols_num="2"
+          custom_placement="0" a="0">
+		  </dragdrop_torch>
+		  
+  <dragdrop_bino x="456" y="50" width="68" height="41"
+          cell_width="41" cell_height="41" rows_num="1" cols_num="2"
+          custom_placement="0" a="0">
+		  </dragdrop_bino>
+
   <dragdrop_detector x="388" y="100" width="34" height="41"
           cell_width="34" cell_height="41" rows_num="1" cols_num="1"
           custom_placement="0" a="0"/>
