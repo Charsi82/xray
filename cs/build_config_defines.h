@@ -50,3 +50,12 @@
 
 // расширенный пояс
 #define EXT_BELT
+
+// слот ножа
+#define INV_KNIFE_SLOT
+
+// слот фонарика
+#define INV_TORCH_SLOT
+
+// слот бинокля
+#define INV_BINO_SLOT
