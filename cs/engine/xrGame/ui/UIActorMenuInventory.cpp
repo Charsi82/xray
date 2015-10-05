@@ -44,6 +44,18 @@ void CUIActorMenu::InitInventoryMode()
 	m_pInventoryPistolList->Show		(true);
 	m_pInventoryAutomaticList->Show		(true);
 
+#ifdef INV_KNIFE_SLOT
+	m_pInventoryKnifeList->Show(true);
+#endif
+
+#ifdef INV_TORCH_SLOT
+	m_pInventoryTorchList->Show(true);
+#endif
+
+#ifdef INV_BINO_SLOT
+	m_pInventoryBinoList->Show(true);
+#endif
+
 #ifdef DRAG_DROP_TRASH
 	m_pTrashList->Show(true);
 #endif
@@ -242,6 +254,15 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 		m_pInventoryBagList,
 		m_pTradeActorBagList,
 		m_pTradeActorList,
+#ifdef INV_KNIFE_SLOT
+		m_pInventoryKnifeList,
+#endif
+#ifdef INV_TORCH_SLOT
+		m_pInventoryTorchList,
+#endif
+#ifdef INV_BINO_SLOT
+		m_pInventoryBinoList,
+#endif
 		NULL
 	};
 
@@ -362,7 +383,7 @@ void CUIActorMenu::DetachAddon(LPCSTR addon_name)
 
 void CUIActorMenu::InitCellForSlot( u32 slot_idx ) 
 {
-	VERIFY( KNIFE_SLOT <= slot_idx && slot_idx <= DETECTOR_SLOT );
+	VERIFY( KNIFE_SLOT <= slot_idx && slot_idx <= TORCH_SLOT );
 	PIItem item	= m_pActorInvOwner->inventory().m_slots[slot_idx].m_pIItem;
 	if ( !item )
 	{
@@ -387,6 +408,15 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 	CUIDragDropListEx*			curr_list = NULL;
 	//Slots
+#ifdef INV_KNIFE_SLOT
+	InitCellForSlot				(KNIFE_SLOT);
+#endif
+#ifdef INV_TORCH_SLOT
+	InitCellForSlot				(TORCH_SLOT);
+#endif
+#ifdef INV_BINO_SLOT
+	InitCellForSlot				(APPARATUS_SLOT);
+#endif
 	InitCellForSlot				(PISTOL_SLOT);
 	InitCellForSlot				(RIFLE_SLOT);
 	InitCellForSlot				(OUTFIT_SLOT);
@@ -604,6 +634,21 @@ CUIDragDropListEx* CUIActorMenu::GetSlotList(u32 slot_idx)
 	}
 	switch ( slot_idx )
 	{
+#ifdef INV_KNIFE_SLOT
+		case KNIFE_SLOT:
+			return m_pInventoryKnifeList;
+			break;
+#endif
+#ifdef INV_TORCH_SLOT
+		case TORCH_SLOT:
+			return m_pInventoryTorchList;
+			break;
+#endif
+#ifdef INV_BINO_SLOT
+		case APPARATUS_SLOT:
+			return m_pInventoryBinoList;
+			break;
+#endif
 		case PISTOL_SLOT:
 			return m_pInventoryPistolList;
 			break;

@@ -299,6 +299,17 @@ EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 	if(l==m_pInventoryOutfitList)		return iActorSlot;
 	if(l==m_pInventoryDetectorList)		return iActorSlot;
 	
+#ifdef INV_KNIFE_SLOT
+	if(l==m_pInventoryKnifeList)		return iActorSlot;
+#endif
+
+#ifdef INV_TORCH_SLOT
+	if (l == m_pInventoryTorchList)		return iActorSlot;
+#endif
+
+#ifdef INV_BINO_SLOT
+	if (l == m_pInventoryBinoList)		return iActorSlot;
+#endif
 
 	if(l==m_pTradeActorBagList)			return iActorBag;
 	if(l==m_pTradeActorList)			return iActorTrade;
@@ -650,6 +661,18 @@ void CUIActorMenu::ClearAllLists()
 	m_pTradePartnerBagList->ClearAll			(true);
 	m_pTradePartnerList->ClearAll				(true);
 	m_pDeadBodyBagList->ClearAll				(true);
+
+#ifdef INV_KNIFE_SLOT
+	m_pInventoryKnifeList->ClearAll				(true);
+#endif
+
+#ifdef INV_TORCH_SLOT
+	m_pInventoryTorchList->ClearAll				(true);
+#endif
+
+#ifdef INV_BINO_SLOT
+	m_pInventoryBinoList->ClearAll				(true);
+#endif	
 }
 
 bool CUIActorMenu::OnMouse( float x, float y, EUIMessages mouse_action )

@@ -104,6 +104,18 @@ void CUIActorMenu::Construct()
 	m_pTradePartnerBagList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_bag", this);
 	m_pTradePartnerList			= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_trade", this);
 
+#ifdef INV_KNIFE_SLOT
+	m_pInventoryKnifeList		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_knife", this);
+#endif
+
+#ifdef INV_TORCH_SLOT
+	m_pInventoryTorchList 		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_torch", this);
+#endif
+
+#ifdef INV_BINO_SLOT
+	m_pInventoryBinoList 		= UIHelper::CreateDragDropListEx(uiXml, "dragdrop_bino", this);
+#endif
+
 #ifdef DRAG_DROP_TRASH
 	m_pTrashList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_trash", this);
 	m_pTrashList->m_f_item_drop = CUIDragDropListEx::DRAG_DROP_EVENT(this, &CUIActorMenu::OnItemDrop);
@@ -204,6 +216,18 @@ void CUIActorMenu::Construct()
 	BindDragDropListEvents				(m_pTradePartnerBagList);
 	BindDragDropListEvents				(m_pTradePartnerList);
 	BindDragDropListEvents				(m_pDeadBodyBagList);
+
+#ifdef INV_KNIFE_SLOT
+	BindDragDropListEvents				(m_pInventoryKnifeList);
+#endif
+
+#ifdef INV_TORCH_SLOT
+	BindDragDropListEvents				(m_pInventoryTorchList);
+#endif
+
+#ifdef INV_BINO_SLOT
+	BindDragDropListEvents				(m_pInventoryBinoList);
+#endif
 
 #ifdef DRAG_DROP_TRASH
 	m_allowed_drops[iTrashSlot].push_back(iActorBag);

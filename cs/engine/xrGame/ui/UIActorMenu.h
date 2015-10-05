@@ -97,6 +97,18 @@ protected:
 	CUIDragDropListEx*			m_pInventoryDetectorList;
 	CUIDragDropListEx*			m_pInventoryBagList;
 
+#ifdef INV_KNIFE_SLOT
+	CUIDragDropListEx*			m_pInventoryKnifeList;
+#endif
+
+#ifdef INV_TORCH_SLOT
+	CUIDragDropListEx*			m_pInventoryTorchList;
+#endif
+
+#ifdef INV_BINO_SLOT
+	CUIDragDropListEx*			m_pInventoryBinoList;
+#endif
+
 	CUIDragDropListEx*			m_pTradeActorBagList;
 	CUIDragDropListEx*			m_pTradeActorList;
 	CUIDragDropListEx*			m_pTradePartnerBagList;
