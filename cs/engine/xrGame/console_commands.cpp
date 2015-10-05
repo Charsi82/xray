@@ -340,6 +340,11 @@ public:
 
 	CCC_DemoRecord(LPCSTR N) : IConsole_Command(N) {};
 	virtual void Execute(LPCSTR args) {
+		if (!g_pGameLevel) // level not loaded
+		{
+			Msg("Demo Record is disabled when level is not loaded.");
+			return;
+		}
 		#ifndef	DEBUG
 		if (GameID() != eGameIDSingle) 
 		{
@@ -348,6 +353,7 @@ public:
 		};
 		#endif
 		Console->Hide	();
+		if (MainMenu()->IsActive()) MainMenu()->Activate(false); // close main menu if it is open
 		string_path		fn_; 
 		strconcat		(sizeof(fn_),fn_, args, ".xrdemo");
 		string_path		fn;
