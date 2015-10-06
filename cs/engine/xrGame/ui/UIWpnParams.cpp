@@ -124,14 +124,8 @@ bool CUIWpnParams::Check(const shared_str& wpn_section)
 {
 	if (pSettings->line_exist(wpn_section, "fire_dispersion_base"))
 	{
-        if (0==xr_strcmp(wpn_section, "wpn_addon_silencer"))
-            return false;
-        if (0==xr_strcmp(wpn_section, "wpn_binoc"))
-            return false;
-        if (0==xr_strcmp(wpn_section, "mp_wpn_binoc"))
-            return false;
-
-        return true;		
+		u32 _slot = READ_IF_EXISTS(pSettings, r_u32, wpn_section, "slot", (u32)-1);
+		return _slot == PISTOL_SLOT || _slot == RIFLE_SLOT;
 	}
 	return false;
 }

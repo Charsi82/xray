@@ -333,7 +333,8 @@ void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem*
 {
 	CWeapon*		weapon = smart_cast<CWeapon*>( &pInvItem );
 	CCustomOutfit*	outfit = smart_cast<CCustomOutfit*>( &pInvItem );
-	if ( weapon || outfit )
+	u32 slot = READ_IF_EXISTS(pSettings, r_u32, pInvItem.m_section_id, "slot", (u32)-1);
+	if (outfit || (weapon && (slot!=KNIFE_SLOT) && (slot!=APPARATUS_SLOT))  )
 	{
 		UIConditionWnd->SetInfo( pCompareItem, pInvItem );
 		UIDesc->AddWindow( UIConditionWnd, false );

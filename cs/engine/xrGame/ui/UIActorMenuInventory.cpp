@@ -818,13 +818,10 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 {
 	CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>( item );
 	CInventory*  inv = &m_pActorInvOwner->inventory();
-
-	// Флаг-признак для невлючения пункта контекстного меню: Dreess Outfit, если костюм уже надет
-	bool bAlreadyDressed = false;
 	u32 const cur_slot = item->GetSlot();
 
 	if ( !pOutfit && cur_slot != NO_ACTIVE_SLOT
-		&& !inv->m_slots[cur_slot].m_bPersistent && inv->CanPutInSlot(item) )
+		/*&& !inv->m_slots[cur_slot].m_bPersistent*/ && inv->CanPutInSlot(item) )
 	{
 		m_UIPropertiesBox->AddItem( "st_move_to_slot",  NULL, INVENTORY_TO_SLOT_ACTION );
 		b_show = true;
@@ -835,23 +832,21 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 		b_show = true;
 	}
 
-	if ( item->Ruck() && inv->CanPutInRuck( item )
-		&& ( cur_slot == (u32)(-1) || !inv->m_slots[cur_slot].m_bPersistent ) )
+	if (pOutfit)
 	{
-		if( !pOutfit )
+		if (inv->m_slots[cur_slot].m_pIItem == item)
 		{
-			m_UIPropertiesBox->AddItem( "st_move_to_bag",  NULL, INVENTORY_TO_BAG_ACTION );
+			m_UIPropertiesBox->AddItem("st_undress_outfit", NULL, INVENTORY_TO_BAG_ACTION);
 		}
 		else
 		{
-			m_UIPropertiesBox->AddItem( "st_undress_outfit",  NULL, INVENTORY_TO_BAG_ACTION );
+			m_UIPropertiesBox->AddItem("st_dress_outfit", NULL, INVENTORY_TO_SLOT_ACTION);
 		}
-		bAlreadyDressed = true;
 		b_show			= true;
 	}
-	if ( pOutfit && !bAlreadyDressed )
+	else if(item->Ruck() && inv->CanPutInRuck(item))
 	{
-		m_UIPropertiesBox->AddItem( "st_dress_outfit",  NULL, INVENTORY_TO_SLOT_ACTION );
+		m_UIPropertiesBox->AddItem("st_move_to_bag", NULL, INVENTORY_TO_BAG_ACTION);
 		b_show			= true;
 	}
 }
