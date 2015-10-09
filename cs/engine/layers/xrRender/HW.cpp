@@ -35,7 +35,8 @@ CHW::CHW() :
 	pDevice(NULL),
 	pBaseRT(NULL),
 	pBaseZB(NULL),
-	m_move_window(true)
+	m_move_window(true),
+	maxRefreshRate(200)  //ECO_RENDER
 {
 	;
 }
@@ -67,10 +68,24 @@ void CHW::Reset		(HWND hwnd)
 	// Windoze
 	DevPP.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
 	DevPP.Windowed				= bWindowed;
+
+	//AVO: fucntional vsync by avbaula
+#ifdef VSYNC_FIX
+
+	DevPP.PresentationInterval = selectPresentInterval(); // Vsync
+	if (!bWindowed) // Refresh rate
+		DevPP.FullScreen_RefreshRateInHz = selectRefresh(DevPP.BackBufferWidth, DevPP.BackBufferHeight, Caps.fTarget);
+	else
+		DevPP.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+#else //!VSYNC_FIX
 	DevPP.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
-	if( !bWindowed )		DevPP.FullScreen_RefreshRateInHz	= selectRefresh	(DevPP.BackBufferWidth,DevPP.BackBufferHeight,Caps.fTarget);
+	if (!bWindowed)		DevPP.FullScreen_RefreshRateInHz = selectRefresh(DevPP.BackBufferWidth, DevPP.BackBufferHeight, Caps.fTarget);
 	else					DevPP.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
-#endif
+#endif //-VSYNC_FIX
+	//-AVO
+
+#endif //_EDITOR
 
 	while	(TRUE)	{
 		HRESULT _hr							= HW.pDevice->Reset	(&DevPP);
@@ -344,9 +359,17 @@ void		CHW::CreateDevice		(HWND m_hWnd, bool move_window)
     P.AutoDepthStencilFormat= fDepth;
 	P.Flags					= 0;	//. D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 
+	//AVO: functional vsync by avbaula
+#ifdef VSYNC_FIX
+	P.PresentationInterval = selectPresentInterval(); // Vsync
+	if (!bWindowed)
+		P.FullScreen_RefreshRateInHz = selectRefresh(P.BackBufferWidth, P.BackBufferHeight, fTarget);
+#else //!VSYNC_FIX
 	// Refresh rate
 	P.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
-    if( !bWindowed )		P.FullScreen_RefreshRateInHz	= selectRefresh	(P.BackBufferWidth, P.BackBufferHeight,fTarget);
+	if (!bWindowed)		P.FullScreen_RefreshRateInHz = selectRefresh(P.BackBufferWidth, P.BackBufferHeight, fTarget);
+#endif //-VSYNC_FIX
+	//-AVO
     else					P.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
 
     // Create the device
@@ -453,7 +476,11 @@ u32 CHW::selectRefresh(u32 dwWidth, u32 dwHeight, D3DFORMAT fmt)
 			pD3D->EnumAdapterModes(DevAdapter,fmt,I,&Mode);
 			if (Mode.Width==dwWidth && Mode.Height==dwHeight)
 			{
-				if (Mode.RefreshRate>selected) selected = Mode.RefreshRate;
+#ifndef ECO_RENDER
+				if (Mode.RefreshRate > selected) selected = Mode.RefreshRate;
+#else
+				if (Mode.RefreshRate <= (UINT)maxRefreshRate && Mode.RefreshRate > selected) selected = Mode.RefreshRate;  //ECO_RENDER modif.
+#endif
 			}
 		}
 		return selected;

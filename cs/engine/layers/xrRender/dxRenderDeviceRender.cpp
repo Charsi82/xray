@@ -340,7 +340,13 @@ void dxRenderDeviceRender::End()
 	DoAsyncScreenshot();
 
 #ifdef	USE_DX10
-	HW.m_pSwapChain->Present( 0, 0 );
+	//AVO: functional vsync by avbaula
+#ifdef VSYNC_FIX
+	HW.m_pSwapChain->Present(psDeviceFlags.test(rsVSync) ? 1 : 0, 0);
+#else //!VSYNC_FIX
+	HW.m_pSwapChain->Present(0, 0);
+#endif //-VSYNC_FIX
+	//-AVO
 #else	//	USE_DX10
 	CHK_DX				(HW.pDevice->EndScene());
 

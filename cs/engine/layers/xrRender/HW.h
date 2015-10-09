@@ -16,6 +16,7 @@ class  CHW
 {
 //	Functions section
 public:
+	int						maxRefreshRate; //ECO_RENDER add
 	CHW();
 	~CHW();
 
