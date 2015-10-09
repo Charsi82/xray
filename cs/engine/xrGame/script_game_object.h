@@ -215,7 +215,7 @@ public:
 			void				SetActorDirection	(float dir, float pitch, float roll);
 
 			CScriptGameObject*	GetActorCar();
-			void				attach_actor_Vehicle(u32 id);
+			void				attach_actor_Vehicle(u16 id);
 			void				detach_actor_Vehicle();
 	// bones
 			u16					BoneNameToId(LPCSTR name);

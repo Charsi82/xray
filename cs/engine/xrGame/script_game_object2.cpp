@@ -371,7 +371,7 @@ void CScriptGameObject::detach_actor_Vehicle()
 		car->DoExit();
 }
 
-void CScriptGameObject::attach_actor_Vehicle(u32 id)
+void CScriptGameObject::attach_actor_Vehicle(u16 id)
 {
 	CActor* actor = smart_cast<CActor*>(&object());
 	if (!actor)
