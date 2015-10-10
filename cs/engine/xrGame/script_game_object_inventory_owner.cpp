@@ -44,6 +44,7 @@
 #include "ai/stalker/ai_stalker_impl.h"
 #include "smart_cover_object.h"
 #include "smart_cover.h"
+#include "ui\UIActorMenu.h"
 
 bool CScriptGameObject::GiveInfoPortion(LPCSTR info_id)
 {
@@ -1541,6 +1542,13 @@ void CScriptGameObject::MoveToRuck(CScriptGameObject *obj)
 	}
 
 	inventory_owner->inventory().Ruck(inventory_item);
+
+	if (HUD().GetUI() && HUD().GetUI()->UIGame())
+	{
+		CUIGameSP* game_sp = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		if (game_sp->ActorMenu().IsShown())
+			game_sp->ActorMenu().ReinitLists();
+	}
 }
 
 void CScriptGameObject::MoveToSlot(CScriptGameObject *obj, bool bNotActivate)
@@ -1558,6 +1566,13 @@ void CScriptGameObject::MoveToSlot(CScriptGameObject *obj, bool bNotActivate)
 	}
 
 	inventory_owner->inventory().Slot(inventory_item, bNotActivate);
+
+	if (HUD().GetUI() && HUD().GetUI()->UIGame())
+	{
+		CUIGameSP* game_sp = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		if (game_sp->ActorMenu().IsShown())
+			game_sp->ActorMenu().ReinitLists();
+	}
 }
 
 void CScriptGameObject::MoveToBelt(CScriptGameObject *obj)
@@ -1575,6 +1590,13 @@ void CScriptGameObject::MoveToBelt(CScriptGameObject *obj)
 	}
 
 	inventory_owner->inventory().Belt(inventory_item);
+
+	if (HUD().GetUI() && HUD().GetUI()->UIGame())
+	{
+		CUIGameSP* game_sp = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		if (game_sp->ActorMenu().IsShown())
+			game_sp->ActorMenu().ReinitLists();
+	}
 }
 
 u32 CScriptGameObject::BeltSize() const

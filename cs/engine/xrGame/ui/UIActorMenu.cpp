@@ -868,3 +868,25 @@ void CUIActorMenu::OnDragItemOnTrash(CUIDragItem* item, bool b_receive)
 		item->SetCustomDraw(NULL);
 }
 #endif //DRAG_DROP_TRASH
+
+void CUIActorMenu::ReinitLists()
+{
+	ResetMode();
+	switch (m_currMenuMode)
+	{
+	case mmInventory:
+		InitInventoryMode();
+		break;
+	case mmTrade:
+		InitTradeMode();
+		break;
+	case mmUpgrade:
+		InitUpgradeMode();
+		break;
+	case mmDeadBodySearch:
+		InitDeadBodySearchMode();
+		break;
+	default:
+		break;
+	}
+}

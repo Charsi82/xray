@@ -328,4 +328,5 @@ public:
 
 	IC	UIHint*					get_hint_wnd				() { return m_hint_wnd; }
 	void						ShowCallback();
+	void						ReinitLists();
 }; // class CUIActorMenu
