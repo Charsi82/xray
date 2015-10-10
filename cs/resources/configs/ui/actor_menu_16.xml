@@ -141,7 +141,7 @@
           cell_width="34" cell_height="41" rows_num="14" cols_num="7"
           unlimited="1" group_similar="1" always_show_scroll="1"/>
 
-  <dragdrop_belt x="303" y="97" width="38" height="320"
+  <dragdrop_belt x="303" y="97" width="38" height="390"
           cell_width="38" cell_height="45" rows_num="6" cols_num="1"
 		  cell_sp_x="0" cell_sp_y="20" a="0"/>
 
