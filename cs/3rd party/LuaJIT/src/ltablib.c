@@ -15,9 +15,109 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-
 #define aux_getn(L,n)	(luaL_checktype(L, n, LUA_TTABLE), luaL_getn(L, n))
 
+static int tserialize_int(lua_State *L, int index, char* buf, int* pbuf_size) {
+		int not_first_pair = 0;
+		const char* tmp;
+
+		luaL_checktype(L, index, LUA_TTABLE);
+		lua_pushnil(L); /* first key */
+
+		buf[(*pbuf_size)++] = '{';
+
+		while (lua_next(L, -2)) {
+			if (not_first_pair)
+			{
+				buf[(*pbuf_size)++] = ',';
+			}
+			else
+			{
+				not_first_pair = 1;
+			}
+
+			// check key type
+			buf[(*pbuf_size)++] = '[';
+			switch (lua_type(L, -2))
+			{
+			case LUA_TSTRING:
+
+				tmp = lua_tostring(L, -2);
+				buf[(*pbuf_size)++] = '\"';
+				while (*tmp)
+				{
+					if (*tmp == '\"')
+					{
+						buf[(*pbuf_size)++] = '\\';
+					}
+					buf[(*pbuf_size)++] = *tmp++;
+				}
+				buf[(*pbuf_size)++] = '\"';
+				break;
+
+			case LUA_TNUMBER:
+				lua_pushvalue(L, -2);
+				tmp = lua_tostring(L, -1);
+				while (*tmp)  buf[(*pbuf_size)++] = *tmp++;
+
+				lua_pop(L, 1);
+				break;
+
+			case LUA_TBOOLEAN:
+				tmp = lua_toboolean(L, -2) ? "true" : "false";
+				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+				break;
+
+			case LUA_TTABLE:
+				lua_pushvalue(L, -2); // clone to top
+				tserialize_int(L, -1, buf, pbuf_size); // process
+				lua_pop(L, 1); // pop table
+				break;
+
+			default:
+				luaL_error(L, "incorrect key type [%s]", lua_typename(L, lua_type(L, -2)));
+				break;
+			};
+			buf[(*pbuf_size)++] = ']';
+			buf[(*pbuf_size)++] = '=';
+
+			// check value
+			switch (lua_type(L, -1))
+			{
+			case LUA_TSTRING:
+				tmp = lua_tostring(L, -1);
+				buf[(*pbuf_size)++] = '\"';
+				while (*tmp)
+				{
+					if (*tmp == '\"') buf[(*pbuf_size)++] = '\\';					
+					buf[(*pbuf_size)++] = *tmp++;
+				}
+				buf[(*pbuf_size)++] = '\"';
+				break;
+
+			case LUA_TNUMBER:
+				tmp = lua_tostring(L, -1);
+				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+				break;
+
+			case LUA_TBOOLEAN:
+				tmp = lua_toboolean(L, -1) ? "true" : "false";
+				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+				break;
+
+			case LUA_TTABLE:
+				tserialize_int(L, -1, buf, pbuf_size);
+				break;
+
+			default:
+				luaL_error(L, "incorrect value type [%s]", lua_typename(L, lua_type(L,-1)));
+				break;
+			};
+			lua_pop(L, 1);
+		};
+		buf[(*pbuf_size)++] = '}';
+		return 0;
+}
 
 static int foreachi (lua_State *L) {
   int i;
@@ -263,6 +363,16 @@ static int sort (lua_State *L) {
   return 0;
 }
 
+#include "stdlib.h"
+static int serialize(lua_State *L) {
+	char* buf = (char*) calloc(1048576, sizeof(char));
+	int buf_size = 0;
+	tserialize_int(L, 1, buf, &buf_size);
+	buf[buf_size] = 0;
+	lua_pushstring(L, buf);
+	free(buf);
+	return 1;
+}
 /* }====================================================== */
 
 
@@ -276,6 +386,7 @@ static const luaL_Reg tab_funcs[] = {
   {"remove", tremove},
   {"setn", setn},
   {"sort", sort},
+  {"serialize", serialize},
   {NULL, NULL}
 };
 
