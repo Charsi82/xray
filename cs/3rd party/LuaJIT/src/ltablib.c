@@ -17,19 +17,20 @@
 
 #define aux_getn(L,n)	(luaL_checktype(L, n, LUA_TTABLE), luaL_getn(L, n))
 
-static int tserialize_int(lua_State *L, int index, char* buf, int* pbuf_size) {
+static int tserialize_int(lua_State *L, int index, luaL_Buffer* buf)
+{
 		int not_first_pair = 0;
 		const char* tmp;
 
 		luaL_checktype(L, index, LUA_TTABLE);
 		lua_pushnil(L); /* first key */
 
-		buf[(*pbuf_size)++] = '{';
+	luaL_addchar(buf, '{');
 
 		while (lua_next(L, -2)) {
 			if (not_first_pair)
 			{
-				buf[(*pbuf_size)++] = ',';
+			luaL_addchar(buf, ',');
 			}
 			else
 			{
@@ -37,40 +38,32 @@ static int tserialize_int(lua_State *L, int index, char* buf, int* pbuf_size) {
 			}
 
 			// check key type
-			buf[(*pbuf_size)++] = '[';
+		luaL_addchar(buf, '[');
 			switch (lua_type(L, -2))
 			{
 			case LUA_TSTRING:
-
 				tmp = lua_tostring(L, -2);
-				buf[(*pbuf_size)++] = '\"';
+			luaL_addchar(buf, '\"');
 				while (*tmp)
 				{
-					if (*tmp == '\"')
-					{
-						buf[(*pbuf_size)++] = '\\';
+				if (*tmp == '\"') luaL_addchar(buf, '\\');
+				luaL_addchar(buf, *tmp++);			
 					}
-					buf[(*pbuf_size)++] = *tmp++;
-				}
-				buf[(*pbuf_size)++] = '\"';
+			luaL_addchar(buf, '\"');
 				break;
 
 			case LUA_TNUMBER:
 				lua_pushvalue(L, -2);
-				tmp = lua_tostring(L, -1);
-				while (*tmp)  buf[(*pbuf_size)++] = *tmp++;
-
-				lua_pop(L, 1);
+			luaL_addvalue(buf);
 				break;
 
 			case LUA_TBOOLEAN:
-				tmp = lua_toboolean(L, -2) ? "true" : "false";
-				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+			luaL_addstring(buf, lua_toboolean(L, -2) ? "true" : "false");
 				break;
 
 			case LUA_TTABLE:
 				lua_pushvalue(L, -2); // clone to top
-				tserialize_int(L, -1, buf, pbuf_size); // process
+			tserialize_int(L, -1, buf); // process
 				lua_pop(L, 1); // pop table
 				break;
 
@@ -78,44 +71,41 @@ static int tserialize_int(lua_State *L, int index, char* buf, int* pbuf_size) {
 				luaL_error(L, "incorrect key type [%s]", lua_typename(L, lua_type(L, -2)));
 				break;
 			};
-			buf[(*pbuf_size)++] = ']';
-			buf[(*pbuf_size)++] = '=';
+		luaL_addstring(buf, "]=");
 
 			// check value
 			switch (lua_type(L, -1))
 			{
 			case LUA_TSTRING:
 				tmp = lua_tostring(L, -1);
-				buf[(*pbuf_size)++] = '\"';
+			luaL_addchar(buf, '\"');
 				while (*tmp)
 				{
-					if (*tmp == '\"') buf[(*pbuf_size)++] = '\\';					
-					buf[(*pbuf_size)++] = *tmp++;
+				if (*tmp == '\"') luaL_addchar(buf, '\\');
+				luaL_addchar(buf, *tmp++);
 				}
-				buf[(*pbuf_size)++] = '\"';
+			luaL_addchar(buf, '\"');
 				break;
 
 			case LUA_TNUMBER:
-				tmp = lua_tostring(L, -1);
-				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+			luaL_addstring(buf, lua_tostring(L, -1));
 				break;
 
 			case LUA_TBOOLEAN:
-				tmp = lua_toboolean(L, -1) ? "true" : "false";
-				while (*tmp) buf[(*pbuf_size)++] = *tmp++;
+			luaL_addstring(buf, lua_toboolean(L, -1) ?  "true" : "false");
 				break;
 
 			case LUA_TTABLE:
-				tserialize_int(L, -1, buf, pbuf_size);
+			tserialize_int(L, -1, buf);
 				break;
 
 			default:
-				luaL_error(L, "incorrect value type [%s]", lua_typename(L, lua_type(L,-1)));
+			luaL_error(L, "incorrect value type [%s]", lua_typename(L, lua_type(L, -1)));
 				break;
 			};
 			lua_pop(L, 1);
 		};
-		buf[(*pbuf_size)++] = '}';
+	luaL_addchar(buf, '}');
 		return 0;
 }
 
@@ -363,14 +353,11 @@ static int sort (lua_State *L) {
   return 0;
 }
 
-#include "stdlib.h"
 static int serialize(lua_State *L) {
-	char* buf = (char*) calloc(1048576, sizeof(char));
-	int buf_size = 0;
-	tserialize_int(L, 1, buf, &buf_size);
-	buf[buf_size] = 0;
-	lua_pushstring(L, buf);
-	free(buf);
+	luaL_Buffer b;
+	luaL_buffinit(L, &b);
+	tserialize_int(L, 1, &b);
+	luaL_pushresult(&b);
 	return 1;
 }
 /* }====================================================== */

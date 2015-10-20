@@ -7458,6 +7458,7 @@
     <ClInclude Include="ui\UIArtefactPanel.h" />
     <ClInclude Include="raypick.h" />
     <ClInclude Include="script_additional_libs.h" />
+    <ClInclude Include="ScientificDetector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11103,6 +11104,7 @@
     <ClCompile Include="raypick.cpp" />
     <ClCompile Include="car_trunk.cpp" />
     <ClCompile Include="script_additional_libs.cpp" />
+    <ClCompile Include="ScientificDetector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="graph_abstract.h">

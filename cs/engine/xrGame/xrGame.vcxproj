@@ -1372,6 +1372,7 @@
     <ClInclude Include="safe_map_iterator_inline.h" />
     <ClInclude Include="saved_game_wrapper.h" />
     <ClInclude Include="saved_game_wrapper_inline.h" />
+    <ClInclude Include="ScientificDetector.h" />
     <ClInclude Include="ScientificOutfit.h" />
     <ClInclude Include="Scope.h" />
     <ClInclude Include="screenshots_common.h" />
@@ -3957,6 +3958,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="ScientificDetector.cpp" />
     <ClCompile Include="ScientificOutfit.cpp" />
     <ClCompile Include="Scope.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>

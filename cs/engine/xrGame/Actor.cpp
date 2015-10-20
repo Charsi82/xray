@@ -1266,7 +1266,7 @@ void CActor::shedule_Update	(u32 DT)
 				{
 					m_sDefaultObjAction = m_sCharacterUseAction;
 				}
-				else if (m_pUsableObject)
+				else if (m_pUsableObject && !character_physics_support()->movement()->PHCapture())
 				{
 					bool b_allow_drag = !!pSettings->line_exist("ph_capture_visuals", game_object->cNameVisual());
 
@@ -1277,7 +1277,7 @@ void CActor::shedule_Update	(u32 DT)
 				{
 					bool b_allow_drag = !!pSettings->line_exist("ph_capture_visuals",pEntityAlive->cNameVisual());
 				
-					if(b_allow_drag)
+					if(b_allow_drag && !character_physics_support()->movement()->PHCapture())
 						m_sDefaultObjAction = m_sDeadCharacterUseOrDragAction;
 					else
 						m_sDefaultObjAction = m_sDeadCharacterUseAction;

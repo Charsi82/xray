@@ -425,6 +425,13 @@ void CActor::ActorUse()
 			{
 				character_physics_support()->movement()->PHCaptureObject( object, element );
 
+				// hide detector on capturing
+				PIItem det_active = inventory().ItemFromSlot(DETECTOR_SLOT);
+				if (det_active)
+				{
+					CCustomDetector* det = smart_cast<CCustomDetector*>(det_active);
+					det->HideDetector(false);
+				}
 			}
 
 		}
