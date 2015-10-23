@@ -7459,6 +7459,7 @@
     <ClInclude Include="raypick.h" />
     <ClInclude Include="script_additional_libs.h" />
     <ClInclude Include="ScientificDetector.h" />
+    <ClInclude Include="WeaponZoomable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11105,6 +11106,7 @@
     <ClCompile Include="car_trunk.cpp" />
     <ClCompile Include="script_additional_libs.cpp" />
     <ClCompile Include="ScientificDetector.cpp" />
+    <ClCompile Include="WeaponZoomable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="graph_abstract.h">

@@ -96,6 +96,8 @@
 #	include "weaponRG6.h"
 #	include "WeaponStatMgun.h"
 
+#	include "WeaponZoomable.h" // weapon with zooming scope
+
 #	include "scope.h"
 #	include "silencer.h"
 #	include "grenadelauncher.h"
@@ -313,6 +315,8 @@ void CObjectFactory::register_classes	()
 	ADD(CWeaponKnife			,CSE_ALifeItemWeapon			,CLSID_OBJECT_W_KNIFE			,"wpn_knife");
 	ADD(CWeaponBM16				,CSE_ALifeItemWeaponShotGun		,CLSID_OBJECT_W_BM16			,"wpn_bm16");
 	ADD(CWeaponRG6				,CSE_ALifeItemWeaponShotGun		,CLSID_OBJECT_W_RG6				,"wpn_rg6");
+
+	ADD(CWeaponZoomable			,CSE_ALifeItemWeaponMagazined	,CLSID_OBJECT_W_ZOOM			,"wpn_zoom");
 	//-----------------------------------------------------------------------------------------------------
 	ADD(CWeaponAmmo				,CSE_ALifeItemAmmo				,CLSID_OBJECT_AMMO				,"wpn_ammo");
 	ADD(CWeaponAmmo				,CSE_ALifeItemAmmo				,CLSID_OBJECT_A_VOG25			,"wpn_ammo_vog25");

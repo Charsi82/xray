@@ -2201,21 +2201,44 @@ inv_grid_x			= 17
 inv_grid_y			= 3
 grenade_vel 		= 30 ;76
 
-[wpn_test_zscope]:wpn_ak74
-;_up2
-class = WP_BINOC
+; weapon with zoomable scope. based on weapon magazined
+[wpn_zoom]:wpn_lr300
+
+class = W_ZOOM
 inv_name = wzs_name
 inv_name_short = wzs_name_s
-grenade_launcher_status    = 0; не менять, подствол вешается, но не будет рабоать.
+
+visual                  = dynamics\weapons\wpn_ak74\wpn_ak74.ogf
+hud                     = wpn_ak74_hud
+
+inv_grid_width       = 5    ; position and size of the icon that will be used to display weapon in the inventory menu
+inv_grid_height      = 2    ; all icons are on the texture ui_icon_equipment.dds,
+inv_grid_x           = 5  ; position and size are in terms of 64x64 squares
+inv_grid_y           = 5
+
+scope_name              = wpn_addon_scope_4x       ; section name for the attachable scope
+scope_x                 = 47                 ; offset in inventory icon
+scope_y                 = 0
+silencer_name           = wpn_addon_silencer    ; section name for the attachable silencer
+silencer_x              = 224                ; offset in inventory icon
+silencer_y              = 13
+grenade_launcher_name   = wpn_addon_grenade_launcher
+grenade_launcher_x      = 126
+grenade_launcher_y      = 24
+
+ammo_class           = ammo_5.45x39_fmj, ammo_5.45x39_ap  ; name of the ltx-section of used ammo
 
 ; scope
-scope_status            = 1; 
+scope_status            	= 2
+silencer_status				= 2
+grenade_launcher_status		= 0
+
 zoom_enabled				= true
-scope_zoom_factor			= 15
+scope_zoom_factor			= 50
 scope_texture				= wpn_crosshair
 
 ; vision
-vision_present				= true; не менять, иначе не показывается прицельная сетка
+vision_present				= true; показывать рамки
 vis_frame_speed				= 4				; скорость, с которой наводится рамка на цель
 vis_frame_color				= 0.7,0.7,0.7,0.0	; цвет рамки RGBA (A) Не учитывается
 found_snd					= detectors\DA-2_beep1
