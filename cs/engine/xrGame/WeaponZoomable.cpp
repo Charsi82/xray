@@ -116,13 +116,6 @@ bool CWeaponZoomable::Action(s32 cmd, u32 flags)
 	return inherited::Action(cmd, flags);
 }
 
-/*bool CWeaponZoomable::render_item_ui_query()
-{
-	//bool b_is_active_item = m_pInventory->ActiveItem() == this;
-	//return b_is_active_item && H_Parent() && IsZoomed() && !IsRotatingToZoom() && m_binoc_vision;
-	return inherited::render_item_ui_query();
-}*/
-
 void CWeaponZoomable::render_item_ui()
 {
 	if (m_binoc_vision) m_binoc_vision->Draw();
@@ -163,16 +156,3 @@ void CWeaponZoomable::net_Relcase(CObject *object)
 
 	m_binoc_vision->remove_links(object);
 }
-
-/*
-using namespace luabind;
-
-#pragma optimize("s",on)
-void CWeaponZoomable::script_register(lua_State *L)
-{
-	module(L)
-		[
-			class_<CWeaponZoomable, CGameObject>("CWeaponAK74SZ")
-			.def(constructor<>())
-		];
-}*/
