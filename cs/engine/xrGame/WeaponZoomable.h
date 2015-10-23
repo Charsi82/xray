@@ -1,16 +1,16 @@
 #pragma once
 
-#include "WeaponMagazined.h"
+#include "WeaponMagazinedWGrenade.h"
 #include "script_export_space.h"
 
 class CUIFrameWindow;
 class CUIStatic;
 class CBinocularsVision;
 
-class CWeaponZoomable : public CWeaponMagazined
+class CWeaponZoomable : public CWeaponMagazinedWGrenade
 {
 private:
-	typedef CWeaponMagazined inherited;
+	typedef CWeaponMagazinedWGrenade inherited;
 
 protected:
 	float			m_fRTZoomFactor; //run-time zoom factor
@@ -18,7 +18,7 @@ protected:
 	CBinocularsVision*					m_binoc_vision;
 
 public:
-	CWeaponZoomable(ESoundTypes eSoundType = SOUND_TYPE_WEAPON_SNIPERRIFLE);
+	CWeaponZoomable(ESoundTypes eSoundType = SOUND_TYPE_WEAPON_SUBMACHINEGUN);
 	virtual			~CWeaponZoomable();
 
 	void			Load(LPCSTR section);
@@ -32,12 +32,10 @@ public:
 	virtual void	UpdateCL();
 	virtual void	render_item_ui();
 	virtual bool	Action(s32 cmd, u32 flags);
-//	virtual bool	render_item_ui_query();
 	virtual void	net_Relcase(CObject *object);
-	virtual void	save(NET_Packet &output_packet);
-	virtual void	load(IReader &input_packet);
+
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CWeaponZoomable)
 #undef script_type_list
-#define script_type_list save_type_list(CWeaponAK74SZ)
+#define script_type_list save_type_list(CWeaponZoomable)

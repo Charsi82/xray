@@ -2201,37 +2201,21 @@ inv_grid_x			= 17
 inv_grid_y			= 3
 grenade_vel 		= 30 ;76
 
-; weapon with zoomable scope. based on weapon magazined
-[wpn_zoom]:wpn_lr300
+; weapon with zoomable scope. based on weapon magazined with gl
+[wpn_zoom]:wpn_ak74
 
 class = W_ZOOM
 inv_name = wzs_name
 inv_name_short = wzs_name_s
 
-visual                  = dynamics\weapons\wpn_ak74\wpn_ak74.ogf
-hud                     = wpn_ak74_hud
-
-inv_grid_width       = 5    ; position and size of the icon that will be used to display weapon in the inventory menu
-inv_grid_height      = 2    ; all icons are on the texture ui_icon_equipment.dds,
-inv_grid_x           = 5  ; position and size are in terms of 64x64 squares
-inv_grid_y           = 5
-
 scope_name              = wpn_addon_scope_4x       ; section name for the attachable scope
-scope_x                 = 47                 ; offset in inventory icon
-scope_y                 = 0
-silencer_name           = wpn_addon_silencer    ; section name for the attachable silencer
-silencer_x              = 224                ; offset in inventory icon
-silencer_y              = 13
-grenade_launcher_name   = wpn_addon_grenade_launcher
-grenade_launcher_x      = 126
-grenade_launcher_y      = 24
 
 ammo_class           = ammo_5.45x39_fmj, ammo_5.45x39_ap  ; name of the ltx-section of used ammo
 
 ; scope
 scope_status            	= 2
 silencer_status				= 2
-grenade_launcher_status		= 0
+grenade_launcher_status		= 2
 
 zoom_enabled				= true
 scope_zoom_factor			= 50

@@ -12,7 +12,7 @@
 
 void GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor);
 
-CWeaponZoomable::CWeaponZoomable(ESoundTypes eSoundType) : CWeaponMagazined(eSoundType)
+CWeaponZoomable::CWeaponZoomable(ESoundTypes eSoundType) : CWeaponMagazinedWGrenade(eSoundType)
 {
 	m_binoc_vision = NULL;
 	m_bVision = false;
@@ -21,18 +21,6 @@ CWeaponZoomable::CWeaponZoomable(ESoundTypes eSoundType) : CWeaponMagazined(eSou
 CWeaponZoomable::~CWeaponZoomable()
 {
 	xr_delete(m_binoc_vision);
-}
-
-void CWeaponZoomable::save(NET_Packet &output_packet)
-{
-	inherited::save(output_packet);
-	save_data(m_fRTZoomFactor, output_packet);
-}
-
-void CWeaponZoomable::load(IReader &input_packet)
-{
-	inherited::load(input_packet);
-	load_data(m_fRTZoomFactor, input_packet);
 }
 
 void CWeaponZoomable::Load(LPCSTR section)
@@ -49,9 +37,6 @@ void CWeaponZoomable::OnZoomIn()
 {
 	if (H_Parent() && !IsZoomed())
 	{
-		if (!IsScopeAttached())
-			m_fRTZoomFactor= pSettings->r_float(cNameSect(), "scope_zoom_factor");
-		
 		m_sounds.StopSound("sndZoomOut");
 		bool b_hud_mode = (Level().CurrentEntity() == H_Parent());
 		m_sounds.PlaySound("sndZoomIn", H_Parent()->Position(), H_Parent(), b_hud_mode);
@@ -63,6 +48,10 @@ void CWeaponZoomable::OnZoomIn()
 	}
 
 	inherited::OnZoomIn();
+
+	if (!ZoomTexture())
+		m_fRTZoomFactor = pSettings->r_float(cNameSect(), "scope_zoom_factor");
+
 	SetZoomFactor(m_fRTZoomFactor);
 }
 
@@ -108,7 +97,7 @@ bool CWeaponZoomable::Action(s32 cmd, u32 flags)
 	switch (cmd)
 	{
 	case kWPN_FUNC:
-		if (flags&CMD_START)
+		if (flags&CMD_START && ZoomTexture())
 		{
 			m_bVision = !m_bVision;
 			if (m_bVision)
@@ -121,6 +110,7 @@ bool CWeaponZoomable::Action(s32 cmd, u32 flags)
 				m_binoc_vision = NULL;
 			}
 		}				
+		if (IsZoomed()) return true;
 	}
 
 	return inherited::Action(cmd, flags);
