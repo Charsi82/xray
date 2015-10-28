@@ -888,6 +888,7 @@
     <ClInclude Include="CustomOutfit.h" />
     <ClInclude Include="CustomRocket.h" />
     <ClInclude Include="CustomZone.h" />
+    <ClInclude Include="WeaponAutomaticShotgun.h" />
     <ClInclude Include="WeaponZoomable.h" />
     <ClInclude Include="CycleConstStorage.h" />
     <ClInclude Include="DamagableItem.h" />
@@ -3019,6 +3020,7 @@
     <ClCompile Include="CustomOutfit.cpp" />
     <ClCompile Include="CustomRocket.cpp" />
     <ClCompile Include="CustomZone.cpp" />
+    <ClCompile Include="WeaponAutomaticShotgun.cpp" />
     <ClCompile Include="WeaponZoomable.cpp" />
     <ClCompile Include="DamagableItem.cpp" />
     <ClCompile Include="damage_manager.cpp" />

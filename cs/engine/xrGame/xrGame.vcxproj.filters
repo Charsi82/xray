@@ -7460,6 +7460,7 @@
     <ClInclude Include="script_additional_libs.h" />
     <ClInclude Include="ScientificDetector.h" />
     <ClInclude Include="WeaponZoomable.h" />
+    <ClInclude Include="WeaponAutomaticShotgun.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11107,6 +11108,7 @@
     <ClCompile Include="script_additional_libs.cpp" />
     <ClCompile Include="ScientificDetector.cpp" />
     <ClCompile Include="WeaponZoomable.cpp" />
+    <ClCompile Include="WeaponAutomaticShotgun.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="graph_abstract.h">
