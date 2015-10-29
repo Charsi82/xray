@@ -215,6 +215,10 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 		}
 		return					true;
 	}
+
+	if (m_bGrenadeMode && (cmd == kWPN_FIREMODE_PREV || cmd == kWPN_FIREMODE_NEXT))
+		return false;
+
 	if(inherited::Action(cmd, flags))
 		return true;
 	
@@ -731,7 +735,7 @@ void CWeaponMagazinedWGrenade::save(NET_Packet &output_packet)
 {
 	inherited::save								(output_packet);
 	save_data									(m_bGrenadeMode, output_packet);
-	save_data									(m_magazine2.size(), output_packet);
+	save_data									(m_magazine2.size() << 2 | m_ammoType2, output_packet);
 
 }
 
@@ -746,6 +750,8 @@ void CWeaponMagazinedWGrenade::load(IReader &input_packet)
 	u32 sz;
 	load_data					(sz, input_packet);
 
+	m_ammoType2 = sz & 0x3;
+	sz >>= 2;
 	CCartridge					l_cartridge; 
 	l_cartridge.Load			(*m_ammoTypes2[m_ammoType2], u8(m_ammoType2));
 

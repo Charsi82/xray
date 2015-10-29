@@ -147,7 +147,7 @@ void CLevel::net_Stop		()
 
 void CLevel::ClientSend()
 {
-	if (GameID() == eGameIDSingle || OnClient())
+	if ((GameID() != eGameIDSingle) || OnClient()) // fixed by Shoker
 	{
 		if ( !net_HasBandwidth() ) return;
 	};

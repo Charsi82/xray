@@ -60,6 +60,14 @@ void CWeaponMagazined::net_Destroy()
 	inherited::net_Destroy();
 }
 
+BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
+{
+	BOOL bRes = inherited::net_Spawn(DC);
+	CSE_ALifeItemWeaponMagazined* const wpn = smart_cast<CSE_ALifeItemWeaponMagazined*>(DC);
+	m_iCurFireMode = wpn->m_u8CurFireMode;
+	SetQueueSize(GetCurrentFireMode());
+	return bRes;
+}
 
 void CWeaponMagazined::Load	(LPCSTR section)
 {
