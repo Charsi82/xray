@@ -1013,7 +1013,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
  	m_dwAmmoCurrentCalcFrame = Device.dwFrame;
 	iAmmoCurrent = 0;
 
-	for(int i = 0; i < (int)m_ammoTypes.size(); ++i) 
+	/*for(int i = 0; i < (int)m_ammoTypes.size(); ++i) 
 	{
 		LPCSTR l_ammoType = *m_ammoTypes[i];
 
@@ -1043,7 +1043,23 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 			continue;
 
 		iAmmoCurrent += inventory_owner().ammo_in_box_to_spawn();
+	}*/
+
+	LPCSTR				S = pSettings->r_string(cNameSect(), "ammo_class");
+	TIItemContainer::iterator l_it = m_pInventory->m_ruck.begin();
+	TIItemContainer::iterator l_ite = m_pInventory->m_ruck.end();
+	for (; l_it != l_ite; ++l_it)
+	{
+		CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
+		if (l_pAmmo && !xr_strcmp(S, l_pAmmo->cNameSect()))
+		{
+			iAmmoCurrent = iAmmoCurrent + l_pAmmo->m_boxCurr;
+
+			if (use_item_to_spawn && !inventory_owner().item_to_spawn())
+				iAmmoCurrent += inventory_owner().ammo_in_box_to_spawn();
+		}
 	}
+
 	return l_count + iAmmoCurrent;
 }
 
@@ -1068,7 +1084,7 @@ int CWeapon::GetCurrentTypeAmmoTotal() const
 	{
 		LPCSTR l_ammoType = m_ammoTypes[m_ammoType].c_str();
 
-		for(TIItemContainer::iterator l_it = m_pInventory->m_belt.begin(); m_pInventory->m_belt.end() != l_it; ++l_it) 
+		/*for(TIItemContainer::iterator l_it = m_pInventory->m_belt.begin(); m_pInventory->m_belt.end() != l_it; ++l_it) 
 		{
 			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
 
@@ -1076,9 +1092,10 @@ int CWeapon::GetCurrentTypeAmmoTotal() const
 			{
 				iAmmoCurrent = iAmmoCurrent + l_pAmmo->m_boxCurr;
 			}
-		}
-
-		for(TIItemContainer::iterator l_it = m_pInventory->m_ruck.begin(); m_pInventory->m_ruck.end() != l_it; ++l_it) 
+		}*/
+		TIItemContainer::iterator l_it = m_pInventory->m_ruck.begin();
+		TIItemContainer::iterator l_ite = m_pInventory->m_ruck.end();
+		for(; l_ite != l_it; ++l_it) 
 		{
 			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
 			if(l_pAmmo && !xr_strcmp(l_pAmmo->cNameSect(), l_ammoType)) 

@@ -20,7 +20,7 @@ BOOL	CWeaponRG6::net_Spawn				(CSE_Abstract* DC)
 	BOOL l_res = inheritedSG::net_Spawn(DC);
 	if (!l_res) return l_res;
 
-	if (iAmmoElapsed && !getCurrentRocket())
+	/*if (iAmmoElapsed && !getCurrentRocket())
 	{
 		shared_str grenade_name = m_ammoTypes[0];
 		shared_str fake_grenade_name = pSettings->r_string(grenade_name, "fake_grenade_name");
@@ -35,9 +35,16 @@ BOOL	CWeaponRG6::net_Spawn				(CSE_Abstract* DC)
 			}
 		}
 //			inheritedRL::SpawnRocket(*fake_grenade_name, this);
-	}
+	}*/
 	
-
+	for (u32 i = 0; i < m_magazine.size(); i++)
+	{
+		CCartridge& l_cartridge = m_magazine[i];
+		shared_str grenade_name = m_ammoTypes[l_cartridge.m_LocalAmmoType];
+		shared_str fake_grenade_name = pSettings->r_string(grenade_name, "fake_grenade_name");
+		if (fake_grenade_name.size())
+			inheritedRL::SpawnRocket(*fake_grenade_name, this);
+	}
 	
 	return l_res;
 };
