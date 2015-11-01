@@ -609,7 +609,7 @@ void CWeapon::load(IReader &input_packet)
 	inherited::load	(input_packet);
 	load_data		(iAmmoElapsed,					input_packet);
 	load_data		(m_flagsAddOnState,				input_packet);
-	UpdateAddonsVisibility			();
+	//UpdateAddonsVisibility			(); //duplicate in net_Spawn!
 	load_data		(m_ammoType,					input_packet);
 	load_data		(m_zoom_params.m_bIsZoomModeNow,input_packet);
 
