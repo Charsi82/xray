@@ -19,10 +19,11 @@
 #include "Explosive.h"
 #include "PHDestroyable.h"
 #include "DelayedActionFuse.h"
+
 // refs
 class ENGINE_API			CBoneInstance;
 class						CActor;
-//class						CInventory;
+class						CInventory;
 class						CSE_PHSkeleton;
 class						CCarWeapon;
 struct						dxGeomUserData;
@@ -620,6 +621,7 @@ public:
 
 public:
 	virtual CEntity*					cast_entity				()						{return this;}
+	xr_vector<u16> m_items;
 	u32		GetSize() { return m_items.size(); }
 private:
 	template <class T> IC void fill_wheel_vector(LPCSTR S,xr_vector<T>& type_wheels);
@@ -628,7 +630,6 @@ private:
 
 	//Inventory for the car
 	//CInventory	*inventory;
-	xr_vector<u16> m_items;
 	
 	virtual	void reinit			();
 	virtual	void reload			(LPCSTR section);

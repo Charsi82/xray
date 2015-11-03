@@ -99,5 +99,5 @@ void CUIActorMenu::CurModeToScript()
 #include "game_object_space.h"
 void CUIActorMenu::ShowCallback()
 {
-	Actor()->callback(GameObject::eActorMenuOpen)(HUD().GetUI()->MainInputReceiver(), m_currMenuMode);
+	Actor()->callback(GameObject::eActorMenuOpen)(HUD().GetUI()->MainInputReceiver(), m_pCar ? mmCarTrunk : m_currMenuMode);
 }
