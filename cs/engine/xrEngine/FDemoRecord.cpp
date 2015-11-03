@@ -406,7 +406,7 @@ void CDemoRecord::IR_OnKeyboardPress	(int dik)
 	if (dik == DIK_ESCAPE)	fLifeTime				= -1;
 
 //#ifndef MASTER_GOLD
-	if (dik == DIK_RETURN)
+	if (dik == DIK_RETURN && strstr(Core.Params,"-dbg"))
 	{	
 		if (g_pGameLevel->CurrentEntity())
 		{
